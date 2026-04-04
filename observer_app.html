@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Observer</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#F7F5F2;--surface:#FFF;--surface2:#EFECE8;--surface3:#E8E4DF;--ink:#18160F;--ink2:#5C5750;--ink3:#9E9890;--accent:#1B3A2D;--accent-mid:#2D5C45;--accent-light:#E4EFE9;--warn:#C84B1F;--warn-light:#FAF0EB;--purple:#4A3FB5;--purple-light:#EEEDFC;--purple-mid:#7B74D4;--border:rgba(24,22,15,0.08);--border2:rgba(24,22,15,0.13);--r:14px;--r-sm:8px;--r-pill:100px}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+body{background:var(--bg);font-family:'DM Sans',sans-serif;color:var(--ink);-webkit-font-smoothing:antialiased;overflow:hidden}
+.app{display:flex;flex-direction:column;height:100vh;max-width:420px;margin:0 auto;background:var(--bg);position:relative}
+.screen{display:none;flex-direction:column;height:100%}
+.screen.active{display:flex}
+#s-login{background:var(--accent);justify-content:space-between}
+.login-top{padding:56px 28px 0}
+.login-wordmark{font-family:'Syne',sans-serif;font-size:30px;font-weight:700;color:#fff;letter-spacing:-0.5px}
+.login-tagline{font-size:13px;color:rgba(255,255,255,0.5);margin-top:6px;font-weight:300}
+.login-form{background:var(--bg);border-radius:24px 24px 0 0;padding:28px 24px 48px}
+.login-title{font-family:'Syne',sans-serif;font-size:20px;font-weight:600;color:var(--ink);margin-bottom:20px}
+.field-group{margin-bottom:14px}
+.field-label{font-size:11px;font-weight:500;color:var(--ink3);letter-spacing:.06em;text-transform:uppercase;margin-bottom:6px}
+.field-input{width:100%;padding:13px 16px;border-radius:var(--r-sm);border:1px solid var(--border2);background:var(--surface);font-family:'DM Sans',sans-serif;font-size:15px;color:var(--ink);outline:none;transition:border-color .15s}
+.field-input:focus{border-color:var(--purple-mid)}
+.btn-login{width:100%;padding:15px;background:var(--accent);color:#fff;border:none;border-radius:var(--r-sm);font-family:'Syne',sans-serif;font-size:15px;font-weight:600;cursor:pointer;margin-top:6px;transition:opacity .15s}
+.btn-login:active{opacity:.85}
+.login-hint{font-size:12px;color:var(--ink3);text-align:center;margin-top:14px}
+.login-error{font-size:12px;color:var(--warn);margin-top:8px;display:none}
+.topbar{padding:16px 20px 14px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);background:var(--surface);flex-shrink:0}
+.topbar-title{font-family:'Syne',sans-serif;font-size:17px;font-weight:600;color:var(--ink)}
+.topbar-right{display:flex;align-items:center;gap:10px}
+.obs-pill{font-size:11px;font-weight:500;background:var(--surface2);color:var(--ink2);padding:5px 10px;border-radius:var(--r-pill)}
+.logout-btn{font-size:12px;color:var(--ink3);cursor:pointer;padding:4px}
+.scroll{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.scroll::-webkit-scrollbar{display:none}
+.section{padding:16px 20px}
+.sec-label{font-size:10px;font-weight:500;color:var(--ink3);letter-spacing:.08em;text-transform:uppercase;margin-bottom:10px}
+
+.ses-input{width:100%;padding:12px 14px;border-radius:var(--r-sm);border:1px solid var(--border2);background:var(--surface);font-family:'DM Sans',sans-serif;font-size:14px;color:var(--ink);outline:none}
+.ses-input:focus{border-color:var(--purple-mid)}
+.bottom-bar{padding:12px 20px 24px;background:var(--surface);border-top:1px solid var(--border);flex-shrink:0}
+.btn-primary{width:100%;padding:15px;background:var(--accent);color:#fff;border:none;border-radius:var(--r-sm);font-family:'Syne',sans-serif;font-size:14px;font-weight:600;cursor:pointer;letter-spacing:.02em;transition:opacity .15s}
+.btn-primary:active{opacity:.85}
+.btn-primary:disabled{opacity:.35;cursor:default}
+/* Airtable config */
+.at-config-box{background:var(--surface2);border-radius:var(--r);padding:14px;margin-top:4px}
+.at-config-title{font-size:12px;font-weight:500;color:var(--ink2);margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.at-dot{width:7px;height:7px;border-radius:50%;background:var(--ink3);flex-shrink:0}
+.at-dot.connected{background:#2D9D5C}
+.at-hint{font-size:11px;color:var(--ink3);margin-top:8px;line-height:1.5}
+.at-hint a{color:var(--purple);text-decoration:none}
+/* Sync status banner */
+.sync-bar{display:flex;align-items:center;gap:8px;padding:8px 20px;font-size:12px;flex-shrink:0;border-bottom:1px solid var(--border)}
+.sync-bar.idle{background:var(--surface);color:var(--ink3)}
+.sync-bar.syncing{background:#EEF2FF;color:#3730A3}
+.sync-bar.ok{background:var(--accent-light);color:var(--accent)}
+.sync-bar.err{background:var(--warn-light);color:var(--warn)}
+.sync-spinner{width:12px;height:12px;border:1.5px solid currentColor;border-top-color:transparent;border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0}
+@keyframes spin{to{transform:rotate(360deg)}}
+.sync-dot{width:7px;height:7px;border-radius:50%;background:currentColor;flex-shrink:0}
+.banner{background:var(--accent);color:rgba(255,255,255,.8);font-size:11px;padding:7px 20px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.missed-btn{background:rgba(255,255,255,.15);border:none;color:#fff;border-radius:var(--r-pill);padding:4px 11px;font-size:12px;font-weight:500;cursor:pointer;display:flex;align-items:center;gap:5px}
+.missed-ct{background:rgba(255,255,255,.25);border-radius:10px;padding:1px 6px;font-size:11px}
+.tabs{display:flex;background:var(--surface);border-bottom:1px solid var(--border);flex-shrink:0}
+.tab{flex:1;padding:12px 4px;text-align:center;font-size:12px;font-weight:500;color:var(--ink3);cursor:pointer;border-bottom:2px solid transparent;transition:all .15s}
+.tab.active{color:var(--accent);border-bottom-color:var(--accent)}
+.mode-row{display:flex;gap:6px}
+.mode-btn{flex:1;padding:9px;border-radius:var(--r-sm);border:1px solid var(--border2);background:var(--surface);font-size:12px;font-weight:500;color:var(--ink2);cursor:pointer;text-align:center;transition:all .12s}
+.mode-btn.active{background:var(--purple-light);border-color:var(--purple-mid);color:var(--purple)}
+.mcard{background:var(--surface);border:1px solid var(--border2);border-radius:var(--r);margin-bottom:8px;overflow:hidden;transition:border-color .15s}
+.mcard.open{border-color:var(--purple-mid)}
+.mhead{display:flex;align-items:center;gap:10px;padding:12px 14px;cursor:pointer}
+.mav{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;flex-shrink:0}
+.mav.c0{background:var(--purple-light);color:var(--purple)}
+.mav.c1{background:var(--accent-light);color:var(--accent)}
+.mav.c2{background:#FAF0EB;color:#C84B1F}
+.mav.c3{background:#FFF3E0;color:#B45309}
+.mav.c4{background:#EEF2FF;color:#3730A3}
+.mtitle{flex:1;font-size:13px;font-weight:500;color:var(--ink)}
+.msub{font-size:11px;color:var(--ink3);font-weight:400}
+.mremove{font-size:20px;color:var(--ink3);padding:2px 4px;cursor:pointer;line-height:1}
+.mbody{padding:0 14px 14px;border-top:1px solid var(--border);display:none}
+.mcard.open .mbody{display:block}
+.mf{margin-top:10px}
+.mfl{font-size:9px;font-weight:500;color:var(--ink3);letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px}
+.chips{display:flex;flex-wrap:wrap;gap:5px}
+.chip{padding:6px 12px;border-radius:var(--r-pill);border:1px solid var(--border2);font-size:12px;color:var(--ink2);background:var(--surface);cursor:pointer;transition:all .1s;user-select:none;white-space:nowrap}
+.chip:active{transform:scale(.96)}
+.chip.sel{background:var(--purple-light);border-color:var(--purple-mid);color:var(--purple);font-weight:500}
+.chip.sel-g{background:var(--accent-light);border-color:var(--accent-mid);color:var(--accent);font-weight:500}
+.add-btn{display:flex;align-items:center;gap:8px;padding:12px 14px;border:1px dashed var(--border2);border-radius:var(--r);color:var(--ink3);font-size:13px;cursor:pointer;background:none;width:100%;transition:all .12s;margin-bottom:8px}
+.add-btn:active{background:var(--surface2)}
+.add-ico{width:22px;height:22px;border-radius:50%;border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;font-size:16px;color:var(--ink3);flex-shrink:0}
+.shared{background:var(--surface2);border-radius:var(--r);padding:12px 14px;margin-bottom:10px}
+.shared-lbl{font-size:10px;font-weight:500;color:var(--ink3);letter-spacing:.07em;text-transform:uppercase;margin-bottom:10px}
+.qcard{background:var(--surface);border-radius:var(--r);border:1px solid var(--border2);padding:14px}
+.qlbl{font-size:9px;font-weight:500;color:var(--ink3);letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px}
+.qchips{display:flex;flex-wrap:wrap;gap:5px}
+.qchip{padding:6px 11px;border-radius:var(--r-pill);border:1px solid var(--border2);font-size:12px;color:var(--ink2);background:var(--surface);cursor:pointer;transition:all .1s;white-space:nowrap}
+.qchip.sel{background:var(--purple-light);border-color:var(--purple-mid);color:var(--purple);font-weight:500}
+.qsubmit{width:100%;padding:12px;background:var(--accent);color:#fff;border:none;border-radius:var(--r-sm);font-family:'Syne',sans-serif;font-size:13px;font-weight:600;cursor:pointer;margin-top:4px}
+.qhint{font-size:11px;color:var(--ink3);text-align:center;margin-top:8px}
+.flash{background:var(--accent-light);border:1px solid var(--accent-mid);border-radius:var(--r);padding:12px 14px;display:flex;align-items:center;gap:10px;margin-bottom:8px;animation:fs .25s ease}
+@keyframes fs{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
+.chk{width:28px;height:28px;border-radius:50%;background:var(--accent-mid);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.flash-t{font-size:13px;font-weight:500;color:var(--accent)}
+.flash-s{font-size:11px;color:var(--accent-mid);margin-top:1px}
+.ehead{display:flex;align-items:center;justify-content:space-between;padding:14px 20px 10px}
+.ecount{font-size:13px;font-weight:500;color:var(--ink)}
+.exp-btn{font-size:12px;font-weight:500;background:var(--accent);color:#fff;border:none;border-radius:var(--r-pill);padding:6px 14px;cursor:pointer}
+.ecard{background:var(--surface);border-radius:var(--r);border:1px solid var(--border);padding:12px 14px;margin-bottom:8px}
+.emeta{font-size:11px;color:var(--ink3);margin-bottom:7px;display:flex;flex-wrap:wrap;gap:5px}
+.emeta span{background:var(--surface2);padding:2px 7px;border-radius:6px}
+.emrows{display:flex;flex-direction:column;gap:5px;margin-bottom:7px}
+.emrow{font-size:12px;color:var(--ink2);display:flex;align-items:center;gap:6px}
+.edot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.edot.c0{background:var(--purple-mid)}.edot.c1{background:var(--accent-mid)}.edot.c2{background:#E8814A}.edot.c3{background:#D97706}.edot.c4{background:#6366F1}
+.etags{display:flex;flex-wrap:wrap;gap:4px}
+.etag{font-size:10px;padding:2px 7px;border-radius:6px;background:var(--surface2);color:var(--ink2)}
+.etag.missed{background:var(--warn-light);color:var(--warn)}
+.empty{text-align:center;padding:48px 20px;color:var(--ink3);font-size:14px}
+.sgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:14px 20px 0}
+.scard{background:var(--surface);border-radius:var(--r);border:1px solid var(--border);padding:14px}
+.snum{font-family:'Syne',sans-serif;font-size:26px;font-weight:700;color:var(--ink)}
+.slbl{font-size:11px;color:var(--ink3);margin-top:2px}
+.csec{padding:14px 20px 0}
+.ctitle{font-size:10px;font-weight:500;color:var(--ink3);letter-spacing:.07em;text-transform:uppercase;margin-bottom:10px}
+.brow{margin-bottom:9px}
+.bmeta{display:flex;justify-content:space-between;font-size:12px;color:var(--ink2);margin-bottom:4px}
+.bpct{color:var(--ink3)}
+.btrack{height:6px;border-radius:3px;background:var(--surface3)}
+.bfill{height:6px;border-radius:3px;background:var(--accent)}
+.bfill.p{background:var(--purple)}
+.div{height:1px;background:var(--border);margin:4px 20px 0}
+.toast{position:absolute;bottom:80px;left:50%;transform:translateX(-50%);background:var(--ink);color:#fff;padding:10px 18px;border-radius:var(--r-pill);font-size:13px;opacity:0;pointer-events:none;transition:opacity .2s;white-space:nowrap;z-index:100}
+.toast.show{opacity:1}
+</style>
+</head>
+<body>
+<div class="app">
+
+<div class="screen active" id="s-login">
+  <div class="login-top">
+    <div class="login-wordmark">Observer</div>
+    <div class="login-tagline">Customer demographic tracking</div>
+  </div>
+  <div class="login-form">
+    <div class="login-title">Sign in</div>
+    <div class="field-group"><div class="field-label">Observer ID</div><input class="field-input" id="f-user" type="text" placeholder="e.g. sarah.k"></div>
+    <div class="field-group"><div class="field-label">PIN</div><input class="field-input" id="f-pin" type="password" placeholder="••••" maxlength="6" inputmode="numeric"></div>
+    <div class="login-error" id="lerr">Incorrect ID or PIN — try again.</div>
+    <button class="btn-login" onclick="doLogin()">Sign in</button>
+    <div class="login-hint">Demo: any ID · PIN is 1234</div>
+  </div>
+</div>
+
+<div class="screen" id="s-session">
+  <div class="topbar">
+    <div class="topbar-title">New session</div>
+    <div class="topbar-right"><div class="obs-pill" id="obs-pill"></div><div class="logout-btn" onclick="doLogout()">Sign out</div></div>
+  </div>
+  <div class="scroll">
+    <div class="section">
+      <div class="sec-label">Location</div>
+      <input class="ses-input" id="loc-input" type="text" placeholder="e.g. Ala Moana Center" oninput="checkStartBtn()">
+    </div>
+    <div class="section" style="padding-top:0">
+      <div class="sec-label">Session name <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--ink3)">(optional)</span></div>
+      <input class="ses-input" id="sname" type="text" placeholder="e.g. Saturday morning shift">
+    </div>
+    <div class="section" style="padding-top:0;padding-bottom:24px">
+      <div class="sec-label">Sync server <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--ink3)">(optional)</span></div>
+      <div class="at-config-box">
+        <div class="at-config-title"><div class="at-dot" id="at-dot"></div><span id="at-status-lbl">Not configured — CSV only</span></div>
+        <div class="field-group" style="margin-bottom:0">
+          <div class="field-label" style="font-size:10px">Server URL</div>
+          <input class="ses-input" id="at-url" type="url" placeholder="https://your-app.vercel.app/api/sync" oninput="updateAtStatus()">
+        </div>
+        <div class="at-hint">Paste your Vercel deployment URL here. Leave blank to use CSV export only.</div>
+      </div>
+    </div>
+  </div>
+  <div class="bottom-bar"><button class="btn-primary" id="start-btn" disabled onclick="startSession()">Start session</button></div>
+</div>
+
+<div class="screen" id="s-main">
+  <div class="topbar">
+    <div><div class="topbar-title" id="main-loc"></div></div>
+    <div class="topbar-right"><div class="obs-pill" id="main-obs"></div><div class="logout-btn" onclick="endSession()">End</div></div>
+  </div>
+  <div class="banner">
+    <span id="banner-txt"></span>
+    <div style="display:flex;align-items:center;gap:8px">
+      <span style="font-size:11px">Missed:</span>
+      <button class="missed-btn" onclick="incMissed()">+ <span class="missed-ct" id="missed-n">0</span></button>
+    </div>
+  </div>
+  <div class="tabs">
+    <div class="tab active" onclick="switchTab('log',this)">Log</div>
+    <div class="tab" onclick="switchTab('entries',this)">Entries</div>
+    <div class="tab" onclick="switchTab('summary',this)">Summary</div>
+  </div>
+  <div class="sync-bar idle" id="sync-bar" style="display:none">
+    <div class="sync-dot" id="sync-dot"></div>
+    <span id="sync-msg"></span>
+  </div>
+
+  <div id="tab-log" class="scroll" style="padding:14px 20px 24px">
+    <div id="success-area"></div>
+    <div class="mode-row" style="margin-bottom:14px">
+      <div class="mode-btn active" id="mfull" onclick="setMode('full')">Full log</div>
+      <div class="mode-btn" id="mquick" onclick="setMode('quick')">Quick log</div>
+    </div>
+    <div id="full-wrap">
+      <div id="mlist"></div>
+      <button class="add-btn" onclick="addMember()"><div class="add-ico">+</div>Add person to group</button>
+      <div class="shared">
+        <div class="shared-lbl">Shared for whole group</div>
+        <div class="mf"><div class="mfl">Visible disabilities / aids</div><div class="chips" id="sh-dis">
+          <div class="chip sel-g" data-v="None observed" onclick="shChip(this,'dis',false)">None observed</div>
+          <div class="chip" data-v="Wheelchair" onclick="shChip(this,'dis',false)">Wheelchair</div>
+          <div class="chip" data-v="Walking aid" onclick="shChip(this,'dis',false)">Walking aid</div>
+          <div class="chip" data-v="Visual aid" onclick="shChip(this,'dis',false)">Visual aid</div>
+          <div class="chip" data-v="Hearing aid" onclick="shChip(this,'dis',false)">Hearing aid</div>
+          <div class="chip" data-v="Prosthetic" onclick="shChip(this,'dis',false)">Prosthetic</div>
+        </div></div>
+        <div class="mf"><div class="mfl">Emotional state</div><div class="chips" id="sh-emo">
+          <div class="chip" data-v="Happy" onclick="shChip(this,'emo',true)">Happy</div>
+          <div class="chip sel-g" data-v="Neutral" onclick="shChip(this,'emo',true)">Neutral</div>
+          <div class="chip" data-v="Confused" onclick="shChip(this,'emo',true)">Confused</div>
+          <div class="chip" data-v="Frustrated" onclick="shChip(this,'emo',true)">Frustrated</div>
+          <div class="chip" data-v="Distressed" onclick="shChip(this,'emo',true)">Distressed</div>
+        </div></div>
+      </div>
+      <button class="btn-primary" onclick="submitFull()">Log observation</button>
+    </div>
+    <div id="quick-wrap" style="display:none">
+      <div class="qcard">
+        <div style="margin-bottom:10px"><div class="qlbl">Age</div><div class="qchips" id="q-age">
+          <div class="qchip" data-v="Under 18" onclick="qC(this,'age')">Under 18</div>
+          <div class="qchip" data-v="18–24" onclick="qC(this,'age')">18–24</div>
+          <div class="qchip" data-v="25–34" onclick="qC(this,'age')">25–34</div>
+          <div class="qchip" data-v="35–44" onclick="qC(this,'age')">35–44</div>
+          <div class="qchip" data-v="45–59" onclick="qC(this,'age')">45–59</div>
+          <div class="qchip" data-v="60+" onclick="qC(this,'age')">60+</div>
+        </div></div>
+        <div style="margin-bottom:10px"><div class="qlbl">Gender</div><div class="qchips" id="q-gen">
+          <div class="qchip" data-v="Male" onclick="qC(this,'gen')">Male</div>
+          <div class="qchip" data-v="Female" onclick="qC(this,'gen')">Female</div>
+          <div class="qchip" data-v="Non-binary" onclick="qC(this,'gen')">Non-binary</div>
+          <div class="qchip" data-v="Unclear" onclick="qC(this,'gen')">Unclear</div>
+        </div></div>
+        <div style="margin-bottom:12px"><div class="qlbl">Group size</div><div class="qchips" id="q-sz">
+          <div class="qchip" data-v="1" onclick="qC(this,'sz')">1</div>
+          <div class="qchip" data-v="2" onclick="qC(this,'sz')">2</div>
+          <div class="qchip" data-v="3" onclick="qC(this,'sz')">3</div>
+          <div class="qchip" data-v="4+" onclick="qC(this,'sz')">4+</div>
+        </div></div>
+        <button class="qsubmit" onclick="submitQuick()">Quick log</button>
+        <div class="qhint">Minimal entry — enrich later in Entries</div>
+      </div>
+    </div>
+  </div>
+
+  <div id="tab-entries" class="scroll" style="display:none">
+    <div class="ehead"><div class="ecount" id="ecount">0 entries</div><button class="exp-btn" onclick="exportCSV()">Export CSV</button></div>
+    <div id="elist" style="padding:0 20px 24px"></div>
+  </div>
+
+  <div id="tab-summary" class="scroll" style="display:none;padding-bottom:24px">
+    <div id="scontent"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+</div>
+<script>
+let user=null,sess={loc:null,name:'',t:null},entries=[],members=[],shared={dis:['None observed'],emo:['Neutral']},missed=0,qs={age:null,gen:null,sz:null},mid=0;
+let syncUrl='';
+const AC=['c0','c1','c2','c3','c4'];
+
+function updateAtStatus(){
+  const u=document.getElementById('at-url').value.trim();
+  syncUrl=u;
+  const ok=u.startsWith('http');
+  document.getElementById('at-dot').className='at-dot'+(ok?' connected':'');
+  document.getElementById('at-status-lbl').textContent=ok?'Ready to sync — '+u.replace(/https?:\/\//,'').split('/')[0]:'Not configured — CSV only';
+}
+
+function setSyncBar(state,msg){
+  const bar=document.getElementById('sync-bar'),dot=document.getElementById('sync-dot'),sp=document.getElementById('sync-msg');
+  bar.style.display='flex';bar.className='sync-bar '+state;
+  dot.className=state==='syncing'?'sync-spinner':'sync-dot';
+  sp.textContent=msg;
+}
+
+async function syncToServer(entriesToSync){
+  if(!syncUrl)return false;
+  setSyncBar('syncing','Syncing to Airtable…');
+  const rows=[];
+  entriesToSync.forEach(e=>{
+    if(e.missed){rows.push({fields:{'Entry ID':String(e.id),'Timestamp':e.ts.toISOString(),'Type':'missed','Observer':e.obs,'Location':e.loc,'Session':e.ses,'Missed':'YES'}});return;}
+    if(!e.members.length){rows.push({fields:{'Entry ID':String(e.id),'Timestamp':e.ts.toISOString(),'Type':e.type,'Observer':e.obs,'Location':e.loc,'Session':e.ses,'Disability':(e.dis||[]).join(', '),'Emotion':(e.emo||[]).join(', '),'Missed':'NO'}});return;}
+    e.members.forEach((m,i)=>rows.push({fields:{'Entry ID':String(e.id),'Timestamp':e.ts.toISOString(),'Type':e.type,'Observer':e.obs,'Location':e.loc,'Session':e.ses,'Person #':String(i+1),'Age':m.age||'','Gender':m.gender||'','Ethnicity':m.eth||'','Disability':i===0?(e.dis||[]).join(', '):'','Emotion':i===0?(e.emo||[]).join(', '):'','Missed':'NO'}}));
+  });
+  try{
+    const res=await fetch(syncUrl,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({records:rows})});
+    const data=await res.json();
+    if(!res.ok)throw new Error(data.error||'Server error');
+    setSyncBar('ok','Synced '+rows.length+' rows to Airtable');
+    setTimeout(()=>{document.getElementById('sync-bar').style.display='none';},4000);
+    return true;
+  }catch(err){
+    setSyncBar('err','Sync failed: '+err.message+' — use CSV export to save data');
+    return false;
+  }
+}
+
+function doLogin(){const u=document.getElementById('f-user').value.trim(),p=document.getElementById('f-pin').value.trim(),e=document.getElementById('lerr');if(!u||p!=='1234'){e.style.display='block';return}e.style.display='none';user=u;document.getElementById('obs-pill').textContent=u;document.getElementById('main-obs').textContent=u;go('s-session')}
+function doLogout(){user=null;go('s-login')}
+
+async function endSession(){
+  if(!entries.length||confirm('End session?'+(syncUrl?' Data will sync to Airtable.':''))){
+    if(entries.length&&syncUrl){
+      go('s-main');
+      await syncToServer(entries);
+      await new Promise(r=>setTimeout(r,2000));
+    }
+    entries=[];members=[];missed=0;mid=0;resetShUI();
+    document.getElementById('loc-input').value='';
+    document.getElementById('sname').value='';
+    document.getElementById('at-url').value='';
+    syncUrl='';updateAtStatus();
+    document.getElementById('start-btn').disabled=true;
+    document.getElementById('sync-bar').style.display='none';
+    sess={loc:null,name:'',t:null};go('s-session');
+  }
+}
+
+function checkStartBtn(){document.getElementById('start-btn').disabled=!document.getElementById('loc-input').value.trim()}
+function startSession(){const loc=document.getElementById('loc-input').value.trim();if(!loc){showToast('Please enter a location');return}sess.loc=loc;sess.name=document.getElementById('sname').value.trim()||'Session';sess.t=new Date();document.getElementById('main-loc').textContent=sess.loc;document.getElementById('banner-txt').textContent=sess.name+' · '+sess.t.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});document.getElementById('missed-n').textContent='0';missed=0;entries=[];resetFull();if(syncUrl){setSyncBar('idle','Airtable connected · syncs on session end');}go('s-main')}
+function go(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active')}
+function switchTab(n,el){document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));el.classList.add('active');['log','entries','summary'].forEach(x=>{document.getElementById('tab-'+x).style.display=x===n?'block':'none'});if(n==='entries')renderE();if(n==='summary')renderS()}
+function setMode(m){document.getElementById('mfull').classList.toggle('active',m==='full');document.getElementById('mquick').classList.toggle('active',m==='quick');document.getElementById('full-wrap').style.display=m==='full'?'block':'none';document.getElementById('quick-wrap').style.display=m==='quick'?'block':'none'}
+function addMember(){const id=mid++;members.push({id,age:null,gender:null,eth:null});renderM();setTimeout(()=>{collapseAll();const c=document.querySelector('.mcard[data-id="'+id+'"]');if(c)c.classList.add('open')},30)}
+function collapseAll(){document.querySelectorAll('.mcard').forEach(c=>c.classList.remove('open'))}
+function renderM(){document.getElementById('mlist').innerHTML=members.map((m,i)=>{const cc=AC[i%5],parts=[m.age,m.gender,m.eth].filter(Boolean),sub=parts.length?parts.join(' · '):'<span style="color:#9E9890;font-weight:400">no fields selected</span>';return'<div class="mcard" data-id="'+m.id+'"><div class="mhead" onclick="togM('+m.id+')"><div class="mav '+cc+'">'+(i+1)+'</div><div class="mtitle">Person '+(i+1)+'&nbsp;<span class="msub">'+sub+'</span></div>'+(members.length>1?'<div class="mremove" onclick="remM(event,'+m.id+')">×</div>':'')+'</div><div class="mbody"><div class="mf"><div class="mfl">Age range</div><div class="chips">'+['Under 18','18–24','25–34','35–44','45–59','60+'].map(v=>'<div class="chip'+(m.age===v?' sel':'')+'" onclick="setF('+m.id+',\'age\',\''+v+'\')">'+v+'</div>').join('')+'</div></div><div class="mf"><div class="mfl">Gender presentation</div><div class="chips">'+['Male','Female','Non-binary','Unclear'].map(v=>'<div class="chip'+(m.gender===v?' sel':'')+'" onclick="setF('+m.id+',\'gender\',\''+v+'\')">'+v+'</div>').join('')+'</div></div><div class="mf"><div class="mfl">Race / ethnicity</div><div class="chips">'+['Asian','Black','Hispanic / Latino','Middle Eastern','Pacific Islander','White','Mixed / other','Unclear'].map(v=>'<div class="chip'+(m.eth===v?' sel':'')+'" onclick="setF('+m.id+',\'eth\',\''+v+'\')">'+v+'</div>').join('')+'</div></div></div></div>'}).join('')}
+function togM(id){const c=document.querySelector('.mcard[data-id="'+id+'"]'),was=c.classList.contains('open');collapseAll();if(!was)c.classList.add('open')}
+function remM(e,id){e.stopPropagation();members=members.filter(m=>m.id!==id);if(!members.length)addMember();else renderM()}
+function setF(id,f,v){const m=members.find(m=>m.id===id);if(!m)return;m[f]=v;renderM();const c=document.querySelector('.mcard[data-id="'+id+'"]');if(c)c.classList.add('open')}
+function shChip(el,f,single){const v=el.dataset.v;if(single){shared[f]=[v];document.querySelectorAll('#sh-'+f+' .chip').forEach(c=>c.classList.remove('sel','sel-g'));el.classList.add('sel-g')}else{if(v==='None observed'){shared[f]=['None observed'];document.querySelectorAll('#sh-'+f+' .chip').forEach(c=>c.classList.remove('sel','sel-g'));el.classList.add('sel-g')}else{document.querySelector('#sh-'+f+' .chip[data-v="None observed"]')?.classList.remove('sel','sel-g');shared[f]=shared[f].filter(x=>x!=='None observed');if(shared[f].includes(v)){shared[f]=shared[f].filter(x=>x!==v);el.classList.remove('sel','sel-g')}else{shared[f].push(v);el.classList.add('sel-g')}}}}
+function resetShUI(){shared={dis:['None observed'],emo:['Neutral']};document.querySelectorAll('#sh-dis .chip,#sh-emo .chip').forEach(c=>c.classList.remove('sel','sel-g'));document.querySelector('#sh-dis .chip[data-v="None observed"]')?.classList.add('sel-g');document.querySelector('#sh-emo .chip[data-v="Neutral"]')?.classList.add('sel-g')}
+function resetFull(){members=[];mid=0;resetShUI();addMember()}
+function submitFull(){const e={id:entries.length+1,ts:new Date(),type:'full',loc:sess.loc,ses:sess.name,obs:user,members:members.map(m=>({age:m.age,gender:m.gender,eth:m.eth})),dis:[...shared.dis],emo:[...shared.emo],missed:false};entries.push(e);const a=document.getElementById('success-area');a.innerHTML='<div class="flash"><div class="chk"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2.5 7L5.5 10L11.5 4" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div><div class="flash-t">Logged #'+e.id+' · '+e.members.length+' '+(e.members.length===1?'person':'people')+'</div><div class="flash-s">'+e.members.map(m=>[m.age,m.gender].filter(Boolean).join(' ')||'partial').join(' · ')+'</div></div></div>';setTimeout(()=>{a.innerHTML=''},4000);resetFull()}
+function qC(el,f){document.querySelectorAll('#q-'+f+' .qchip').forEach(c=>c.classList.remove('sel'));el.classList.add('sel');qs[f]=el.dataset.v}
+function submitQuick(){if(!qs.age||!qs.gen||!qs.sz){showToast('Select age, gender and group size');return}entries.push({id:entries.length+1,ts:new Date(),type:'quick',loc:sess.loc,ses:sess.name,obs:user,members:[{age:qs.age,gender:qs.gen,eth:'—'}],groupSize:qs.sz,dis:[],emo:[],missed:false});document.querySelectorAll('.qchip').forEach(c=>c.classList.remove('sel'));qs={age:null,gen:null,sz:null};showToast('Quick log saved')}
+function incMissed(){missed++;document.getElementById('missed-n').textContent=missed;entries.push({id:entries.length+1,ts:new Date(),type:'missed',loc:sess.loc,ses:sess.name,obs:user,members:[],dis:[],emo:[],missed:true});showToast('Missed group recorded')}
+function renderE(){const list=document.getElementById('elist');document.getElementById('ecount').textContent=entries.length+(entries.length===1?' entry':' entries');if(!entries.length){list.innerHTML='<div class="empty">No entries yet.</div>';return}list.innerHTML=entries.slice().reverse().map(e=>{const t=e.ts.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});if(e.missed)return'<div class="ecard"><div class="emeta"><span>#'+e.id+'</span><span>'+t+'</span><span>'+e.obs+'</span></div><div class="etags"><div class="etag missed">Missed group</div></div></div>';const mr=e.members.map((m,i)=>'<div class="emrow"><div class="edot '+AC[i%5]+'"></div>'+(m.age||'?')+' · '+(m.gender||'?')+(m.eth&&m.eth!=='—'?' · '+m.eth:'')+'</div>').join(''),tags=[...(e.dis||[]),...(e.emo||[])].filter(Boolean);return'<div class="ecard"><div class="emeta"><span>#'+e.id+'</span><span>'+t+'</span><span>'+e.obs+'</span><span>'+(e.type==='quick'?'Quick':'Full')+'</span></div>'+(mr?'<div class="emrows">'+mr+'</div>':'')+(tags.length?'<div class="etags">'+tags.map(t=>'<div class="etag">'+t+'</div>').join('')+'</div>':'')+'</div>'}).join('')}
+function renderS(){const el=document.getElementById('scontent'),real=entries.filter(e=>!e.missed),total=real.length,tp=real.reduce((s,e)=>s+e.members.length,0),ms=entries.filter(e=>e.missed).length;if(!total&&!ms){el.innerHTML='<div class="empty" style="padding-top:48px">No data yet.</div>';return}const fr=k=>{const c={};real.forEach(e=>e.members.forEach(m=>{const v=m[k]||'?';c[v]=(c[v]||0)+1}));return Object.entries(c).sort((a,b)=>b[1]-a[1])},frs=k=>{const c={};real.forEach(e=>(e[k]||[]).forEach(v=>{c[v]=(c[v]||0)+1}));return Object.entries(c).sort((a,b)=>b[1]-a[1])},bars=(pairs,cls='')=>pairs.slice(0,5).map(([l,c])=>{const p=tp?Math.round(c/tp*100):0;return'<div class="brow"><div class="bmeta"><span>'+l+'</span><span class="bpct">'+c+' · '+p+'%</span></div><div class="btrack"><div class="bfill '+cls+'" style="width:'+p+'%"></div></div></div>'}).join('');el.innerHTML='<div class="sgrid"><div class="scard"><div class="snum">'+total+'</div><div class="slbl">Observations</div></div><div class="scard"><div class="snum">'+tp+'</div><div class="slbl">People logged</div></div><div class="scard"><div class="snum">'+(total?(tp/total).toFixed(1):0)+'</div><div class="slbl">Avg group size</div></div><div class="scard"><div class="snum" style="color:var(--warn)">'+ms+'</div><div class="slbl">Missed groups</div></div></div><div class="csec"><div class="ctitle">Age ranges</div>'+bars(fr('age'),'p')+'</div><div class="div"></div><div class="csec"><div class="ctitle">Gender</div>'+bars(fr('gender'))+'</div><div class="div"></div><div class="csec"><div class="ctitle">Ethnicity</div>'+bars(fr('eth'),'p')+'</div><div class="div"></div><div class="csec" style="padding-bottom:8px"><div class="ctitle">Emotional state</div>'+bars(frs('emo'))+'</div>'}
+function exportCSV(){if(!entries.length){showToast('No entries to export');return}const rows=[['Entry ID','Timestamp','Type','Observer','Location','Session','Person #','Age','Gender','Ethnicity','Disability','Emotion','Missed']];entries.forEach(e=>{if(e.missed){rows.push([e.id,e.ts.toISOString(),'missed',e.obs,e.loc,e.ses,'','','','','','','YES']);return}if(!e.members.length){rows.push([e.id,e.ts.toISOString(),e.type,e.obs,e.loc,e.ses,'','','','',(e.dis||[]).join(';'),(e.emo||[]).join(';'),'NO']);return}e.members.forEach((m,i)=>rows.push([e.id,e.ts.toISOString(),e.type,e.obs,e.loc,e.ses,i+1,m.age||'',m.gender||'',m.eth||'',i===0?(e.dis||[]).join(';'):'',i===0?(e.emo||[]).join(';'):'','NO']))});const csv=rows.map(r=>r.map(v=>'"'+String(v||'').replace(/"/g,'""')+'"').join(',')).join('\n'),a=document.createElement('a');a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);a.download='observer_'+(sess.loc||'').replace(/\s+/g,'_')+'_'+new Date().toISOString().slice(0,10)+'.csv';a.click();showToast('CSV exported')}
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200)}
+document.getElementById('f-pin').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin()});
+</script>
+</body>
+</html>

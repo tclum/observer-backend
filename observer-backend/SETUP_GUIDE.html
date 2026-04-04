@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Observer — Setup Guide</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#F7F5F2;--surface:#FFF;--surface2:#EFECE8;--ink:#18160F;--ink2:#5C5750;--ink3:#9E9890;--accent:#1B3A2D;--accent-light:#E4EFE9;--accent-mid:#2D5C45;--purple:#4A3FB5;--purple-light:#EEEDFC;--warn:#C84B1F;--warn-light:#FAF0EB;--border:rgba(24,22,15,0.08);--border2:rgba(24,22,15,0.13)}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);font-family:'DM Sans',sans-serif;color:var(--ink);-webkit-font-smoothing:antialiased;padding:0 0 80px}
+.hero{background:var(--accent);padding:48px 32px 40px;color:#fff}
+.wordmark{font-family:'Syne',sans-serif;font-size:26px;font-weight:700;letter-spacing:-0.3px}
+.tagline{font-size:14px;color:rgba(255,255,255,0.55);margin-top:6px;font-weight:300}
+.hero-title{font-family:'Syne',sans-serif;font-size:22px;font-weight:600;margin-top:28px;line-height:1.3}
+.content{max-width:720px;margin:0 auto;padding:0 24px}
+.overview{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;padding:28px 24px 0;max-width:720px;margin:0 auto}
+.ov-card{background:var(--surface);border:1px solid var(--border2);border-radius:14px;padding:16px}
+.ov-num{font-family:'Syne',sans-serif;font-size:28px;font-weight:700;color:var(--accent)}
+.ov-lbl{font-size:12px;color:var(--ink3);margin-top:4px}
+h2{font-family:'Syne',sans-serif;font-size:20px;font-weight:600;color:var(--ink);margin:36px 0 16px;padding-bottom:10px;border-bottom:1px solid var(--border2)}
+h3{font-size:15px;font-weight:500;color:var(--ink);margin:20px 0 8px}
+p{font-size:14px;color:var(--ink2);line-height:1.7;margin-bottom:12px}
+.step{display:flex;gap:16px;margin-bottom:20px;align-items:flex-start}
+.step-num{width:32px;height:32px;border-radius:50%;background:var(--accent);color:#fff;font-family:'Syne',sans-serif;font-size:14px;font-weight:600;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px}
+.step-body{flex:1}
+.step-title{font-size:15px;font-weight:500;color:var(--ink);margin-bottom:6px}
+.step-desc{font-size:14px;color:var(--ink2);line-height:1.65}
+.step-desc a{color:var(--purple);text-decoration:none}
+.step-desc a:hover{text-decoration:underline}
+code{font-family:'DM Mono',monospace;font-size:12px;background:var(--surface2);padding:2px 6px;border-radius:4px;color:var(--ink)}
+pre{background:var(--ink);color:#E8E4DF;border-radius:12px;padding:16px 18px;font-family:'DM Mono',monospace;font-size:13px;line-height:1.7;overflow-x:auto;margin:10px 0}
+pre .c{color:#5C9E7A}
+pre .k{color:#9B8FE8}
+pre .s{color:#E8B87A}
+.callout{border-radius:12px;padding:14px 16px;margin:16px 0;font-size:13px;line-height:1.65}
+.callout.info{background:var(--accent-light);border:1px solid var(--accent-mid);color:var(--accent)}
+.callout.warn{background:var(--warn-light);border:1px solid #E8814A;color:var(--warn)}
+.callout.purple{background:var(--purple-light);border:1px solid #AFA9EC;color:var(--purple)}
+.callout strong{font-weight:500}
+.field-table{width:100%;border-collapse:collapse;font-size:13px;margin:10px 0}
+.field-table th{text-align:left;padding:8px 12px;background:var(--surface2);color:var(--ink3);font-weight:500;font-size:11px;letter-spacing:.05em;text-transform:uppercase}
+.field-table td{padding:8px 12px;border-bottom:1px solid var(--border);color:var(--ink2);vertical-align:top}
+.field-table td:first-child{font-family:'DM Mono',monospace;font-size:12px;color:var(--ink);white-space:nowrap}
+.field-table tr:last-child td{border-bottom:none}
+.field-table-wrap{background:var(--surface);border:1px solid var(--border2);border-radius:12px;overflow:hidden;margin:10px 0}
+.badge{display:inline-block;font-size:11px;font-weight:500;padding:3px 9px;border-radius:20px;margin-right:4px}
+.badge.green{background:var(--accent-light);color:var(--accent)}
+.badge.purple{background:var(--purple-light);color:var(--purple)}
+.badge.warn{background:var(--warn-light);color:var(--warn)}
+.divider{height:1px;background:var(--border2);margin:8px 0}
+.file-tree{background:var(--surface);border:1px solid var(--border2);border-radius:12px;padding:16px 18px;font-family:'DM Mono',monospace;font-size:13px;line-height:2;color:var(--ink2)}
+.file-tree .dir{color:var(--ink);font-weight:500}
+.file-tree .comment{color:var(--ink3);font-size:11px;margin-left:8px}
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="wordmark">Observer</div>
+  <div class="tagline">Deployment &amp; setup guide</div>
+  <div class="hero-title">Get from local HTML file<br>to live app with Airtable sync</div>
+</div>
+
+<div class="overview">
+  <div class="ov-card"><div class="ov-num">~20</div><div class="ov-lbl">minutes total</div></div>
+  <div class="ov-card"><div class="ov-num">$0</div><div class="ov-lbl">cost (free tiers)</div></div>
+  <div class="ov-card"><div class="ov-num">3</div><div class="ov-lbl">accounts needed</div></div>
+</div>
+
+<div class="content">
+
+  <h2>What you'll need</h2>
+  <p>Three free accounts — you may already have some of these:</p>
+  <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:8px">
+    <div style="background:var(--surface);border:1px solid var(--border2);border-radius:10px;padding:12px 16px;display:flex;align-items:center;gap:12px">
+      <div style="width:36px;height:36px;border-radius:8px;background:#24292E;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="white"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+      </div>
+      <div>
+        <div style="font-size:14px;font-weight:500;color:var(--ink)">GitHub</div>
+        <div style="font-size:12px;color:var(--ink3)">To store the backend code — <a href="https://github.com/signup" style="color:var(--purple)">github.com/signup</a></div>
+      </div>
+    </div>
+    <div style="background:var(--surface);border:1px solid var(--border2);border-radius:10px;padding:12px 16px;display:flex;align-items:center;gap:12px">
+      <div style="width:36px;height:36px;border-radius:8px;background:#000;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+        <svg width="18" height="16" viewBox="0 0 76 65" fill="white"><path d="M37.5274 0L75.0548 65H0L37.5274 0Z"/></svg>
+      </div>
+      <div>
+        <div style="font-size:14px;font-weight:500;color:var(--ink)">Vercel</div>
+        <div style="font-size:12px;color:var(--ink3)">To host the backend — <a href="https://vercel.com/signup" style="color:var(--purple)">vercel.com/signup</a> (use "Continue with GitHub")</div>
+      </div>
+    </div>
+    <div style="background:var(--surface);border:1px solid var(--border2);border-radius:10px;padding:12px 16px;display:flex;align-items:center;gap:12px">
+      <div style="width:36px;height:36px;border-radius:8px;background:#FFBF00;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-weight:700;font-size:16px;color:#1c1c1c">A</div>
+      <div>
+        <div style="font-size:14px;font-weight:500;color:var(--ink)">Airtable</div>
+        <div style="font-size:12px;color:var(--ink3)">To store and view your data — <a href="https://airtable.com/signup" style="color:var(--purple)">airtable.com/signup</a></div>
+      </div>
+    </div>
+  </div>
+
+  <h2>Part 1 — Set up Airtable</h2>
+
+  <div class="step">
+    <div class="step-num">1</div>
+    <div class="step-body">
+      <div class="step-title">Create a new Base</div>
+      <div class="step-desc">Log in to Airtable → click <strong>Add a base</strong> → choose <strong>Start from scratch</strong> → name it <strong>Observer Data</strong>.</div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">2</div>
+    <div class="step-body">
+      <div class="step-title">Rename the default table to "Observations"</div>
+      <div class="step-desc">Double-click the tab at the bottom that says <strong>Table 1</strong> and rename it to exactly: <code>Observations</code></div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">3</div>
+    <div class="step-body">
+      <div class="step-title">Add these fields to the table</div>
+      <div class="step-desc" style="margin-bottom:10px">Delete any default fields Airtable creates, then add the following — all as <strong>Single line text</strong> type:</div>
+      <div class="field-table-wrap">
+        <table class="field-table">
+          <thead><tr><th>Field name</th><th>Type</th><th>Contains</th></tr></thead>
+          <tbody>
+            <tr><td>Entry ID</td><td>Single line text</td><td>Observation number</td></tr>
+            <tr><td>Timestamp</td><td>Single line text</td><td>ISO date/time</td></tr>
+            <tr><td>Type</td><td>Single line text</td><td>full, quick, or missed</td></tr>
+            <tr><td>Observer</td><td>Single line text</td><td>Observer's login ID</td></tr>
+            <tr><td>Location</td><td>Single line text</td><td>Location entered at session start</td></tr>
+            <tr><td>Session</td><td>Single line text</td><td>Session name</td></tr>
+            <tr><td>Person #</td><td>Single line text</td><td>Person number within group</td></tr>
+            <tr><td>Age</td><td>Single line text</td><td>Age range</td></tr>
+            <tr><td>Gender</td><td>Single line text</td><td>Gender presentation</td></tr>
+            <tr><td>Ethnicity</td><td>Single line text</td><td>Race / ethnicity</td></tr>
+            <tr><td>Disability</td><td>Single line text</td><td>Visible disability / aids</td></tr>
+            <tr><td>Emotion</td><td>Single line text</td><td>Emotional state</td></tr>
+            <tr><td>Missed</td><td>Single line text</td><td>YES or NO</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">4</div>
+    <div class="step-body">
+      <div class="step-title">Copy your Base ID</div>
+      <div class="step-desc">Look at the URL in your browser while viewing the base:<br><code>https://airtable.com/<strong>appXXXXXXXXXXXXXX</strong>/tblXXXX/...</code><br><br>The part starting with <code>app</code> is your Base ID. Copy and save it — you'll need it shortly.</div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">5</div>
+    <div class="step-body">
+      <div class="step-title">Create a Personal Access Token</div>
+      <div class="step-desc">
+        Go to <a href="https://airtable.com/create/tokens" target="_blank">airtable.com/create/tokens</a> → click <strong>Create new token</strong>.<br><br>
+        — Name it anything (e.g. <em>Observer App</em>)<br>
+        — Under <strong>Scopes</strong>, add: <code>data.records:write</code><br>
+        — Under <strong>Access</strong>, select your <em>Observer Data</em> base<br>
+        — Click <strong>Create token</strong> and copy it immediately (it won't show again)
+      </div>
+    </div>
+  </div>
+
+  <h2>Part 2 — Deploy the backend to Vercel</h2>
+
+  <div class="step">
+    <div class="step-num">6</div>
+    <div class="step-body">
+      <div class="step-title">Create a new GitHub repository</div>
+      <div class="step-desc">
+        Go to <a href="https://github.com/new" target="_blank">github.com/new</a> → name it <code>observer-backend</code> → set to <strong>Private</strong> → click <strong>Create repository</strong>.
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">7</div>
+    <div class="step-body">
+      <div class="step-title">Upload the backend files</div>
+      <div class="step-desc" style="margin-bottom:10px">
+        You received a folder called <code>observer-backend</code> with this structure:
+      </div>
+      <div class="file-tree">
+        <span class="dir">observer-backend/</span><br>
+        &nbsp;&nbsp;<span class="dir">api/</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;sync.js <span class="comment">← the serverless function</span><br>
+        &nbsp;&nbsp;package.json<br>
+        &nbsp;&nbsp;vercel.json<br>
+        &nbsp;&nbsp;.gitignore
+      </div>
+      <div class="step-desc" style="margin-top:10px">
+        On your new GitHub repo page, click <strong>uploading an existing file</strong> → drag the entire <code>observer-backend</code> folder contents in → click <strong>Commit changes</strong>.
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">8</div>
+    <div class="step-body">
+      <div class="step-title">Import to Vercel</div>
+      <div class="step-desc">
+        Go to <a href="https://vercel.com/new" target="_blank">vercel.com/new</a> → click <strong>Import</strong> next to your <code>observer-backend</code> repo → leave all settings as default → click <strong>Deploy</strong>.<br><br>
+        Wait ~30 seconds. Vercel will give you a URL like:<br>
+        <code>https://observer-backend-xxxx.vercel.app</code>
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">9</div>
+    <div class="step-body">
+      <div class="step-title">Add your Airtable credentials as environment variables</div>
+      <div class="step-desc" style="margin-bottom:10px">
+        In Vercel: go to your project → <strong>Settings</strong> → <strong>Environment Variables</strong> → add these three:
+      </div>
+      <div class="field-table-wrap">
+        <table class="field-table">
+          <thead><tr><th>Variable name</th><th>Value</th></tr></thead>
+          <tbody>
+            <tr><td>AIRTABLE_TOKEN</td><td>Your Personal Access Token (starts with <code>pat...</code>)</td></tr>
+            <tr><td>AIRTABLE_BASE_ID</td><td>Your Base ID (starts with <code>app...</code>)</td></tr>
+            <tr><td>AIRTABLE_TABLE_NAME</td><td><code>Observations</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="step-desc" style="margin-top:10px">After adding them, go to <strong>Deployments</strong> → click the three dots on the latest deployment → <strong>Redeploy</strong> so the variables take effect.</div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">10</div>
+    <div class="step-body">
+      <div class="step-title">Copy your sync URL</div>
+      <div class="step-desc">
+        Your sync endpoint is your Vercel URL with <code>/api/sync</code> appended:<br><br>
+        <code>https://observer-backend-xxxx.vercel.app/api/sync</code><br><br>
+        This is the only URL your observers need. Keep it — you'll paste it into the app.
+      </div>
+    </div>
+  </div>
+
+  <h2>Part 3 — Connect the Observer app</h2>
+
+  <div class="step">
+    <div class="step-num">11</div>
+    <div class="step-body">
+      <div class="step-title">Open observer_app.html and paste the sync URL</div>
+      <div class="step-desc">
+        Open the app in your browser → sign in → on the <strong>New session</strong> screen, paste your Vercel sync URL into the <strong>Server URL</strong> field.<br><br>
+        The dot next to "Sync server" will turn green and show your domain. You're connected.
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">12</div>
+    <div class="step-body">
+      <div class="step-title">Test it</div>
+      <div class="step-desc">
+        Log a few observations → tap <strong>End</strong> → watch the sync banner. If it turns green, open your Airtable base — you should see rows appearing in the Observations table within a few seconds.
+      </div>
+    </div>
+  </div>
+
+  <div class="callout info">
+    <strong>Sharing with your team</strong> — once deployed, simply share the <code>observer_app.html</code> file with each observer and tell them to paste the sync URL at the start of each session. No installation, no accounts required on their end.
+  </div>
+
+  <h2>Troubleshooting</h2>
+
+  <h3>Sync fails with "Server error"</h3>
+  <p>Usually means the environment variables aren't set correctly in Vercel, or the deployment wasn't redeployed after adding them. Go to Vercel → Settings → Environment Variables, double-check all three values, then redeploy.</p>
+
+  <h3>Sync fails with "Airtable returned an error"</h3>
+  <p>Usually a field name mismatch. Make sure every field in your Airtable table is spelled exactly as listed in Step 3, including capitalisation and spaces.</p>
+
+  <h3>The dot stays grey even after pasting the URL</h3>
+  <p>Make sure the URL starts with <code>https://</code>. The dot turns green as soon as a valid URL is detected.</p>
+
+  <h3>App works but no data appears in Airtable</h3>
+  <p>Check that the table is named exactly <code>Observations</code> (capital O, no trailing space). Also confirm your Personal Access Token has <code>data.records:write</code> scope on the correct base.</p>
+
+  <div class="callout warn" style="margin-top:32px">
+    <strong>Security note</strong> — the sync URL itself is not secret (it has no credentials in it), but anyone who has it can post data to your Airtable. For an internal team tool this is fine. If you ever want to restrict access, you can add a shared secret header — let your developer know.
+  </div>
+
+</div>
+</body>
+</html>
