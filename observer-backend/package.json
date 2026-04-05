@@ -1,9 +1,0 @@
-{
-  "name": "observer-backend",
-  "version": "1.0.0",
-  "description": "Serverless backend for Observer demographic app",
-  "private": true,
-  "engines": {
-    "node": "20.x"
-  }
-}
