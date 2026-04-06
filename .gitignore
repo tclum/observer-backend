@@ -1,0 +1,30 @@
+# Dependencies
+node_modules/
+
+# Environment variables — never commit real credentials
+.env
+.env.local
+.env.*.local
+
+# Test coverage output
+coverage/
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Vercel build output
+.vercel
+
+# Logs
+*.log
+npm-debug.log*
+
+# Editor directories
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
