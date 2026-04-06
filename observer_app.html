@@ -188,9 +188,6 @@ body{background:var(--bg);font-family:'DM Sans',sans-serif;color:var(--ink);-web
       <div class="login-error" id="login-err"></div>
       <button class="btn-login" id="login-btn" onclick="doLogin()">Sign in</button>
       <div class="login-hint" onclick="showRegister()">New observer? <span>Request access</span></div>
-      <div style="margin-top:12px;text-align:center"><div class="field-label" style="display:inline">Server URL</div></div>
-      <div style="margin-top:6px"><input class="field-input" id="f-server" type="url" placeholder="https://your-app.vercel.app/api" style="font-size:13px;padding:10px 14px"></div>
-      <div style="font-size:11px;color:var(--ink3);margin-top:5px;text-align:center">Enter your Vercel backend base URL</div>
     </div>
     <!-- REGISTER FIELDS -->
     <div id="register-fields" style="display:none">
@@ -356,7 +353,7 @@ body{background:var(--bg);font-family:'DM Sans',sans-serif;color:var(--ink);-web
 
 <script>
 let user=null,sess={loc:null,name:'',t:null},entries=[],members=[],shared={dis:[],emo:[]},missed=0,qs={age:null,gen:null,sz:null},mid=0;
-let syncUrl='',serverBase='';
+let syncUrl='https://observer-backend-self.vercel.app/api/sync',serverBase='https://observer-backend-self.vercel.app/api';
 let fieldConfig={ages:[],genders:[],ethnicities:[],disabilities:[],emotions:[]};
 let adminConfig={ages:[],genders:[],ethnicities:[],disabilities:[],emotions:[]};
 const AC=['c0','c1','c2','c3','c4'];
@@ -389,12 +386,8 @@ function showRegister(){
 async function doLogin(){
   const u=document.getElementById('f-user').value.trim();
   const p=document.getElementById('f-pin').value.trim();
-  const sv=document.getElementById('f-server').value.trim();
   const err=document.getElementById('login-err');
   if(!u||!p){err.textContent='Please enter your ID and PIN';err.style.display='block';return;}
-  if(!sv){err.textContent='Please enter your server URL';err.style.display='block';return;}
-  serverBase=sv.replace(/\/$/,'');
-  syncUrl=serverBase+'/sync';
   showLoading('Signing in…');
   const btn=document.getElementById('login-btn');
   btn.disabled=true;
@@ -427,10 +420,7 @@ async function doRegister(){
   const p=document.getElementById('r-pin').value.trim();
   const err=document.getElementById('reg-err');
   const ok=document.getElementById('reg-ok');
-  const sv=document.getElementById('f-server').value.trim();
   if(!name||!u||!p){err.textContent='All fields required';err.style.display='block';return;}
-  if(!sv){err.textContent='Please enter your server URL first';err.style.display='block';return;}
-  serverBase=sv.replace(/\/$/,'');
   showLoading('Submitting request…');
   const btn=document.getElementById('reg-btn');
   btn.disabled=true;
@@ -445,7 +435,7 @@ async function doRegister(){
 }
 
 function doLogout(){
-  user=null;syncUrl='';serverBase='';
+  user=null;
   document.getElementById('f-user').value='';
   document.getElementById('f-pin').value='';
   document.getElementById('login-err').style.display='none';
