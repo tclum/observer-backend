@@ -1,0 +1,819 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Observer — Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@500;600;700&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#F7F5F2;--surface:#FFF;--surface2:#EFECE8;--surface3:#E8E4DF;--ink:#18160F;--ink2:#5C5750;--ink3:#9E9890;--accent:#1B3A2D;--accent-mid:#2D5C45;--accent-light:#E4EFE9;--warn:#C84B1F;--warn-light:#FAF0EB;--purple:#4A3FB5;--purple-light:#EEEDFC;--purple-mid:#7B74D4;--border:rgba(24,22,15,0.08);--border2:rgba(24,22,15,0.13);--r:12px;--r-sm:8px;--r-pill:100px;--sidebar:240px}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:var(--bg);font-family:'DM Sans',sans-serif;color:var(--ink);-webkit-font-smoothing:antialiased}
+a{text-decoration:none;color:inherit}
+button{font-family:'DM Sans',sans-serif;cursor:pointer}
+
+/* ── LOGIN ── */
+.login-page{min-height:100vh;display:flex;align-items:center;justify-content:center;background:var(--accent);padding:24px}
+.login-card{background:var(--bg);border-radius:20px;padding:40px;width:100%;max-width:400px}
+.login-logo{font-family:'Syne',sans-serif;font-size:24px;font-weight:700;color:var(--ink);letter-spacing:-0.3px;margin-bottom:4px}
+.login-sub{font-size:13px;color:var(--ink3);margin-bottom:32px}
+.field{margin-bottom:16px}
+.field label{display:block;font-size:11px;font-weight:500;color:var(--ink3);letter-spacing:.06em;text-transform:uppercase;margin-bottom:6px}
+.field input,.field select{width:100%;padding:12px 14px;border-radius:var(--r-sm);border:1px solid var(--border2);background:var(--surface);font-family:'DM Sans',sans-serif;font-size:14px;color:var(--ink);outline:none;transition:border-color .15s}
+.field input:focus,.field select:focus{border-color:var(--purple-mid)}
+.btn-full{width:100%;padding:13px;background:var(--accent);color:#fff;border:none;border-radius:var(--r-sm);font-family:'Syne',sans-serif;font-size:14px;font-weight:600;cursor:pointer;transition:opacity .15s;margin-top:4px}
+.btn-full:hover{opacity:.9}
+.btn-full:disabled{opacity:.4;cursor:default}
+.login-err{font-size:12px;color:var(--warn);margin-top:8px;display:none}
+
+/* ── APP SHELL ── */
+.app-shell{display:none;min-height:100vh}
+.app-shell.active{display:flex}
+.sidebar{width:var(--sidebar);background:var(--accent);display:flex;flex-direction:column;flex-shrink:0;position:fixed;top:0;left:0;height:100vh;z-index:10}
+.sidebar-logo{padding:28px 24px 20px;font-family:'Syne',sans-serif;font-size:20px;font-weight:700;color:#fff;letter-spacing:-0.3px;border-bottom:1px solid rgba(255,255,255,.08)}
+.sidebar-user{padding:16px 24px;border-bottom:1px solid rgba(255,255,255,.08)}
+.sidebar-user-name{font-size:13px;font-weight:500;color:#fff}
+.sidebar-user-role{font-size:11px;color:rgba(255,255,255,.45);margin-top:2px}
+.sidebar-nav{flex:1;padding:12px 0;overflow-y:auto}
+.nav-item{display:flex;align-items:center;gap:10px;padding:10px 24px;font-size:13px;font-weight:500;color:rgba(255,255,255,.6);cursor:pointer;transition:all .12s;border-left:2px solid transparent}
+.nav-item:hover{color:#fff;background:rgba(255,255,255,.06)}
+.nav-item.active{color:#fff;background:rgba(255,255,255,.1);border-left-color:#fff}
+.nav-item svg{flex-shrink:0;opacity:.7}
+.nav-item.active svg{opacity:1}
+.nav-section-label{font-size:10px;font-weight:500;color:rgba(255,255,255,.3);letter-spacing:.08em;text-transform:uppercase;padding:16px 24px 6px}
+.sidebar-footer{padding:16px 24px;border-top:1px solid rgba(255,255,255,.08)}
+.logout-link{font-size:12px;color:rgba(255,255,255,.4);cursor:pointer;transition:color .12s}
+.logout-link:hover{color:#fff}
+.main-content{margin-left:var(--sidebar);flex:1;min-height:100vh;display:flex;flex-direction:column}
+.page{display:none;flex-direction:column;flex:1;padding:32px}
+.page.active{display:flex}
+.page-header{margin-bottom:28px}
+.page-title{font-family:'Syne',sans-serif;font-size:24px;font-weight:700;color:var(--ink);letter-spacing:-0.3px}
+.page-sub{font-size:14px;color:var(--ink3);margin-top:4px}
+
+/* ── CARDS & STATS ── */
+.stat-row{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:24px}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:20px}
+.stat-num{font-family:'Syne',sans-serif;font-size:32px;font-weight:700;color:var(--ink);line-height:1}
+.stat-lbl{font-size:12px;color:var(--ink3);margin-top:6px}
+.stat-card.accent{background:var(--accent);border-color:var(--accent)}
+.stat-card.accent .stat-num,.stat-card.accent .stat-lbl{color:#fff}
+.stat-card.accent .stat-lbl{color:rgba(255,255,255,.6)}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);overflow:hidden}
+.card-header{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.card-title{font-size:14px;font-weight:500;color:var(--ink)}
+.card-body{padding:20px}
+
+/* ── FILTERS ── */
+.filter-bar{display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap}
+.filter-select{padding:8px 12px;border-radius:var(--r-sm);border:1px solid var(--border2);background:var(--surface);font-family:'DM Sans',sans-serif;font-size:13px;color:var(--ink);outline:none;min-width:140px}
+.filter-input{padding:8px 12px;border-radius:var(--r-sm);border:1px solid var(--border2);background:var(--surface);font-family:'DM Sans',sans-serif;font-size:13px;color:var(--ink);outline:none;min-width:140px}
+.filter-select:focus,.filter-input:focus{border-color:var(--purple-mid)}
+.btn-sm{padding:8px 16px;border-radius:var(--r-sm);border:none;font-size:13px;font-weight:500;cursor:pointer;transition:all .12s}
+.btn-sm.primary{background:var(--accent);color:#fff}
+.btn-sm.primary:hover{opacity:.9}
+.btn-sm.outline{background:none;border:1px solid var(--border2);color:var(--ink2)}
+.btn-sm.outline:hover{background:var(--surface2)}
+.btn-sm.danger{background:var(--warn-light);color:var(--warn);border:1px solid #E8814A}
+.btn-sm.purple{background:var(--purple-light);color:var(--purple);border:1px solid var(--purple-mid)}
+
+/* ── TABLE ── */
+.table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:13px}
+thead th{text-align:left;padding:10px 14px;background:var(--surface2);color:var(--ink3);font-weight:500;font-size:11px;letter-spacing:.05em;text-transform:uppercase;white-space:nowrap;border-bottom:1px solid var(--border)}
+tbody td{padding:11px 14px;border-bottom:1px solid var(--border);color:var(--ink2);vertical-align:middle}
+tbody tr:last-child td{border-bottom:none}
+tbody tr:hover td{background:var(--surface2)}
+
+/* ── BADGES ── */
+.badge{display:inline-block;font-size:11px;font-weight:500;padding:3px 9px;border-radius:var(--r-pill);white-space:nowrap}
+.badge.active{background:var(--accent-light);color:var(--accent)}
+.badge.pending{background:#FAEEDA;color:#854F0B}
+.badge.suspended{background:var(--warn-light);color:var(--warn)}
+.badge.rejected{background:var(--surface2);color:var(--ink3)}
+.badge.admin{background:var(--purple-light);color:var(--purple)}
+.badge.observer{background:var(--accent-light);color:var(--accent)}
+.badge.retail{background:#E6F1FB;color:#185FA5}
+.badge.restaurant{background:#FFF3E0;color:#B45309}
+.badge.event{background:var(--purple-light);color:var(--purple)}
+.badge.other{background:var(--surface2);color:var(--ink3)}
+
+/* ── CHARTS ── */
+.chart-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin-bottom:24px}
+.bar-section{margin-bottom:16px}
+.bar-lbl{display:flex;justify-content:space-between;font-size:12px;color:var(--ink2);margin-bottom:4px}
+.bar-pct{color:var(--ink3)}
+.bar-track{height:8px;border-radius:4px;background:var(--surface2)}
+.bar-fill{height:8px;border-radius:4px;background:var(--accent);transition:width .4s ease}
+.bar-fill.p{background:var(--purple)}
+.bar-fill.w{background:#D97706}
+
+/* ── MODAL ── */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(24,22,15,.4);z-index:100;align-items:center;justify-content:center;padding:24px}
+.modal-overlay.open{display:flex}
+.modal{background:var(--surface);border-radius:16px;width:100%;max-width:480px;max-height:90vh;overflow-y:auto}
+.modal-header{padding:20px 24px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.modal-title{font-family:'Syne',sans-serif;font-size:16px;font-weight:600;color:var(--ink)}
+.modal-close{background:none;border:none;font-size:20px;color:var(--ink3);cursor:pointer;line-height:1;padding:2px}
+.modal-body{padding:24px}
+.modal-footer{padding:16px 24px;border-top:1px solid var(--border);display:flex;gap:10px;justify-content:flex-end}
+
+/* ── LOCATION CARDS ── */
+.loc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px}
+.loc-card{background:var(--surface);border:1px solid var(--border2);border-radius:var(--r);padding:18px}
+.loc-card-name{font-size:15px;font-weight:500;color:var(--ink);margin-bottom:4px}
+.loc-card-addr{font-size:12px;color:var(--ink3);margin-bottom:10px}
+.loc-card-meta{display:flex;align-items:center;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+.loc-card-observers{font-size:12px;color:var(--ink3);margin-bottom:12px}
+.loc-card-actions{display:flex;gap:8px}
+.loc-inactive{opacity:.5}
+
+/* ── EMPTY STATE ── */
+.empty-state{text-align:center;padding:60px 20px;color:var(--ink3)}
+.empty-state-title{font-size:16px;font-weight:500;color:var(--ink2);margin-bottom:6px}
+.empty-state-sub{font-size:13px}
+
+/* ── OBSERVER PROFILE ── */
+.profile-header{display:flex;align-items:center;gap:16px;margin-bottom:24px}
+.profile-avatar{width:56px;height:56px;border-radius:50%;background:var(--accent-light);display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-size:20px;font-weight:700;color:var(--accent);flex-shrink:0}
+
+/* ── LOADING ── */
+.loading{display:flex;align-items:center;justify-content:center;padding:48px;color:var(--ink3);font-size:14px;gap:10px}
+.spinner{width:18px;height:18px;border:2px solid var(--border2);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0}
+@keyframes spin{to{transform:rotate(360deg)}}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--ink);color:#fff;padding:10px 20px;border-radius:var(--r-pill);font-size:13px;opacity:0;pointer-events:none;transition:opacity .2s;white-space:nowrap;z-index:200}
+.toast.show{opacity:1}
+
+/* ── RESPONSIVE ── */
+@media(max-width:900px){
+  :root{--sidebar:200px}
+  .stat-row{grid-template-columns:repeat(2,1fr)}
+  .chart-grid{grid-template-columns:1fr}
+}
+@media(max-width:640px){
+  .sidebar{display:none}
+  .main-content{margin-left:0}
+  .page{padding:20px}
+  .stat-row{grid-template-columns:1fr 1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- LOGIN PAGE -->
+<div class="login-page" id="login-page">
+  <div class="login-card">
+    <div class="login-logo">Observer</div>
+    <div class="login-sub">Management dashboard</div>
+    <div class="field"><label>Email</label><input type="email" id="l-email" placeholder="your@email.com"></div>
+    <div class="field"><label>Password</label><input type="password" id="l-pass" placeholder="••••••••"></div>
+    <div class="login-err" id="login-err"></div>
+    <button class="btn-full" id="login-btn" onclick="doWebLogin()">Sign in</button>
+  </div>
+</div>
+
+<!-- APP SHELL -->
+<div class="app-shell" id="app-shell">
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="sidebar-logo">Observer</div>
+    <div class="sidebar-user">
+      <div class="sidebar-user-name" id="sb-name"></div>
+      <div class="sidebar-user-role" id="sb-role"></div>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-item active" onclick="navTo('dashboard')" id="nav-dashboard">
+        <svg width="16" height="16" fill="none" viewBox="0 0 16 16"><rect x="1" y="1" width="6" height="6" rx="1.5" stroke="currentColor" stroke-width="1.3"/><rect x="9" y="1" width="6" height="6" rx="1.5" stroke="currentColor" stroke-width="1.3"/><rect x="1" y="9" width="6" height="6" rx="1.5" stroke="currentColor" stroke-width="1.3"/><rect x="9" y="9" width="6" height="6" rx="1.5" stroke="currentColor" stroke-width="1.3"/></svg>
+        Dashboard
+      </div>
+      <div class="nav-item" onclick="navTo('data')" id="nav-data">
+        <svg width="16" height="16" fill="none" viewBox="0 0 16 16"><path d="M2 4h12M2 8h12M2 12h7" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+        Data
+      </div>
+      <div class="nav-item admin-only" onclick="navTo('locations')" id="nav-locations" style="display:none">
+        <svg width="16" height="16" fill="none" viewBox="0 0 16 16"><path d="M8 1.5C5.79 1.5 4 3.29 4 5.5c0 3 4 8 4 8s4-5 4-8c0-2.21-1.79-4-4-4z" stroke="currentColor" stroke-width="1.3"/><circle cx="8" cy="5.5" r="1.5" stroke="currentColor" stroke-width="1.3"/></svg>
+        Locations
+      </div>
+      <div class="nav-item admin-only" onclick="navTo('users')" id="nav-users" style="display:none">
+        <svg width="16" height="16" fill="none" viewBox="0 0 16 16"><circle cx="8" cy="5" r="3" stroke="currentColor" stroke-width="1.3"/><path d="M2 14c0-3.314 2.686-6 6-6s6 2.686 6 6" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+        Users
+      </div>
+      <div class="nav-item observer-only" onclick="navTo('mydata')" id="nav-mydata" style="display:none">
+        <svg width="16" height="16" fill="none" viewBox="0 0 16 16"><circle cx="8" cy="5" r="3" stroke="currentColor" stroke-width="1.3"/><path d="M2 14c0-3.314 2.686-6 6-6s6 2.686 6 6" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+        My data
+      </div>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="logout-link" onclick="doLogout()">Sign out</div>
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <div class="main-content">
+
+    <!-- DASHBOARD -->
+    <div class="page active" id="page-dashboard">
+      <div class="page-header">
+        <div class="page-title">Dashboard</div>
+        <div class="page-sub" id="dash-sub">Overview of all observations</div>
+      </div>
+      <div class="filter-bar">
+        <select class="filter-select" id="dash-filter-loc" onchange="loadDashboard()"><option value="">All locations</option></select>
+        <input class="filter-input" type="date" id="dash-filter-from" onchange="loadDashboard()">
+        <input class="filter-input" type="date" id="dash-filter-to" onchange="loadDashboard()">
+        <select class="filter-select" id="dash-filter-obs" onchange="loadDashboard()" style="display:none"><option value="">All observers</option></select>
+        <button class="btn-sm outline" onclick="clearDashFilters()">Clear</button>
+      </div>
+      <div class="stat-row" id="dash-stats"></div>
+      <div class="chart-grid" id="dash-charts"></div>
+    </div>
+
+    <!-- DATA TABLE -->
+    <div class="page" id="page-data">
+      <div class="page-header">
+        <div style="display:flex;align-items:center;justify-content:space-between">
+          <div><div class="page-title">Data</div><div class="page-sub">All observation entries</div></div>
+          <button class="btn-sm primary" onclick="exportFilteredCSV()">Export CSV</button>
+        </div>
+      </div>
+      <div class="filter-bar">
+        <select class="filter-select" id="data-filter-loc"><option value="">All locations</option></select>
+        <select class="filter-select" id="data-filter-obs" style="display:none"><option value="">All observers</option></select>
+        <input class="filter-input" type="date" id="data-filter-from">
+        <input class="filter-input" type="date" id="data-filter-to">
+        <select class="filter-select" id="data-filter-type"><option value="">All types</option><option value="full">Full</option><option value="quick">Quick</option><option value="missed">Missed</option></select>
+        <button class="btn-sm primary" onclick="applyDataFilters()">Filter</button>
+        <button class="btn-sm outline" onclick="clearDataFilters()">Clear</button>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title" id="data-count">Loading…</div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>#</th><th>Time</th><th>Observer</th><th>Location</th><th>Session</th><th>Type</th><th>Age</th><th>Gender</th><th>Ethnicity</th><th>Emotion</th><th>Missed</th></tr></thead>
+            <tbody id="data-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- LOCATIONS -->
+    <div class="page" id="page-locations">
+      <div class="page-header">
+        <div style="display:flex;align-items:center;justify-content:space-between">
+          <div><div class="page-title">Locations</div><div class="page-sub">Manage observation sites</div></div>
+          <button class="btn-sm primary" onclick="openLocModal()">+ Add location</button>
+        </div>
+      </div>
+      <div class="loc-grid" id="loc-grid"></div>
+    </div>
+
+    <!-- USERS -->
+    <div class="page" id="page-users">
+      <div class="page-header">
+        <div style="display:flex;align-items:center;justify-content:space-between">
+          <div><div class="page-title">Users</div><div class="page-sub">Manage observer accounts</div></div>
+          <button class="btn-sm primary" onclick="openCreateUserModal()">+ Create user</button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Name</th><th>Username</th><th>Email</th><th>Role</th><th>Status</th><th>Actions</th></tr></thead>
+            <tbody id="users-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- MY DATA (observer) -->
+    <div class="page" id="page-mydata">
+      <div class="page-header">
+        <div class="page-title">My data</div>
+        <div class="page-sub">Your observation sessions</div>
+      </div>
+      <div class="stat-row" id="my-stats"></div>
+      <div class="card">
+        <div class="card-header"><div class="card-title" id="my-data-count">Loading…</div></div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>#</th><th>Time</th><th>Location</th><th>Session</th><th>Type</th><th>Age</th><th>Gender</th><th>Ethnicity</th><th>Emotion</th></tr></thead>
+            <tbody id="my-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- LOCATION MODAL -->
+<div class="modal-overlay" id="loc-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="loc-modal-title">Add location</div>
+      <button class="modal-close" onclick="closeLocModal()">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="field"><label>Location name</label><input type="text" id="lm-name" placeholder="e.g. Ala Moana Center"></div>
+      <div class="field"><label>Address</label><input type="text" id="lm-addr" placeholder="123 Main St, Honolulu, HI"></div>
+      <div class="field"><label>Type</label>
+        <select id="lm-type">
+          <option value="Retail">Retail</option>
+          <option value="Restaurant">Restaurant</option>
+          <option value="Event">Event</option>
+          <option value="Other">Other</option>
+        </select>
+      </div>
+      <div class="field"><label>Assigned observers</label>
+        <div id="lm-observers-list" style="display:flex;flex-wrap:wrap;gap:6px;min-height:36px;padding:8px;border:1px solid var(--border2);border-radius:var(--r-sm);background:var(--surface)"></div>
+        <div style="margin-top:8px;display:flex;gap:6px">
+          <select id="lm-obs-select" style="flex:1;padding:8px 10px;border-radius:var(--r-sm);border:1px solid var(--border2);font-family:'DM Sans',sans-serif;font-size:13px;color:var(--ink);outline:none"></select>
+          <button onclick="addObserverToLoc()" style="padding:8px 14px;background:var(--accent);color:#fff;border:none;border-radius:var(--r-sm);font-size:12px;font-weight:500;cursor:pointer">Add</button>
+        </div>
+      </div>
+      <div class="field"><label>Status</label>
+        <select id="lm-active">
+          <option value="true">Active</option>
+          <option value="false">Inactive</option>
+        </select>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-sm outline" onclick="closeLocModal()">Cancel</button>
+      <button class="btn-sm primary" onclick="saveLocation()">Save location</button>
+    </div>
+  </div>
+</div>
+
+<!-- CREATE USER MODAL -->
+<div class="modal-overlay" id="user-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">Create user</div>
+      <button class="modal-close" onclick="closeUserModal()">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="field"><label>Full name</label><input type="text" id="um-name" placeholder="Name"></div>
+      <div class="field"><label>Observer ID (for app login)</label><input type="text" id="um-username" placeholder="e.g. sarah.k"></div>
+      <div class="field"><label>Email (for website login)</label><input type="email" id="um-email" placeholder="sarah@example.com"></div>
+      <div class="field"><label>App PIN</label><input type="password" id="um-pin" placeholder="••••" maxlength="6"></div>
+      <div class="field"><label>Website password</label><input type="password" id="um-password" placeholder="••••••••"></div>
+      <div class="field"><label>Role</label>
+        <select id="um-role">
+          <option value="Observer">Observer</option>
+          <option value="Admin">Admin</option>
+        </select>
+      </div>
+      <div style="font-size:12px;color:var(--warn)" id="um-err" style="display:none"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-sm outline" onclick="closeUserModal()">Cancel</button>
+      <button class="btn-sm primary" onclick="createWebUser()">Create user</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const SERVER = 'https://observer-backend-self.vercel.app/api';
+let currentUser = null;
+let allObservations = [];
+let allUsers = [];
+let allLocations = [];
+let editingLocId = null;
+let locAssignedObservers = [];
+
+async function api(endpoint, body) {
+  const r = await fetch(SERVER + endpoint, {
+    method: 'POST', headers: {'Content-Type':'application/json'},
+    body: JSON.stringify(body)
+  });
+  return r.json();
+}
+
+// ── AUTH ──
+async function doWebLogin() {
+  const email = document.getElementById('l-email').value.trim();
+  const pass = document.getElementById('l-pass').value.trim();
+  const err = document.getElementById('login-err');
+  const btn = document.getElementById('login-btn');
+  if (!email || !pass) { err.textContent = 'Email and password required'; err.style.display = 'block'; return; }
+  btn.disabled = true; btn.textContent = 'Signing in…';
+  try {
+    const res = await api('/web-auth', { action: 'webLogin', email, password: pass });
+    if (!res.success) { err.textContent = res.error || 'Login failed'; err.style.display = 'block'; btn.disabled = false; btn.textContent = 'Sign in'; return; }
+    currentUser = res.user;
+    currentUser._pass = pass;
+    err.style.display = 'none';
+    initApp();
+  } catch(e) { err.textContent = 'Could not reach server.'; err.style.display = 'block'; btn.disabled = false; btn.textContent = 'Sign in'; }
+}
+
+function doLogout() {
+  currentUser = null; allObservations = []; allUsers = []; allLocations = [];
+  document.getElementById('l-email').value = '';
+  document.getElementById('l-pass').value = '';
+  document.getElementById('login-btn').disabled = false;
+  document.getElementById('login-btn').textContent = 'Sign in';
+  document.getElementById('login-err').style.display = 'none';
+  document.getElementById('app-shell').classList.remove('active');
+  document.getElementById('login-page').style.display = 'flex';
+}
+
+function initApp() {
+  document.getElementById('login-page').style.display = 'none';
+  document.getElementById('app-shell').classList.add('active');
+  document.getElementById('sb-name').textContent = currentUser.name || currentUser.username;
+  document.getElementById('sb-role').textContent = currentUser.role;
+  const isAdmin = currentUser.role === 'Admin';
+  document.querySelectorAll('.admin-only').forEach(el => el.style.display = isAdmin ? 'flex' : 'none');
+  document.querySelectorAll('.observer-only').forEach(el => el.style.display = !isAdmin ? 'flex' : 'none');
+  document.getElementById('dash-filter-obs').style.display = isAdmin ? 'block' : 'none';
+  document.getElementById('data-filter-obs').style.display = isAdmin ? 'block' : 'none';
+  loadAllData();
+  navTo('dashboard');
+}
+
+// ── NAVIGATION ──
+function navTo(page) {
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('nav-' + page)?.classList.add('active');
+  document.getElementById('page-' + page)?.classList.add('active');
+  if (page === 'dashboard') renderDashboard();
+  if (page === 'data') renderDataTable();
+  if (page === 'locations') renderLocations();
+  if (page === 'users') renderUsers();
+  if (page === 'mydata') renderMyData();
+}
+
+// ── LOAD DATA ──
+async function loadAllData() {
+  try {
+    const [obsRes, usersRes, locsRes] = await Promise.all([
+      fetch(`https://api.airtable.com/v0/${getBaseId()}/Observations?maxRecords=500`, { headers: { 'Authorization': `Bearer ${getToken()}` } }).then(r => r.json()).catch(() => ({ records: [] })),
+      api('/web-auth', { action: 'getWebUsers', email: currentUser.email, password: currentUser._pass }),
+      api('/locations', { action: 'getLocations', email: currentUser.email, password: currentUser._pass }),
+    ]);
+    allObservations = (obsRes.records || []).map(r => r.fields);
+    allUsers = (usersRes.users || []).filter(u => u.username !== currentUser.username);
+    allLocations = locsRes.locations || [];
+    populateFilters();
+    renderDashboard();
+    if (currentUser.role !== 'Admin') renderMyData();
+  } catch(e) { console.error('Load error:', e); }
+}
+
+function getBaseId() { return document.getElementById('l-email').dataset.baseId || window._baseId || ''; }
+function getToken() { return window._token || ''; }
+
+// ── FILTERS ──
+function populateFilters() {
+  const locs = [...new Set(allObservations.map(o => o.Location).filter(Boolean))].sort();
+  const obsList = [...new Set(allObservations.map(o => o.Observer).filter(Boolean))].sort();
+  ['dash-filter-loc','data-filter-loc'].forEach(id => {
+    const el = document.getElementById(id);
+    const cur = el.value;
+    el.innerHTML = '<option value="">All locations</option>' + locs.map(l => `<option value="${l}">${l}</option>`).join('');
+    if (cur) el.value = cur;
+  });
+  ['dash-filter-obs','data-filter-obs'].forEach(id => {
+    const el = document.getElementById(id);
+    const cur = el.value;
+    el.innerHTML = '<option value="">All observers</option>' + obsList.map(o => `<option value="${o}">${o}</option>`).join('');
+    if (cur) el.value = cur;
+  });
+}
+
+function getFilteredObs() {
+  const loc = document.getElementById('dash-filter-loc').value;
+  const obs = document.getElementById('dash-filter-obs').value;
+  const from = document.getElementById('dash-filter-from').value;
+  const to = document.getElementById('dash-filter-to').value;
+  return allObservations.filter(o => {
+    if (currentUser.role !== 'Admin' && o.Observer !== currentUser.username) return false;
+    if (loc && o.Location !== loc) return false;
+    if (obs && o.Observer !== obs) return false;
+    if (from && o.Timestamp && o.Timestamp < from) return false;
+    if (to && o.Timestamp && o.Timestamp.slice(0,10) > to) return false;
+    return true;
+  });
+}
+
+function clearDashFilters() {
+  ['dash-filter-loc','dash-filter-obs','dash-filter-from','dash-filter-to'].forEach(id => { document.getElementById(id).value = ''; });
+  renderDashboard();
+}
+function clearDataFilters() {
+  ['data-filter-loc','data-filter-obs','data-filter-from','data-filter-to','data-filter-type'].forEach(id => { document.getElementById(id).value = ''; });
+  renderDataTable();
+}
+
+// ── DASHBOARD ──
+function loadDashboard() { renderDashboard(); }
+
+function renderDashboard() {
+  const obs = getFilteredObs();
+  const real = obs.filter(o => o.Missed !== 'YES');
+  const missed = obs.filter(o => o.Missed === 'YES').length;
+  const people = real.length;
+  const sessions = [...new Set(real.map(o => o.Session).filter(Boolean))].length;
+  const locs = [...new Set(real.map(o => o.Location).filter(Boolean))].length;
+
+  document.getElementById('dash-stats').innerHTML = `
+    <div class="stat-card accent"><div class="stat-num">${people}</div><div class="stat-lbl">People logged</div></div>
+    <div class="stat-card"><div class="stat-num">${real.length > 0 ? [...new Set(real.map(o=>o['Entry ID']))].length : 0}</div><div class="stat-lbl">Observations</div></div>
+    <div class="stat-card"><div class="stat-num">${sessions}</div><div class="stat-lbl">Sessions</div></div>
+    <div class="stat-card"><div class="stat-num" style="color:var(--warn)">${missed}</div><div class="stat-lbl">Missed groups</div></div>
+  `;
+
+  const freq = (key) => {
+    const c = {};
+    real.forEach(o => { if(o[key]) c[o[key]] = (c[o[key]]||0)+1; });
+    return Object.entries(c).sort((a,b)=>b[1]-a[1]).slice(0,5);
+  };
+
+  const bars = (pairs, cls='', total=people) => pairs.map(([l,c]) => {
+    const p = total ? Math.round(c/total*100) : 0;
+    return `<div class="bar-section"><div class="bar-lbl"><span>${l}</span><span class="bar-pct">${c} · ${p}%</span></div><div class="bar-track"><div class="bar-fill ${cls}" style="width:${p}%"></div></div></div>`;
+  }).join('');
+
+  document.getElementById('dash-charts').innerHTML = `
+    <div class="card"><div class="card-header"><div class="card-title">Age ranges</div></div><div class="card-body">${bars(freq('Age'),'p') || '<div class="empty-state"><div class="empty-state-sub">No data</div></div>'}</div></div>
+    <div class="card"><div class="card-header"><div class="card-title">Gender presentation</div></div><div class="card-body">${bars(freq('Gender')) || '<div class="empty-state"><div class="empty-state-sub">No data</div></div>'}</div></div>
+    <div class="card"><div class="card-header"><div class="card-title">Ethnicity</div></div><div class="card-body">${bars(freq('Ethnicity'),'p') || '<div class="empty-state"><div class="empty-state-sub">No data</div></div>'}</div></div>
+    <div class="card"><div class="card-header"><div class="card-title">Emotional state</div></div><div class="card-body">${bars(freq('Emotion'),'w') || '<div class="empty-state"><div class="empty-state-sub">No data</div></div>'}</div></div>
+  `;
+}
+
+// ── DATA TABLE ──
+function applyDataFilters() { renderDataTable(); }
+
+function renderDataTable() {
+  const loc = document.getElementById('data-filter-loc').value;
+  const obs = document.getElementById('data-filter-obs').value;
+  const from = document.getElementById('data-filter-from').value;
+  const to = document.getElementById('data-filter-to').value;
+  const type = document.getElementById('data-filter-type').value;
+  let data = allObservations.filter(o => {
+    if (currentUser.role !== 'Admin' && o.Observer !== currentUser.username) return false;
+    if (loc && o.Location !== loc) return false;
+    if (obs && o.Observer !== obs) return false;
+    if (type && o.Type !== type) return false;
+    if (from && o.Timestamp && o.Timestamp < from) return false;
+    if (to && o.Timestamp && o.Timestamp.slice(0,10) > to) return false;
+    return true;
+  });
+  document.getElementById('data-count').textContent = `${data.length} ${data.length===1?'entry':'entries'}`;
+  document.getElementById('data-tbody').innerHTML = data.length ? data.map(o => {
+    const t = o.Timestamp ? new Date(o.Timestamp).toLocaleString([],{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'}) : '—';
+    return `<tr>
+      <td style="font-family:'DM Mono',monospace;font-size:12px;color:var(--ink3)">${o['Entry ID']||'—'}</td>
+      <td style="white-space:nowrap">${t}</td>
+      <td>${o.Observer||'—'}</td>
+      <td>${o.Location||'—'}</td>
+      <td style="color:var(--ink3)">${o.Session||'—'}</td>
+      <td><span class="badge ${o.Type||'other'}">${o.Type||'—'}</span></td>
+      <td>${o.Age||'—'}</td>
+      <td>${o.Gender||'—'}</td>
+      <td>${o.Ethnicity||'—'}</td>
+      <td>${o.Emotion||'—'}</td>
+      <td>${o.Missed==='YES'?'<span class="badge suspended">Yes</span>':'—'}</td>
+    </tr>`;
+  }).join('') : '<tr><td colspan="11" style="text-align:center;padding:40px;color:var(--ink3)">No entries match your filters</td></tr>';
+}
+
+// ── MY DATA ──
+function renderMyData() {
+  const my = allObservations.filter(o => o.Observer === currentUser.username);
+  const real = my.filter(o => o.Missed !== 'YES');
+  const sessions = [...new Set(my.map(o => o.Session).filter(Boolean))].length;
+  document.getElementById('my-stats').innerHTML = `
+    <div class="stat-card accent"><div class="stat-num">${real.length}</div><div class="stat-lbl">People logged</div></div>
+    <div class="stat-card"><div class="stat-num">${[...new Set(real.map(o=>o['Entry ID']))].length}</div><div class="stat-lbl">Observations</div></div>
+    <div class="stat-card"><div class="stat-num">${sessions}</div><div class="stat-lbl">Sessions</div></div>
+    <div class="stat-card"><div class="stat-num">${my.filter(o=>o.Missed==='YES').length}</div><div class="stat-lbl">Missed groups</div></div>
+  `;
+  document.getElementById('my-data-count').textContent = `${my.length} ${my.length===1?'entry':'entries'}`;
+  document.getElementById('my-tbody').innerHTML = my.map(o => {
+    const t = o.Timestamp ? new Date(o.Timestamp).toLocaleString([],{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'}) : '—';
+    return `<tr>
+      <td style="font-family:'DM Mono',monospace;font-size:12px;color:var(--ink3)">${o['Entry ID']||'—'}</td>
+      <td style="white-space:nowrap">${t}</td>
+      <td>${o.Location||'—'}</td>
+      <td style="color:var(--ink3)">${o.Session||'—'}</td>
+      <td><span class="badge ${o.Type||'other'}">${o.Type||'—'}</span></td>
+      <td>${o.Age||'—'}</td><td>${o.Gender||'—'}</td><td>${o.Ethnicity||'—'}</td><td>${o.Emotion||'—'}</td>
+    </tr>`;
+  }).join('') || '<tr><td colspan="9" style="text-align:center;padding:40px;color:var(--ink3)">No entries yet</td></tr>';
+}
+
+// ── LOCATIONS ──
+function renderLocations() {
+  const grid = document.getElementById('loc-grid');
+  if (!allLocations.length) {
+    grid.innerHTML = '<div class="empty-state"><div class="empty-state-title">No locations yet</div><div class="empty-state-sub">Add your first observation site</div></div>';
+    return;
+  }
+  grid.innerHTML = allLocations.map(l => `
+    <div class="loc-card ${l.active===false?'loc-inactive':''}">
+      <div class="loc-card-name">${l.name}</div>
+      <div class="loc-card-addr">${l.address||'No address'}</div>
+      <div class="loc-card-meta">
+        <span class="badge ${(l.type||'other').toLowerCase()}">${l.type||'Other'}</span>
+        ${l.active===false?'<span class="badge rejected">Inactive</span>':'<span class="badge active">Active</span>'}
+      </div>
+      <div class="loc-card-observers">${l.observers?.length ? l.observers.join(', ') : 'No observers assigned'}</div>
+      <div class="loc-card-actions">
+        <button class="btn-sm outline" onclick="editLocation('${l.id}')">Edit</button>
+      </div>
+    </div>`).join('');
+}
+
+function openLocModal(loc) {
+  editingLocId = null;
+  locAssignedObservers = [];
+  document.getElementById('lm-name').value = '';
+  document.getElementById('lm-addr').value = '';
+  document.getElementById('lm-type').value = 'Retail';
+  document.getElementById('lm-active').value = 'true';
+  document.getElementById('loc-modal-title').textContent = 'Add location';
+  populateObserverSelect();
+  renderLocObservers();
+  document.getElementById('loc-modal').classList.add('open');
+}
+
+function editLocation(id) {
+  const l = allLocations.find(x => x.id === id);
+  if (!l) return;
+  editingLocId = id;
+  locAssignedObservers = [...(l.observers || [])];
+  document.getElementById('lm-name').value = l.name;
+  document.getElementById('lm-addr').value = l.address || '';
+  document.getElementById('lm-type').value = l.type || 'Retail';
+  document.getElementById('lm-active').value = l.active === false ? 'false' : 'true';
+  document.getElementById('loc-modal-title').textContent = 'Edit location';
+  populateObserverSelect();
+  renderLocObservers();
+  document.getElementById('loc-modal').classList.add('open');
+}
+
+function populateObserverSelect() {
+  const sel = document.getElementById('lm-obs-select');
+  const observers = allUsers.filter(u => u.role === 'Observer' && u.status === 'Active');
+  sel.innerHTML = '<option value="">Select observer…</option>' + observers.map(u => `<option value="${u.username}">${u.name} (@${u.username})</option>`).join('');
+}
+
+function addObserverToLoc() {
+  const sel = document.getElementById('lm-obs-select');
+  const v = sel.value;
+  if (!v || locAssignedObservers.includes(v)) return;
+  locAssignedObservers.push(v);
+  renderLocObservers();
+  sel.value = '';
+}
+
+function renderLocObservers() {
+  document.getElementById('lm-observers-list').innerHTML = locAssignedObservers.map(o =>
+    `<span style="display:inline-flex;align-items:center;gap:4px;background:var(--accent-light);color:var(--accent);padding:4px 10px;border-radius:var(--r-pill);font-size:12px;font-weight:500">${o}<button onclick="removeLocObserver('${o}')" style="background:none;border:none;color:var(--accent);font-size:14px;cursor:pointer;line-height:1;padding:0 0 0 2px">×</button></span>`
+  ).join('');
+}
+
+function removeLocObserver(username) {
+  locAssignedObservers = locAssignedObservers.filter(o => o !== username);
+  renderLocObservers();
+}
+
+function closeLocModal() { document.getElementById('loc-modal').classList.remove('open'); }
+
+async function saveLocation() {
+  const name = document.getElementById('lm-name').value.trim();
+  if (!name) { showToast('Location name required'); return; }
+  const location = {
+    name, address: document.getElementById('lm-addr').value.trim(),
+    type: document.getElementById('lm-type').value,
+    observers: locAssignedObservers,
+    active: document.getElementById('lm-active').value === 'true',
+  };
+  try {
+    let res;
+    if (editingLocId) {
+      res = await api('/locations', { action: 'updateLocation', email: currentUser.email, password: currentUser._pass, locationId: editingLocId, location });
+    } else {
+      res = await api('/locations', { action: 'createLocation', email: currentUser.email, password: currentUser._pass, location });
+    }
+    if (res.success) {
+      showToast(editingLocId ? 'Location updated' : 'Location created');
+      closeLocModal();
+      const locsRes = await api('/locations', { action: 'getLocations', email: currentUser.email, password: currentUser._pass });
+      allLocations = locsRes.locations || [];
+      renderLocations();
+    } else showToast(res.error || 'Failed to save');
+  } catch(e) { showToast('Error saving location'); }
+}
+
+// ── USERS ──
+function renderUsers() {
+  const tbody = document.getElementById('users-tbody');
+  if (!allUsers.length) { tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:40px;color:var(--ink3)">No users yet</td></tr>'; return; }
+  tbody.innerHTML = allUsers.map(u => `
+    <tr>
+      <td style="font-weight:500">${u.name||'—'}</td>
+      <td style="font-family:'DM Mono',monospace;font-size:12px">@${u.username}</td>
+      <td style="color:var(--ink3)">${u.email||'—'}</td>
+      <td><span class="badge ${(u.role||'').toLowerCase()}">${u.role}</span></td>
+      <td><span class="badge ${(u.status||'').toLowerCase()}">${u.status}</span></td>
+      <td>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          ${u.status==='Pending'?`<button class="btn-sm primary" style="padding:5px 10px;font-size:11px" onclick="updateWebUser('${u.id}',{Status:'Active'})">Approve</button><button class="btn-sm danger" style="padding:5px 10px;font-size:11px" onclick="updateWebUser('${u.id}',{Status:'Rejected'})">Reject</button>`:''}
+          ${u.status==='Active'?`<button class="btn-sm outline" style="padding:5px 10px;font-size:11px" onclick="updateWebUser('${u.id}',{Status:'Suspended'})">Suspend</button>`:''}
+          ${u.status==='Suspended'||u.status==='Rejected'?`<button class="btn-sm primary" style="padding:5px 10px;font-size:11px" onclick="updateWebUser('${u.id}',{Status:'Active'})">Reactivate</button>`:''}
+          <button class="btn-sm purple" style="padding:5px 10px;font-size:11px" onclick="promptResetPassword('${u.id}','${u.username}')">Reset pwd</button>
+        </div>
+      </td>
+    </tr>`).join('');
+}
+
+async function updateWebUser(id, fields) {
+  try {
+    const res = await api('/web-auth', { action: 'webUpdateUser', email: currentUser.email, password: currentUser._pass, targetId: id, fields });
+    if (res.success) {
+      showToast('User updated');
+      const r = await api('/web-auth', { action: 'getWebUsers', email: currentUser.email, password: currentUser._pass });
+      allUsers = (r.users||[]).filter(u => u.username !== currentUser.username);
+      renderUsers();
+    } else showToast(res.error||'Failed');
+  } catch(e) { showToast('Error'); }
+}
+
+async function promptResetPassword(id, username) {
+  const p = prompt(`New website password for ${username}:`);
+  if (!p) return;
+  await updateWebUser(id, { Password: p });
+}
+
+function openCreateUserModal() { document.getElementById('user-modal').classList.add('open'); }
+function closeUserModal() { document.getElementById('user-modal').classList.remove('open'); }
+
+async function createWebUser() {
+  const name = document.getElementById('um-name').value.trim();
+  const username = document.getElementById('um-username').value.trim();
+  const email = document.getElementById('um-email').value.trim();
+  const pin = document.getElementById('um-pin').value.trim();
+  const password = document.getElementById('um-password').value.trim();
+  const role = document.getElementById('um-role').value;
+  const errEl = document.getElementById('um-err');
+  if (!name||!username||!email||!pin||!password) { errEl.textContent='All fields required'; errEl.style.display='block'; return; }
+  try {
+    const res = await api('/web-auth', { action: 'webCreateUser', email: currentUser.email, password: currentUser._pass, newUser: { name, username, email, pin, password, role } });
+    if (res.success) {
+      showToast('User created'); closeUserModal();
+      const r = await api('/web-auth', { action: 'getWebUsers', email: currentUser.email, password: currentUser._pass });
+      allUsers = (r.users||[]).filter(u => u.username !== currentUser.username);
+      renderUsers();
+    } else { errEl.textContent = res.error||'Failed'; errEl.style.display='block'; }
+  } catch(e) { errEl.textContent='Error'; errEl.style.display='block'; }
+}
+
+// ── CSV EXPORT ──
+function exportFilteredCSV() {
+  const loc = document.getElementById('data-filter-loc').value;
+  const obs = document.getElementById('data-filter-obs').value;
+  const from = document.getElementById('data-filter-from').value;
+  const to = document.getElementById('data-filter-to').value;
+  const type = document.getElementById('data-filter-type').value;
+  let data = allObservations.filter(o => {
+    if (currentUser.role !== 'Admin' && o.Observer !== currentUser.username) return false;
+    if (loc && o.Location !== loc) return false;
+    if (obs && o.Observer !== obs) return false;
+    if (type && o.Type !== type) return false;
+    if (from && o.Timestamp && o.Timestamp < from) return false;
+    if (to && o.Timestamp && o.Timestamp.slice(0,10) > to) return false;
+    return true;
+  });
+  if (!data.length) { showToast('No data to export'); return; }
+  const cols = ['Entry ID','Timestamp','Type','Observer','Location','Session','Person #','Age','Gender','Ethnicity','Disability','Emotion','Missed'];
+  const rows = [cols, ...data.map(o => cols.map(c => o[c]||''))];
+  const csv = rows.map(r => r.map(v => `"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');
+  const a = document.createElement('a');
+  a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
+  a.download = 'observer_export_' + new Date().toISOString().slice(0,10) + '.csv';
+  a.click();
+  showToast('CSV exported');
+}
+
+// ── HELPERS ──
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+document.getElementById('l-pass').addEventListener('keydown', e => { if (e.key === 'Enter') doWebLogin(); });
+document.querySelectorAll('.modal-overlay').forEach(m => m.addEventListener('click', e => { if (e.target === m) m.classList.remove('open'); }));
+</script>
+</body>
+</html>

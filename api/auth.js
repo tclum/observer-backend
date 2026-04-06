@@ -50,7 +50,20 @@ export default async function handler(req, res) {
       if (u.Status === 'Pending') return res.status(403).json({ error: 'Your account is pending approval by an admin.' });
       if (u.Status === 'Suspended') return res.status(403).json({ error: 'Your account has been suspended. Contact an admin.' });
       if (u.Status !== 'Active') return res.status(403).json({ error: 'Account not active.' });
-      return res.status(200).json({ success: true, user: { username: u.Username, role: u.Role, name: u.Name } });
+      // Fetch assigned locations
+      let locations = [];
+      try {
+        const locFormula = u.Role === 'Admin' ? '' : `FIND("${username}",{Observers})`;
+        const locUrl = `${AT_BASE}/${encodeURIComponent('Locations')}${locFormula ? '?filterByFormula=' + encodeURIComponent(locFormula) : ''}`;
+        const locRes = await fetch(locUrl, { headers: HEADERS });
+        if (locRes.ok) {
+          const locData = await locRes.json();
+          locations = locData.records
+            .filter(r => r.fields.Active !== false)
+            .map(r => ({ id: r.id, name: r.fields.Name || '', type: r.fields.Type || '' }));
+        }
+      } catch(e) { /* locations optional */ }
+      return res.status(200).json({ success: true, user: { username: u.Username, role: u.Role, name: u.Name }, locations });
     }
 
     // ── REGISTER ──
