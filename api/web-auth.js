@@ -1,117 +1,94 @@
-const AT_BASE = `https://api.airtable.com/v0/${process.env.AIRTABLE_BASE_ID}`;
-const HEADERS = {
-  'Authorization': `Bearer ${process.env.AIRTABLE_TOKEN}`,
-  'Content-Type': 'application/json',
-};
-
-async function atGet(table, formula) {
-  const url = `${AT_BASE}/${encodeURIComponent(table)}${formula ? '?filterByFormula=' + encodeURIComponent(formula) : ''}`;
-  const r = await fetch(url, { headers: HEADERS });
-  if (!r.ok) throw new Error(`Airtable error: ${r.status}`);
-  return r.json();
-}
-
-async function atUpdate(table, id, fields) {
-  const r = await fetch(`${AT_BASE}/${encodeURIComponent(table)}/${id}`, {
-    method: 'PATCH', headers: HEADERS,
-    body: JSON.stringify({ fields }),
-  });
-  if (!r.ok) { const e = await r.json(); throw new Error(e.error?.message || 'Airtable error'); }
-  return r.json();
-}
+import { atGet, atCreate, atUpdate, signJWT, verifyToken, hashPassword, verifyPassword, checkRateLimit, getClientIP } from './_utils.js';
 
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
   const { action } = req.body;
 
   try {
-    // ── WEB LOGIN ──
+    // ── WEB LOGIN (rate limited) ──
     if (action === 'webLogin') {
+      const ip = getClientIP(req);
+      const rl = checkRateLimit(ip);
+      if (!rl.allowed) return res.status(429).json({ error: `Too many attempts. Try again in ${rl.resetIn} minutes.` });
+
       const { email, password } = req.body;
       if (!email || !password) return res.status(400).json({ error: 'Email and password required' });
+
       const data = await atGet('Users', `{Email}="${email.toLowerCase()}"`);
       if (!data.records.length) return res.status(401).json({ error: 'Invalid email or password' });
-      const u = data.records[0].fields;
-      if (u.Password !== password) return res.status(401).json({ error: 'Invalid email or password' });
+
+      const rec = data.records[0];
+      const u = rec.fields;
+
+      const match = await verifyPassword(password, u.Password || '');
+      if (!match) return res.status(401).json({ error: 'Invalid email or password' });
+
+      // Upgrade plain-text password to hashed silently
+      if (u.Password && !u.Password.startsWith('pbkdf2:')) {
+        hashPassword(password).then(h => atUpdate('Users', rec.id, { Password: h })).catch(() => {});
+      }
+
       if (u.Status === 'Pending') return res.status(403).json({ error: 'Your account is pending approval.' });
       if (u.Status === 'Suspended') return res.status(403).json({ error: 'Your account has been suspended.' });
       if (u.Status !== 'Active') return res.status(403).json({ error: 'Account not active.' });
+
+      const token = await signJWT({ id: rec.id, username: u.Username, email: u.Email, role: u.Role, name: u.Name, type: 'web' });
+
       return res.status(200).json({
         success: true,
-        user: {
-          id: data.records[0].id,
-          username: u.Username,
-          email: u.Email,
-          name: u.Name,
-          role: u.Role,
-        }
+        token,
+        user: { id: rec.id, username: u.Username, email: u.Email, name: u.Name, role: u.Role },
       });
     }
 
-    // ── SET PASSWORD (admin sets for user, or first-time setup) ──
-    if (action === 'setPassword') {
-      const { adminEmail, adminPassword, targetId, newPassword } = req.body;
-      const auth = await atGet('Users', `AND({Email}="${adminEmail.toLowerCase()}",{Role}="Admin")`);
-      if (!auth.records.length || auth.records[0].fields.Password !== adminPassword) {
-        return res.status(403).json({ error: 'Admin credentials required' });
-      }
-      await atUpdate('Users', targetId, { Password: newPassword });
-      return res.status(200).json({ success: true });
-    }
+    // ── TOKEN-AUTHENTICATED ACTIONS ──
+    const payload = await verifyToken(req);
+    if (!payload) return res.status(401).json({ error: 'Session expired. Please sign in again.' });
 
-    // ── GET ALL USERS FOR WEB (admin) ──
+    const requireAdmin = async () => {
+      if (payload.role !== 'Admin') return false;
+      const d = await atGet('Users', `AND({Email}="${payload.email}",{Role}="Admin",{Status}="Active")`);
+      return d.records.length > 0;
+    };
+
+    // ── GET USERS (admin) ──
     if (action === 'getWebUsers') {
-      const { email, password } = req.body;
-      const auth = await atGet('Users', `AND({Email}="${email.toLowerCase()}",{Role}="Admin")`);
-      if (!auth.records.length || auth.records[0].fields.Password !== password) {
-        return res.status(403).json({ error: 'Admin credentials required' });
-      }
+      if (!(await requireAdmin())) return res.status(403).json({ error: 'Admin access required' });
       const data = await atGet('Users', 'NOT({Username}="")');
-      const users = data.records.map(r => ({
-        id: r.id,
-        username: r.fields.Username,
-        name: r.fields.Name,
-        email: r.fields.Email || '',
-        role: r.fields.Role,
-        status: r.fields.Status,
-      }));
-      return res.status(200).json({ success: true, users });
+      return res.status(200).json({ success: true, users: data.records.map(r => ({
+        id: r.id, username: r.fields.Username, name: r.fields.Name,
+        email: r.fields.Email || '', role: r.fields.Role, status: r.fields.Status,
+      }))});
     }
 
     // ── UPDATE USER (admin) ──
     if (action === 'webUpdateUser') {
-      const { email, password, targetId, fields } = req.body;
-      const auth = await atGet('Users', `AND({Email}="${email.toLowerCase()}",{Role}="Admin")`);
-      if (!auth.records.length || auth.records[0].fields.Password !== password) {
-        return res.status(403).json({ error: 'Admin credentials required' });
-      }
+      if (!(await requireAdmin())) return res.status(403).json({ error: 'Admin access required' });
+      const { targetId, fields } = req.body;
+      if (fields.Password && !fields.Password.startsWith('pbkdf2:')) fields.Password = await hashPassword(fields.Password);
+      if (fields.PIN && !fields.PIN.startsWith('pbkdf2:')) fields.PIN = await hashPassword(fields.PIN);
       await atUpdate('Users', targetId, fields);
       return res.status(200).json({ success: true });
     }
 
     // ── CREATE USER (admin) ──
     if (action === 'webCreateUser') {
-      const { email, password, newUser } = req.body;
-      const auth = await atGet('Users', `AND({Email}="${email.toLowerCase()}",{Role}="Admin")`);
-      if (!auth.records.length || auth.records[0].fields.Password !== password) {
-        return res.status(403).json({ error: 'Admin credentials required' });
-      }
+      if (!(await requireAdmin())) return res.status(403).json({ error: 'Admin access required' });
+      const { newUser } = req.body;
       const existing = await atGet('Users', `OR({Username}="${newUser.username}",{Email}="${newUser.email.toLowerCase()}")`);
       if (existing.records.length) return res.status(409).json({ error: 'Username or email already exists' });
-      const r = await fetch(`${AT_BASE}/Users`, {
-        method: 'POST', headers: HEADERS,
-        body: JSON.stringify({ records: [{ fields: {
-          Username: newUser.username, PIN: newUser.pin, Name: newUser.name,
-          Email: newUser.email.toLowerCase(), Password: newUser.password,
-          Role: newUser.role || 'Observer', Status: 'Active'
-        }}]}),
+      const hashedPin = await hashPassword(newUser.pin);
+      const hashedPassword = await hashPassword(newUser.password);
+      await atCreate('Users', {
+        Username: newUser.username, PIN: hashedPin, Name: newUser.name,
+        Email: newUser.email.toLowerCase(), Password: hashedPassword,
+        Role: newUser.role || 'Observer', Status: 'Active',
       });
-      if (!r.ok) { const e = await r.json(); throw new Error(e.error?.message || 'Failed to create user'); }
       return res.status(200).json({ success: true });
     }
 
