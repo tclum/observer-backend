@@ -454,21 +454,33 @@ function navTo(page) {
 async function loadAllData() {
   try {
     const [obsRes, usersRes, locsRes] = await Promise.all([
-      fetch(`https://api.airtable.com/v0/${getBaseId()}/Observations?maxRecords=500`, { headers: { 'Authorization': `Bearer ${getToken()}` } }).then(r => r.json()).catch(() => ({ records: [] })),
+      api('/data', { action: 'getObservations', email: currentUser.email, password: currentUser._pass }),
       api('/web-auth', { action: 'getWebUsers', email: currentUser.email, password: currentUser._pass }),
       api('/locations', { action: 'getLocations', email: currentUser.email, password: currentUser._pass }),
     ]);
-    allObservations = (obsRes.records || []).map(r => r.fields);
+    // normalise field names from backend camelCase to match table column names
+    allObservations = (obsRes.observations || []).map(o => ({
+      'Entry ID': o.entryId,
+      'Timestamp': o.timestamp,
+      'Type': o.type,
+      'Observer': o.observer,
+      'Location': o.location,
+      'Session': o.session,
+      'Person #': o.personNum,
+      'Age': o.age,
+      'Gender': o.gender,
+      'Ethnicity': o.ethnicity,
+      'Disability': o.disability,
+      'Emotion': o.emotion,
+      'Missed': o.missed,
+    }));
     allUsers = (usersRes.users || []).filter(u => u.username !== currentUser.username);
     allLocations = locsRes.locations || [];
     populateFilters();
     renderDashboard();
     if (currentUser.role !== 'Admin') renderMyData();
-  } catch(e) { console.error('Load error:', e); }
+  } catch(e) { console.error('Load error:', e); showToast('Error loading data'); }
 }
-
-function getBaseId() { return document.getElementById('l-email').dataset.baseId || window._baseId || ''; }
-function getToken() { return window._token || ''; }
 
 // ── FILTERS ──
 function populateFilters() {
