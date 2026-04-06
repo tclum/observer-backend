@@ -1,0 +1,63 @@
+name: CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  test:
+    name: Unit & E2E Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      # Unit tests run first — they're fast and catch logic errors early
+      - name: Run unit tests
+        run: npm run test:unit
+
+      # E2E tests exercise the full HTTP layer
+      - name: Run E2E tests
+        run: npm run test:e2e
+
+      # Coverage report (fails if thresholds in vitest.config.js aren't met)
+      - name: Generate coverage report
+        run: npm run test:coverage
+
+      - name: Upload coverage to GitHub Actions summary
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: coverage/
+          retention-days: 14
+
+  lint-check:
+    name: Verify test files exist
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check required test files are present
+        run: |
+          echo "Checking test structure..."
+          test -f tests/unit/auth.test.js        || (echo "Missing auth unit tests"       && exit 1)
+          test -f tests/unit/config.test.js      || (echo "Missing config unit tests"     && exit 1)
+          test -f tests/unit/sync.test.js        || (echo "Missing sync unit tests"       && exit 1)
+          test -f tests/unit/missions.test.js    || (echo "Missing missions unit tests"   && exit 1)
+          test -f tests/unit/validation.test.js  || (echo "Missing validation unit tests" && exit 1)
+          test -f tests/e2e/auth.e2e.test.js             || (echo "Missing auth E2E tests"          && exit 1)
+          test -f tests/e2e/config-sync.e2e.test.js      || (echo "Missing config/sync E2E tests"   && exit 1)
+          test -f tests/e2e/missions.e2e.test.js         || (echo "Missing missions E2E tests"       && exit 1)
+          echo "All test files present ✓"
