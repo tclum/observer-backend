@@ -1,3 +1,20 @@
+// ── CORS ──
+const ALLOWED_ORIGIN = process.env.ALLOWED_ORIGIN || '';
+
+export function setCorsHeaders(req, res) {
+  const origin = req.headers['origin'] || '';
+  if (ALLOWED_ORIGIN && origin === ALLOWED_ORIGIN) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+  } else if (!ALLOWED_ORIGIN) {
+    // No restriction configured — allow all (dev fallback)
+    res.setHeader('Access-Control-Allow-Origin', '*');
+  }
+  // If origin doesn't match, omit the header → browser blocks the request
+  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  res.setHeader('Vary', 'Origin');
+}
+
 // ── AIRTABLE ──
 const AT_BASE = `https://api.airtable.com/v0/${process.env.AIRTABLE_BASE_ID}`;
 export const AT_HEADERS = {
