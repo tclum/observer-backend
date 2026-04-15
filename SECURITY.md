@@ -149,6 +149,43 @@ All API logic runs as Vercel serverless functions under `/api`. There is no pers
 
 ---
 
+## 10. Frontend XSS (Cross-Site Scripting)
+
+**Surface:** The dashboard is a single-page app that renders data fetched from the backend into `innerHTML`. If any Airtable record (observer name, location name, field values, etc.) contains HTML markup, it would execute in the viewer's browser — potentially stealing session tokens or performing actions as the logged-in user.
+
+**Control — HTML escaping:**
+- All user-supplied values are passed through an `esc()` helper before being inserted into `innerHTML`. The helper encodes `& < > " '` to their HTML entity equivalents.
+- `onclick` string interpolation (previously used for user IDs and usernames in rendered buttons) has been replaced with `data-*` attributes + `addEventListener` calls, eliminating the risk of attribute-injection breaking out of event handler strings.
+- Implemented in `public/index.html` (`esc()` helper, applied to all table rows, chart bars, location cards, user rows, and observer tag chips).
+
+**Residual risk:**
+- No Content Security Policy (CSP) header is set. Adding a strict CSP (`script-src 'self'`) would provide a second line of defence if an XSS vector is ever missed.
+
+---
+
+## 11. Frontend Token Storage
+
+**Surface:** The JWT must be held in memory somewhere on the client; different storage locations have different exposure profiles.
+
+**Control — JavaScript variable (in-memory only):**
+- `authToken` is stored as a plain JS variable, not in `localStorage` or `sessionStorage`. This means the token is never persisted to disk and is not accessible to other browser tabs or pages.
+- On logout (or session expiry), the variable is nulled and the login form is re-shown.
+
+**Residual risk:**
+- Any XSS that executes in the same page context can still read the in-memory token. The XSS escaping above (section 10) is the primary defence.
+- The token is lost on page refresh, requiring re-authentication — this is an intentional security/UX trade-off.
+
+---
+
+## 12. Client-Side Role Enforcement (UI Layer)
+
+**Surface:** Admin-only navigation items and actions (Users, Locations pages) are hidden in the UI based on `currentUser.role` from the JWT.
+
+**Control — Defence in depth:**
+- The UI hiding is a UX convenience only. All enforcement is server-side: admin endpoints re-verify role and `Active` status against Airtable on every request. A user who manipulates the DOM to reveal hidden buttons will still receive 403 from the API.
+
+---
+
 ## Summary Table
 
 | Area | Control | Strength | Key Risk |
@@ -162,3 +199,6 @@ All API logic runs as Vercel serverless functions under `/api`. There is no pers
 | Injection | `encodeURIComponent` on formulas | Medium | Semantic content not validated |
 | Account lifecycle | Status check before token issuance | Strong | — |
 | Data scoping | Server-side filter from JWT payload | Strong | — |
+| Frontend XSS | `esc()` on all innerHTML, data attributes for events | Strong | No CSP header set |
+| Token storage | In-memory JS variable only | Strong | Lost on refresh; XSS in same context can read it |
+| Client-side role UI | Defence in depth — real enforcement is server-side | Strong | — |

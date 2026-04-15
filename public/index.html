@@ -379,6 +379,10 @@ tbody tr:hover td{background:var(--surface2)}
 
 <script>
 const SERVER = 'https://observer-backend-self.vercel.app/api';
+
+function esc(str) {
+  return String(str ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
 let currentUser = null;
 let authToken = null;
 let allObservations = [];
@@ -556,7 +560,7 @@ function renderDashboard() {
 
   const bars = (pairs, cls='', total=people) => pairs.map(([l,c]) => {
     const p = total ? Math.round(c/total*100) : 0;
-    return `<div class="bar-section"><div class="bar-lbl"><span>${l}</span><span class="bar-pct">${c} · ${p}%</span></div><div class="bar-track"><div class="bar-fill ${cls}" style="width:${p}%"></div></div></div>`;
+    return `<div class="bar-section"><div class="bar-lbl"><span>${esc(l)}</span><span class="bar-pct">${c} · ${p}%</span></div><div class="bar-track"><div class="bar-fill ${cls}" style="width:${p}%"></div></div></div>`;
   }).join('');
 
   document.getElementById('dash-charts').innerHTML = `
@@ -589,16 +593,16 @@ function renderDataTable() {
   document.getElementById('data-tbody').innerHTML = data.length ? data.map(o => {
     const t = o.Timestamp ? new Date(o.Timestamp).toLocaleString([],{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'}) : '—';
     return `<tr>
-      <td style="font-family:'DM Mono',monospace;font-size:12px;color:var(--ink3)">${o['Entry ID']||'—'}</td>
-      <td style="white-space:nowrap">${t}</td>
-      <td>${o.Observer||'—'}</td>
-      <td>${o.Location||'—'}</td>
-      <td style="color:var(--ink3)">${o.Session||'—'}</td>
-      <td><span class="badge ${o.Type||'other'}">${o.Type||'—'}</span></td>
-      <td>${o.Age||'—'}</td>
-      <td>${o.Gender||'—'}</td>
-      <td>${o.Ethnicity||'—'}</td>
-      <td>${o.Emotion||'—'}</td>
+      <td style="font-family:'DM Mono',monospace;font-size:12px;color:var(--ink3)">${esc(o['Entry ID'])||'—'}</td>
+      <td style="white-space:nowrap">${esc(t)}</td>
+      <td>${esc(o.Observer)||'—'}</td>
+      <td>${esc(o.Location)||'—'}</td>
+      <td style="color:var(--ink3)">${esc(o.Session)||'—'}</td>
+      <td><span class="badge ${esc(o.Type||'other')}">${esc(o.Type)||'—'}</span></td>
+      <td>${esc(o.Age)||'—'}</td>
+      <td>${esc(o.Gender)||'—'}</td>
+      <td>${esc(o.Ethnicity)||'—'}</td>
+      <td>${esc(o.Emotion)||'—'}</td>
       <td>${o.Missed==='YES'?'<span class="badge suspended">Yes</span>':'—'}</td>
     </tr>`;
   }).join('') : '<tr><td colspan="11" style="text-align:center;padding:40px;color:var(--ink3)">No entries match your filters</td></tr>';
@@ -619,12 +623,12 @@ function renderMyData() {
   document.getElementById('my-tbody').innerHTML = my.map(o => {
     const t = o.Timestamp ? new Date(o.Timestamp).toLocaleString([],{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'}) : '—';
     return `<tr>
-      <td style="font-family:'DM Mono',monospace;font-size:12px;color:var(--ink3)">${o['Entry ID']||'—'}</td>
-      <td style="white-space:nowrap">${t}</td>
-      <td>${o.Location||'—'}</td>
-      <td style="color:var(--ink3)">${o.Session||'—'}</td>
-      <td><span class="badge ${o.Type||'other'}">${o.Type||'—'}</span></td>
-      <td>${o.Age||'—'}</td><td>${o.Gender||'—'}</td><td>${o.Ethnicity||'—'}</td><td>${o.Emotion||'—'}</td>
+      <td style="font-family:'DM Mono',monospace;font-size:12px;color:var(--ink3)">${esc(o['Entry ID'])||'—'}</td>
+      <td style="white-space:nowrap">${esc(t)}</td>
+      <td>${esc(o.Location)||'—'}</td>
+      <td style="color:var(--ink3)">${esc(o.Session)||'—'}</td>
+      <td><span class="badge ${esc(o.Type||'other')}">${esc(o.Type)||'—'}</span></td>
+      <td>${esc(o.Age)||'—'}</td><td>${esc(o.Gender)||'—'}</td><td>${esc(o.Ethnicity)||'—'}</td><td>${esc(o.Emotion)||'—'}</td>
     </tr>`;
   }).join('') || '<tr><td colspan="9" style="text-align:center;padding:40px;color:var(--ink3)">No entries yet</td></tr>';
 }
@@ -638,17 +642,18 @@ function renderLocations() {
   }
   grid.innerHTML = allLocations.map(l => `
     <div class="loc-card ${l.active===false?'loc-inactive':''}">
-      <div class="loc-card-name">${l.name}</div>
-      <div class="loc-card-addr">${l.address||'No address'}</div>
+      <div class="loc-card-name">${esc(l.name)}</div>
+      <div class="loc-card-addr">${esc(l.address||'No address')}</div>
       <div class="loc-card-meta">
-        <span class="badge ${(l.type||'other').toLowerCase()}">${l.type||'Other'}</span>
+        <span class="badge ${esc((l.type||'other').toLowerCase())}">${esc(l.type||'Other')}</span>
         ${l.active===false?'<span class="badge rejected">Inactive</span>':'<span class="badge active">Active</span>'}
       </div>
-      <div class="loc-card-observers">${l.observers?.length ? l.observers.join(', ') : 'No observers assigned'}</div>
+      <div class="loc-card-observers">${l.observers?.length ? l.observers.map(esc).join(', ') : 'No observers assigned'}</div>
       <div class="loc-card-actions">
-        <button class="btn-sm outline" onclick="editLocation('${l.id}')">Edit</button>
+        <button class="btn-sm outline" data-loc-id="${esc(l.id)}">Edit</button>
       </div>
     </div>`).join('');
+  grid.querySelectorAll('[data-loc-id]').forEach(btn => btn.addEventListener('click', () => editLocation(btn.dataset.locId)));
 }
 
 function openLocModal(loc) {
@@ -695,9 +700,11 @@ function addObserverToLoc() {
 }
 
 function renderLocObservers() {
-  document.getElementById('lm-observers-list').innerHTML = locAssignedObservers.map(o =>
-    `<span style="display:inline-flex;align-items:center;gap:4px;background:var(--accent-light);color:var(--accent);padding:4px 10px;border-radius:var(--r-pill);font-size:12px;font-weight:500">${o}<button onclick="removeLocObserver('${o}')" style="background:none;border:none;color:var(--accent);font-size:14px;cursor:pointer;line-height:1;padding:0 0 0 2px">×</button></span>`
+  const list = document.getElementById('lm-observers-list');
+  list.innerHTML = locAssignedObservers.map(o =>
+    `<span style="display:inline-flex;align-items:center;gap:4px;background:var(--accent-light);color:var(--accent);padding:4px 10px;border-radius:var(--r-pill);font-size:12px;font-weight:500">${esc(o)}<button data-obs="${esc(o)}" style="background:none;border:none;color:var(--accent);font-size:14px;cursor:pointer;line-height:1;padding:0 0 0 2px">×</button></span>`
   ).join('');
+  list.querySelectorAll('[data-obs]').forEach(btn => btn.addEventListener('click', () => removeLocObserver(btn.dataset.obs)));
 }
 
 function removeLocObserver(username) {
@@ -739,20 +746,28 @@ function renderUsers() {
   if (!allUsers.length) { tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:40px;color:var(--ink3)">No users yet</td></tr>'; return; }
   tbody.innerHTML = allUsers.map(u => `
     <tr>
-      <td style="font-weight:500">${u.name||'—'}</td>
-      <td style="font-family:'DM Mono',monospace;font-size:12px">@${u.username}</td>
-      <td style="color:var(--ink3)">${u.email||'—'}</td>
-      <td><span class="badge ${(u.role||'').toLowerCase()}">${u.role}</span></td>
-      <td><span class="badge ${(u.status||'').toLowerCase()}">${u.status}</span></td>
+      <td style="font-weight:500">${esc(u.name)||'—'}</td>
+      <td style="font-family:'DM Mono',monospace;font-size:12px">@${esc(u.username)}</td>
+      <td style="color:var(--ink3)">${esc(u.email)||'—'}</td>
+      <td><span class="badge ${esc((u.role||'').toLowerCase())}">${esc(u.role)}</span></td>
+      <td><span class="badge ${esc((u.status||'').toLowerCase())}">${esc(u.status)}</span></td>
       <td>
         <div style="display:flex;gap:6px;flex-wrap:wrap">
-          ${u.status==='Pending'?`<button class="btn-sm primary" style="padding:5px 10px;font-size:11px" onclick="updateWebUser('${u.id}',{Status:'Active'})">Approve</button><button class="btn-sm danger" style="padding:5px 10px;font-size:11px" onclick="updateWebUser('${u.id}',{Status:'Rejected'})">Reject</button>`:''}
-          ${u.status==='Active'?`<button class="btn-sm outline" style="padding:5px 10px;font-size:11px" onclick="updateWebUser('${u.id}',{Status:'Suspended'})">Suspend</button>`:''}
-          ${u.status==='Suspended'||u.status==='Rejected'?`<button class="btn-sm primary" style="padding:5px 10px;font-size:11px" onclick="updateWebUser('${u.id}',{Status:'Active'})">Reactivate</button>`:''}
-          <button class="btn-sm purple" style="padding:5px 10px;font-size:11px" onclick="promptResetPassword('${u.id}','${u.username}')">Reset pwd</button>
+          ${u.status==='Pending'?`<button class="btn-sm primary" style="padding:5px 10px;font-size:11px" data-action="approve" data-uid="${esc(u.id)}">Approve</button><button class="btn-sm danger" style="padding:5px 10px;font-size:11px" data-action="reject" data-uid="${esc(u.id)}">Reject</button>`:''}
+          ${u.status==='Active'?`<button class="btn-sm outline" style="padding:5px 10px;font-size:11px" data-action="suspend" data-uid="${esc(u.id)}">Suspend</button>`:''}
+          ${u.status==='Suspended'||u.status==='Rejected'?`<button class="btn-sm primary" style="padding:5px 10px;font-size:11px" data-action="reactivate" data-uid="${esc(u.id)}">Reactivate</button>`:''}
+          <button class="btn-sm purple" style="padding:5px 10px;font-size:11px" data-action="resetpwd" data-uid="${esc(u.id)}" data-uname="${esc(u.username)}">Reset pwd</button>
         </div>
       </td>
     </tr>`).join('');
+  const actionMap = { approve: {Status:'Active'}, reject: {Status:'Rejected'}, suspend: {Status:'Suspended'}, reactivate: {Status:'Active'} };
+  tbody.querySelectorAll('[data-action]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const action = btn.dataset.action;
+      if (action === 'resetpwd') { promptResetPassword(btn.dataset.uid, btn.dataset.uname); }
+      else if (actionMap[action]) { updateWebUser(btn.dataset.uid, actionMap[action]); }
+    });
+  });
 }
 
 async function updateWebUser(id, fields) {
