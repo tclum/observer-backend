@@ -158,8 +158,27 @@ All API logic runs as Vercel serverless functions under `/api`. There is no pers
 - `onclick` string interpolation (previously used for user IDs and usernames in rendered buttons) has been replaced with `data-*` attributes + `addEventListener` calls, eliminating the risk of attribute-injection breaking out of event handler strings.
 - Implemented in `public/index.html` (`esc()` helper, applied to all table rows, chart bars, location cards, user rows, and observer tag chips).
 
+**Content Security Policy (set in `vercel.json`):**
+
+| Directive | Value | Purpose |
+|---|---|---|
+| `default-src` | `'none'` | Deny everything not explicitly allowed |
+| `script-src` | `'self' 'unsafe-inline'` | Allows the inline `<script>` block; blocks external script injection |
+| `style-src` | `'self' 'unsafe-inline' fonts.googleapis.com` | Inline styles + Google Fonts CSS |
+| `font-src` | `fonts.gstatic.com` | Google Fonts files only |
+| `connect-src` | `observer-backend-self.vercel.app` | API fetches restricted to the known backend — stops data exfiltration even if XSS occurs |
+| `img-src` | `'self' data:` | Allows `data:` URIs used by the CSV export |
+| `frame-ancestors` | `'none'` | Prevents clickjacking via iframe embedding |
+| `base-uri` | `'self'` | Blocks `<base>` tag injection that could redirect relative URLs |
+| `form-action` | `'none'` | No traditional form submissions allowed |
+
+**Additional security headers:**
+- `X-Frame-Options: DENY` — legacy clickjacking protection (belt + suspenders with `frame-ancestors`)
+- `X-Content-Type-Options: nosniff` — prevents MIME-type sniffing attacks
+- `Referrer-Policy: strict-origin-when-cross-origin` — limits referrer leakage to cross-origin requests
+
 **Residual risk:**
-- No Content Security Policy (CSP) header is set. Adding a strict CSP (`script-src 'self'`) would provide a second line of defence if an XSS vector is ever missed.
+- `'unsafe-inline'` for `script-src` is required because all JS lives in an inline `<script>` block in `index.html`. This means the CSP cannot distinguish between legitimate inline scripts and injected ones. The `esc()` HTML-escaping (above) is the primary XSS defence; `connect-src` is the key CSP backstop. Eliminating `'unsafe-inline'` would require moving JS to a separate file and adding a nonce or hash.
 
 ---
 
@@ -199,6 +218,6 @@ All API logic runs as Vercel serverless functions under `/api`. There is no pers
 | Injection | `encodeURIComponent` on formulas | Medium | Semantic content not validated |
 | Account lifecycle | Status check before token issuance | Strong | — |
 | Data scoping | Server-side filter from JWT payload | Strong | — |
-| Frontend XSS | `esc()` on all innerHTML, data attributes for events | Strong | No CSP header set |
+| Frontend XSS | `esc()` on all innerHTML, data attributes for events | Strong | `'unsafe-inline'` needed for inline scripts |
 | Token storage | In-memory JS variable only | Strong | Lost on refresh; XSS in same context can read it |
 | Client-side role UI | Defence in depth — real enforcement is server-side | Strong | — |
