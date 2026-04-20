@@ -25,6 +25,10 @@ button{font-family:'DM Sans',sans-serif;cursor:pointer}
 .btn-full:hover{opacity:.9}
 .btn-full:disabled{opacity:.4;cursor:default}
 .login-err{font-size:12px;color:var(--warn);margin-top:8px;display:none}
+.login-toggle{font-size:12px;color:var(--ink3);margin-top:16px;text-align:center}
+.login-toggle span{color:var(--accent);cursor:pointer;font-weight:500}
+.login-toggle span:hover{text-decoration:underline}
+.login-success{font-size:13px;color:var(--accent);background:var(--accent-light);border-radius:var(--r-sm);padding:12px 14px;margin-top:8px;display:none;line-height:1.5}
 
 /* ── APP SHELL ── */
 .app-shell{display:none;min-height:100vh}
@@ -163,12 +167,33 @@ tbody tr:hover td{background:var(--surface2)}
 <!-- LOGIN PAGE -->
 <div class="login-page" id="login-page">
   <div class="login-card">
-    <div class="login-logo">Observer</div>
-    <div class="login-sub">Management dashboard</div>
-    <div class="field"><label>Email</label><input type="email" id="l-email" placeholder="your@email.com"></div>
-    <div class="field"><label>Password</label><input type="password" id="l-pass" placeholder="••••••••"></div>
-    <div class="login-err" id="login-err"></div>
-    <button class="btn-full" id="login-btn" onclick="doWebLogin()">Sign in</button>
+
+    <!-- SIGN IN VIEW -->
+    <div id="signin-view">
+      <div class="login-logo">Spottly</div>
+      <div class="login-sub">Management dashboard</div>
+      <div class="field"><label>Email</label><input type="email" id="l-email" placeholder="your@email.com"></div>
+      <div class="field"><label>Password</label><input type="password" id="l-pass" placeholder="••••••••"></div>
+      <div class="login-err" id="login-err"></div>
+      <button class="btn-full" id="login-btn" onclick="doWebLogin()">Sign in</button>
+      <div class="login-toggle">Don't have an account? <span onclick="toggleAuthView('signup')">Create one</span></div>
+    </div>
+
+    <!-- SIGN UP VIEW -->
+    <div id="signup-view" style="display:none">
+      <div class="login-logo">Spottly</div>
+      <div class="login-sub">Create an observer account</div>
+      <div class="field"><label>Full name</label><input type="text" id="su-name" placeholder="Your name"></div>
+      <div class="field"><label>Username</label><input type="text" id="su-username" placeholder="e.g. jane.smith"></div>
+      <div class="field"><label>Email</label><input type="email" id="su-email" placeholder="your@email.com"></div>
+      <div class="field"><label>Password</label><input type="password" id="su-pass" placeholder="Min. 8 characters"></div>
+      <div class="field"><label>Confirm password</label><input type="password" id="su-pass2" placeholder="••••••••"></div>
+      <div class="login-err" id="signup-err"></div>
+      <div class="login-success" id="signup-success">Account request submitted. An admin will review and activate your account before you can sign in.</div>
+      <button class="btn-full" id="signup-btn" onclick="doSignup()">Create account</button>
+      <div class="login-toggle">Already have an account? <span onclick="toggleAuthView('signin')">Sign in</span></div>
+    </div>
+
   </div>
 </div>
 
@@ -405,6 +430,40 @@ async function api(endpoint, body) {
 }
 
 // ── AUTH ──
+function toggleAuthView(view) {
+  document.getElementById('signin-view').style.display = view === 'signin' ? 'block' : 'none';
+  document.getElementById('signup-view').style.display = view === 'signup' ? 'block' : 'none';
+  document.getElementById('login-err').style.display = 'none';
+  document.getElementById('signup-err').style.display = 'none';
+  document.getElementById('signup-success').style.display = 'none';
+}
+
+async function doSignup() {
+  const name = document.getElementById('su-name').value.trim();
+  const username = document.getElementById('su-username').value.trim();
+  const email = document.getElementById('su-email').value.trim();
+  const pass = document.getElementById('su-pass').value;
+  const pass2 = document.getElementById('su-pass2').value;
+  const err = document.getElementById('signup-err');
+  const btn = document.getElementById('signup-btn');
+  err.style.display = 'none';
+  if (!name || !username || !email || !pass) { err.textContent = 'All fields required'; err.style.display = 'block'; return; }
+  if (pass !== pass2) { err.textContent = 'Passwords do not match'; err.style.display = 'block'; return; }
+  if (pass.length < 8) { err.textContent = 'Password must be at least 8 characters'; err.style.display = 'block'; return; }
+  btn.disabled = true; btn.textContent = 'Creating account…';
+  try {
+    const res = await api('/web-auth', { action: 'webSignup', name, username, email, password: pass });
+    if (res.success) {
+      document.getElementById('signup-success').style.display = 'block';
+      btn.style.display = 'none';
+      ['su-name','su-username','su-email','su-pass','su-pass2'].forEach(id => document.getElementById(id).value = '');
+    } else {
+      err.textContent = res.error || 'Sign up failed'; err.style.display = 'block';
+      btn.disabled = false; btn.textContent = 'Create account';
+    }
+  } catch(e) { err.textContent = 'Could not reach server.'; err.style.display = 'block'; btn.disabled = false; btn.textContent = 'Create account'; }
+}
+
 async function doWebLogin() {
   const email = document.getElementById('l-email').value.trim();
   const pass = document.getElementById('l-pass').value.trim();
@@ -429,6 +488,7 @@ function doLogout() {
   document.getElementById('login-btn').disabled = false;
   document.getElementById('login-btn').textContent = 'Sign in';
   document.getElementById('login-err').style.display = 'none';
+  toggleAuthView('signin');
   document.getElementById('app-shell').classList.remove('active');
   document.getElementById('login-page').style.display = 'flex';
 }

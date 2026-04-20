@@ -1,0 +1,36 @@
+# Dependencies
+node_modules/
+
+# Environment variables — never commit real credentials
+.env
+.env.test
+.env.local
+.env.*.local
+
+# Generated test fixtures — rebuilt from Airtable before each test run
+tests/fixtures/airtable-data.json
+
+# Test output
+coverage/
+.nyc_output/
+
+# Build output
+.vercel/
+dist/
+build/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*

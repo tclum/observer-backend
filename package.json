@@ -3,7 +3,38 @@
   "version": "1.0.0",
   "description": "Serverless backend for Observer demographic app",
   "private": true,
+  "type": "module",
   "engines": {
     "node": "20.x"
+  },
+  "scripts": {
+    "test": "node --experimental-vm-modules node_modules/.bin/jest",
+    "test:unit": "node --experimental-vm-modules node_modules/.bin/jest tests/unit",
+    "test:e2e": "node --experimental-vm-modules node_modules/.bin/jest tests/e2e",
+    "test:coverage": "node --experimental-vm-modules node_modules/.bin/jest --coverage",
+    "test:ci": "node --experimental-vm-modules node_modules/.bin/jest --ci --coverage --forceExit"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "globalSetup": "./tests/globalSetup.js",
+    "testMatch": [
+      "**/tests/unit/**/*.test.js",
+      "**/tests/e2e/**/*.test.js"
+    ],
+    "transform": {},
+    "coverageDirectory": "coverage",
+    "collectCoverageFrom": [
+      "api/validators/**/*.js"
+    ],
+    "coverageThreshold": {
+      "global": {
+        "branches": 80,
+        "functions": 90,
+        "lines": 90
+      }
+    }
   }
 }
