@@ -44,6 +44,31 @@ export default async function handler(req, res) {
       });
     }
 
+    // ── SIGN UP (unauthenticated) ──
+    if (action === 'webSignup') {
+      const ip = getClientIP(req);
+      const rl = checkRateLimit(ip);
+      if (!rl.allowed) return res.status(429).json({ error: `Too many attempts. Try again in ${rl.resetIn} minutes.` });
+
+      const { name, username, email, password } = req.body;
+      if (!name || !username || !email || !password) return res.status(400).json({ error: 'All fields required' });
+      if (password.length < 8) return res.status(400).json({ error: 'Password must be at least 8 characters' });
+
+      const existing = await atGet('Users', `OR({Username}="${username}",{Email}="${email.toLowerCase()}")`);
+      if (existing.records.length) return res.status(409).json({ error: 'Username or email already in use' });
+
+      const hashedPassword = await hashPassword(password);
+      await atCreate('Users', {
+        Username: username,
+        Name: name,
+        Email: email.toLowerCase(),
+        Password: hashedPassword,
+        Role: 'Observer',
+        Status: 'Pending',
+      });
+      return res.status(200).json({ success: true });
+    }
+
     // ── TOKEN-AUTHENTICATED ACTIONS ──
     const payload = await verifyToken(req);
     if (!payload) return res.status(401).json({ error: 'Session expired. Please sign in again.' });
