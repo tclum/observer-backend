@@ -147,6 +147,65 @@ tbody tr:hover td{background:var(--surface2)}
 .profile-header{display:flex;align-items:center;gap:16px;margin-bottom:24px}
 .profile-avatar{width:56px;height:56px;border-radius:50%;background:var(--accent-light);display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-size:20px;font-weight:700;color:var(--accent);flex-shrink:0}
 
+/* ── RECORD (observer data collection) ── */
+.session-banner{display:flex;align-items:center;gap:14px;padding:14px 18px;background:var(--accent-light);border:1px solid rgba(27,58,45,.15);border-radius:var(--r);margin-bottom:18px;flex-wrap:wrap}
+.session-banner .sb-loc{font-family:'Syne',sans-serif;font-size:15px;font-weight:600;color:var(--accent)}
+.session-banner .sb-meta{font-size:12px;color:var(--ink2)}
+.session-banner .sb-spacer{flex:1}
+.session-banner .sb-missed{font-size:12px;color:var(--ink2);display:flex;align-items:center;gap:8px}
+.session-banner .sb-missed-num{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;color:var(--warn)}
+.mode-toggle{display:inline-flex;background:var(--surface2);border-radius:var(--r-pill);padding:3px;margin-bottom:16px}
+.mode-toggle .mt-btn{padding:7px 18px;font-size:13px;font-weight:500;border-radius:var(--r-pill);cursor:pointer;color:var(--ink3);border:none;background:none}
+.mode-toggle .mt-btn.active{background:var(--surface);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.06)}
+.rec-tabs{display:flex;gap:4px;border-bottom:1px solid var(--border);margin-bottom:18px}
+.rec-tab{padding:10px 16px;font-size:13px;font-weight:500;color:var(--ink3);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px}
+.rec-tab.active{color:var(--ink);border-bottom-color:var(--accent)}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{padding:7px 12px;border-radius:var(--r-pill);background:var(--surface2);color:var(--ink2);font-size:12px;font-weight:500;cursor:pointer;border:1px solid transparent;user-select:none;transition:all .12s}
+.chip:hover{background:var(--surface3)}
+.chip.sel{background:var(--accent);color:#fff;border-color:var(--accent)}
+.chip.sel-g{background:var(--purple-light);color:var(--purple);border-color:var(--purple-mid)}
+.qchip{padding:9px 16px;border-radius:var(--r-pill);background:var(--surface2);color:var(--ink2);font-size:13px;font-weight:500;cursor:pointer;border:1px solid transparent;user-select:none}
+.qchip.sel{background:var(--accent);color:#fff;border-color:var(--accent)}
+.mcard{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);margin-bottom:10px;overflow:hidden}
+.mhead{display:flex;align-items:center;gap:10px;padding:12px 14px;cursor:pointer}
+.mav{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-size:12px;font-weight:700;color:#fff;flex-shrink:0}
+.mav.c0{background:#1B3A2D}.mav.c1{background:#4A3FB5}.mav.c2{background:#185FA5}.mav.c3{background:#B45309}.mav.c4{background:#7B74D4}
+.mtitle{flex:1;font-size:14px;font-weight:500;color:var(--ink)}
+.msub{font-size:12px;color:var(--ink3);font-weight:400;margin-left:4px}
+.mremove{width:24px;height:24px;border-radius:50%;background:var(--surface2);color:var(--ink3);display:flex;align-items:center;justify-content:center;font-size:16px;cursor:pointer;line-height:1}
+.mbody{display:none;padding:0 14px 14px;border-top:1px solid var(--border)}
+.mcard.open .mbody{display:block;padding-top:12px}
+.mf{margin-top:12px}
+.mfl{font-size:11px;font-weight:500;color:var(--ink3);letter-spacing:.05em;text-transform:uppercase;margin-bottom:6px}
+.shared-section{margin-top:18px;padding-top:18px;border-top:1px solid var(--border)}
+.shared-label{font-size:11px;font-weight:500;color:var(--ink3);letter-spacing:.05em;text-transform:uppercase;margin-bottom:8px}
+.flash{display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--accent-light);border:1px solid rgba(27,58,45,.15);border-radius:var(--r);margin-bottom:14px}
+.flash .chk{width:22px;height:22px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.flash-t{font-size:13px;font-weight:500;color:var(--ink)}
+.flash-s{font-size:12px;color:var(--ink2);margin-top:2px}
+.ecard{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:12px 14px;margin-bottom:8px}
+.emeta{display:flex;gap:12px;font-size:11px;color:var(--ink3);margin-bottom:6px;font-family:'DM Mono',monospace}
+.emrows{display:flex;flex-direction:column;gap:4px;font-size:13px;color:var(--ink2)}
+.emrow{display:flex;align-items:center;gap:8px}
+.edot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.edot.c0{background:#1B3A2D}.edot.c1{background:#4A3FB5}.edot.c2{background:#185FA5}.edot.c3{background:#B45309}.edot.c4{background:#7B74D4}
+.etags{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px}
+.etag{padding:2px 8px;border-radius:var(--r-pill);background:var(--purple-light);color:var(--purple);font-size:11px;font-weight:500}
+.etag.missed{background:var(--warn-light);color:var(--warn)}
+.btn-row{display:flex;gap:10px;margin-top:16px;flex-wrap:wrap}
+.btn-lg{padding:12px 20px;border:none;border-radius:var(--r-sm);font-family:'Syne',sans-serif;font-size:14px;font-weight:600;cursor:pointer}
+.btn-lg.primary{background:var(--accent);color:#fff}
+.btn-lg.primary:hover{opacity:.9}
+.btn-lg.primary:disabled{opacity:.4;cursor:default}
+.btn-lg.warn{background:var(--warn);color:#fff}
+.btn-lg.outline{background:var(--surface);border:1px solid var(--border2);color:var(--ink2)}
+.sync-bar{display:none;align-items:center;gap:10px;padding:10px 14px;border-radius:var(--r-sm);font-size:13px;margin-bottom:16px}
+.sync-bar.idle{background:var(--surface2);color:var(--ink2)}
+.sync-bar.syncing{background:var(--purple-light);color:var(--purple)}
+.sync-bar.ok{background:var(--accent-light);color:var(--accent)}
+.sync-bar.err{background:var(--warn-light);color:var(--warn)}
+
 /* ── LOADING ── */
 .loading{display:flex;align-items:center;justify-content:center;padding:48px;color:var(--ink3);font-size:14px;gap:10px}
 .spinner{width:18px;height:18px;border:2px solid var(--border2);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0}
@@ -232,6 +291,10 @@ tbody tr:hover td{background:var(--surface2)}
       <div class="nav-item admin-only" onclick="navTo('config')" id="nav-config" style="display:none">
         <svg width="16" height="16" fill="none" viewBox="0 0 16 16"><circle cx="8" cy="8" r="2" stroke="currentColor" stroke-width="1.3"/><path d="M8 1v2M8 13v2M1 8h2M13 8h2M3 3l1.4 1.4M11.6 11.6L13 13M3 13l1.4-1.4M11.6 4.4L13 3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
         Field Options
+      </div>
+      <div class="nav-item observer-only" onclick="navTo('record')" id="nav-record" style="display:none">
+        <svg width="16" height="16" fill="none" viewBox="0 0 16 16"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.3"/><circle cx="8" cy="8" r="2.5" fill="currentColor"/></svg>
+        Record
       </div>
       <div class="nav-item observer-only" onclick="navTo('mydata')" id="nav-mydata" style="display:none">
         <svg width="16" height="16" fill="none" viewBox="0 0 16 16"><circle cx="8" cy="5" r="3" stroke="currentColor" stroke-width="1.3"/><path d="M2 14c0-3.314 2.686-6 6-6s6 2.686 6 6" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
@@ -346,6 +409,123 @@ tbody tr:hover td{background:var(--surface2)}
       <div class="card">
         <div class="card-body" id="config-body">
           <div style="color:var(--ink3);font-size:13px">Loading…</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RECORD (observer data collection) -->
+    <div class="page" id="page-record">
+      <div class="page-header">
+        <div class="page-title">Record</div>
+        <div class="page-sub">Log observations from the field</div>
+      </div>
+
+      <!-- SETUP CARD (no active session) -->
+      <div class="card" id="rec-setup">
+        <div class="card-header"><div class="card-title">Start a session</div></div>
+        <div class="card-body">
+          <div class="field"><label>Location</label>
+            <select class="filter-select" id="rec-loc" style="width:100%;min-width:0" onchange="recCheckStart()">
+              <option value="">Select a location…</option>
+            </select>
+          </div>
+          <div class="field"><label>Session name (optional)</label>
+            <input class="filter-input" type="text" id="rec-sname" placeholder="e.g. Saturday morning" style="width:100%;min-width:0">
+          </div>
+          <div class="btn-row">
+            <button class="btn-lg primary" id="rec-start-btn" onclick="startSession()" disabled>Start session</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ACTIVE SESSION VIEW -->
+      <div id="rec-active" style="display:none">
+        <div class="session-banner">
+          <div>
+            <div class="sb-loc" id="sb-loc"></div>
+            <div class="sb-meta" id="sb-meta"></div>
+          </div>
+          <div class="sb-spacer"></div>
+          <div class="sb-missed">Missed groups <span class="sb-missed-num" id="missed-n">0</span>
+            <button class="btn-sm outline" onclick="incMissed()">+ Missed</button>
+          </div>
+          <button class="btn-sm danger" onclick="endSession()">End session</button>
+        </div>
+
+        <div class="sync-bar" id="sync-bar"><span id="sync-msg"></span></div>
+
+        <div class="rec-tabs">
+          <div class="rec-tab active" id="rec-tab-log" onclick="switchRecTab('log')">Log</div>
+          <div class="rec-tab" id="rec-tab-entries" onclick="switchRecTab('entries')">Entries</div>
+          <div class="rec-tab" id="rec-tab-summary" onclick="switchRecTab('summary')">Summary</div>
+        </div>
+
+        <!-- LOG TAB -->
+        <div id="rec-pane-log">
+          <div class="mode-toggle">
+            <button class="mt-btn active" id="mfull" onclick="setMode('full')">Full log</button>
+            <button class="mt-btn" id="mquick" onclick="setMode('quick')">Quick log</button>
+          </div>
+
+          <div id="success-area"></div>
+
+          <!-- FULL LOG -->
+          <div id="full-wrap">
+            <div class="card">
+              <div class="card-header">
+                <div class="card-title">Group members</div>
+                <button class="btn-sm primary" onclick="addMember()">+ Add member</button>
+              </div>
+              <div class="card-body">
+                <div id="mlist"></div>
+                <div class="shared-section">
+                  <div class="shared-label">Shared disability / aid</div>
+                  <div class="chips" id="sh-dis"></div>
+                </div>
+                <div class="shared-section">
+                  <div class="shared-label">Shared emotional state</div>
+                  <div class="chips" id="sh-emo"></div>
+                </div>
+                <div class="btn-row">
+                  <button class="btn-lg primary" onclick="submitFull()">Log observation</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- QUICK LOG -->
+          <div id="quick-wrap" style="display:none">
+            <div class="card">
+              <div class="card-header"><div class="card-title">Quick log</div></div>
+              <div class="card-body">
+                <div class="mf"><div class="mfl">Age range</div><div class="chips" id="q-age"></div></div>
+                <div class="mf"><div class="mfl">Gender presentation</div><div class="chips" id="q-gen"></div></div>
+                <div class="mf"><div class="mfl">Group size</div>
+                  <div class="chips" id="q-sz">
+                    <div class="qchip" data-v="1" onclick="qC(this,'sz')">1</div>
+                    <div class="qchip" data-v="2" onclick="qC(this,'sz')">2</div>
+                    <div class="qchip" data-v="3" onclick="qC(this,'sz')">3</div>
+                    <div class="qchip" data-v="4" onclick="qC(this,'sz')">4</div>
+                    <div class="qchip" data-v="5+" onclick="qC(this,'sz')">5+</div>
+                  </div>
+                </div>
+                <div class="btn-row">
+                  <button class="btn-lg primary" onclick="submitQuick()">Quick log</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ENTRIES TAB -->
+        <div id="rec-pane-entries" style="display:none">
+          <div style="font-size:12px;color:var(--ink3);margin-bottom:10px" id="ecount">0 entries</div>
+          <div id="elist"></div>
+        </div>
+
+        <!-- SUMMARY TAB -->
+        <div id="rec-pane-summary" style="display:none">
+          <div id="scontent"></div>
         </div>
       </div>
     </div>
@@ -472,6 +652,14 @@ let locAssignedObservers = [];
 let locAssignedBusinesses = [];
 let umBizAssignedLocs = [];
 let observerPseudonyms = {};
+let recSess = { loc: null, name: '', t: null };
+let recEntries = [];
+let recMembers = [];
+let recShared = { dis: [], emo: [] };
+let recMissed = 0;
+let recQs = { age: null, gen: null, sz: null };
+let recMid = 0;
+const REC_AC = ['c0','c1','c2','c3','c4'];
 
 function isRole(r) { return currentUser?.role === r; }
 function isAdmin() { return isRole('Admin'); }
@@ -596,7 +784,12 @@ function initApp() {
 }
 
 // ── NAVIGATION ──
+function hasUnsyncedSession() { return recSess.t && recEntries.length > 0; }
+
 function navTo(page) {
+  if (page !== 'record' && hasUnsyncedSession()) {
+    if (!confirm(`You have ${recEntries.length} unsynced entries in your active session. Leave the Record page anyway? Use "End session" to sync them first.`)) return;
+  }
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.getElementById('nav-' + page)?.classList.add('active');
@@ -607,7 +800,12 @@ function navTo(page) {
   if (page === 'users') renderUsers();
   if (page === 'mydata') renderMyData();
   if (page === 'config') renderFieldConfig();
+  if (page === 'record') initRecordPage();
 }
+
+window.addEventListener('beforeunload', e => {
+  if (hasUnsyncedSession()) { e.preventDefault(); e.returnValue = ''; return ''; }
+});
 
 // ── LOAD DATA ──
 async function loadAllData() {
@@ -1162,6 +1360,307 @@ function showToast(msg) {
 
 document.getElementById('l-pass').addEventListener('keydown', e => { if (e.key === 'Enter') doWebLogin(); });
 document.querySelectorAll('.modal-overlay').forEach(m => m.addEventListener('click', e => { if (e.target === m) m.classList.remove('open'); }));
+
+// ── RECORD PAGE ──
+async function initRecordPage() {
+  if (!fieldConfig) {
+    try { const res = await api('/config', { action: 'getConfig' }); fieldConfig = res.config || null; }
+    catch(e) { showToast('Could not load field options'); return; }
+  }
+  if (!recSess.t) {
+    try {
+      const res = await api('/locations', { action: 'getAssignedLocations' });
+      const locs = res.locations || [];
+      const sel = document.getElementById('rec-loc');
+      sel.innerHTML = '<option value="">Select a location…</option>' + locs.map(l => `<option value="${esc(l.name)}">${esc(l.name)}</option>`).join('');
+    } catch(e) { showToast('Could not load locations'); }
+    document.getElementById('rec-setup').style.display = 'block';
+    document.getElementById('rec-active').style.display = 'none';
+  } else {
+    document.getElementById('rec-setup').style.display = 'none';
+    document.getElementById('rec-active').style.display = 'block';
+    renderSharedChips();
+    renderM();
+  }
+}
+
+function recCheckStart() {
+  document.getElementById('rec-start-btn').disabled = !document.getElementById('rec-loc').value;
+}
+
+function startSession() {
+  const loc = document.getElementById('rec-loc').value;
+  if (!loc) { showToast('Please select a location'); return; }
+  recSess.loc = loc;
+  recSess.name = document.getElementById('rec-sname').value.trim() || 'Session';
+  recSess.t = new Date();
+  recEntries = [];
+  recMissed = 0;
+  recMembers = [];
+  recMid = 0;
+  recShared = { dis: [], emo: [] };
+  document.getElementById('sb-loc').textContent = recSess.loc;
+  document.getElementById('sb-meta').textContent = recSess.name + ' · ' + recSess.t.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+  document.getElementById('missed-n').textContent = '0';
+  document.getElementById('rec-setup').style.display = 'none';
+  document.getElementById('rec-active').style.display = 'block';
+  document.getElementById('success-area').innerHTML = '';
+  switchRecTab('log');
+  setMode('full');
+  renderSharedChips();
+  resetFull();
+  setSyncBar('idle', 'Ready · entries sync to Airtable on End session');
+}
+
+async function endSession() {
+  if (!recEntries.length) {
+    if (!confirm('End session? No entries logged.')) return;
+  } else if (!confirm(`End session? ${recEntries.length} entries will sync to Airtable.`)) return;
+
+  let synced = true;
+  if (recEntries.length) synced = await syncRecEntries();
+  if (synced) {
+    recSess = { loc: null, name: '', t: null };
+    recEntries = []; recMembers = []; recMissed = 0; recMid = 0;
+    recShared = { dis: [], emo: [] };
+    document.getElementById('rec-loc').value = '';
+    document.getElementById('rec-sname').value = '';
+    document.getElementById('rec-start-btn').disabled = true;
+    document.getElementById('rec-setup').style.display = 'block';
+    document.getElementById('rec-active').style.display = 'none';
+  }
+}
+
+function setSyncBar(state, msg) {
+  const bar = document.getElementById('sync-bar');
+  bar.style.display = 'flex';
+  bar.className = 'sync-bar ' + state;
+  document.getElementById('sync-msg').textContent = msg;
+}
+
+async function syncRecEntries() {
+  setSyncBar('syncing', 'Syncing to Airtable…');
+  const rows = [];
+  recEntries.forEach(e => {
+    if (e.missed) { rows.push({ fields: { 'Entry ID': String(e.id), 'Timestamp': e.ts.toISOString(), 'Type': 'missed', 'Observer': e.obs, 'Location': e.loc, 'Session': e.ses, 'Missed': 'YES' } }); return; }
+    if (!e.members.length) { rows.push({ fields: { 'Entry ID': String(e.id), 'Timestamp': e.ts.toISOString(), 'Type': e.type, 'Observer': e.obs, 'Location': e.loc, 'Session': e.ses, 'Disability': (e.dis||[]).join(', '), 'Emotion': (e.emo||[]).join(', '), 'Missed': 'NO' } }); return; }
+    e.members.forEach((m, i) => rows.push({ fields: { 'Entry ID': String(e.id), 'Timestamp': e.ts.toISOString(), 'Type': e.type, 'Observer': e.obs, 'Location': e.loc, 'Session': e.ses, 'Person #': String(i+1), 'Age': m.age||'', 'Gender': m.gender||'', 'Ethnicity': m.eth||'', 'Disability': i===0?(e.dis||[]).join(', '):'', 'Emotion': i===0?(e.emo||[]).join(', '):'', 'Missed': 'NO' } }));
+  });
+  try {
+    const res = await api('/sync', { records: rows });
+    if (!res.success) throw new Error(res.error || 'Sync failed');
+    setSyncBar('ok', `Synced ${rows.length} rows to Airtable`);
+    setTimeout(() => { document.getElementById('sync-bar').style.display = 'none'; }, 4000);
+    return true;
+  } catch(err) {
+    setSyncBar('err', 'Sync failed: ' + (err.message || 'Unknown error') + ' — try End session again');
+    return false;
+  }
+}
+
+function switchRecTab(name) {
+  ['log','entries','summary'].forEach(n => {
+    document.getElementById('rec-tab-' + n).classList.toggle('active', n === name);
+    document.getElementById('rec-pane-' + n).style.display = n === name ? 'block' : 'none';
+  });
+  if (name === 'entries') renderE();
+  if (name === 'summary') renderS();
+}
+
+function setMode(m) {
+  document.getElementById('mfull').classList.toggle('active', m === 'full');
+  document.getElementById('mquick').classList.toggle('active', m === 'quick');
+  document.getElementById('full-wrap').style.display = m === 'full' ? 'block' : 'none';
+  document.getElementById('quick-wrap').style.display = m === 'quick' ? 'block' : 'none';
+}
+
+function renderSharedChips() {
+  if (!fieldConfig) return;
+  const disEl = document.getElementById('sh-dis');
+  const emoEl = document.getElementById('sh-emo');
+  if (disEl) disEl.innerHTML = (fieldConfig.disabilities||[]).map(v => `<div class="chip${recShared.dis.includes(v)?' sel-g':''}" data-v="${esc(v)}" onclick="shChip(this,'dis',false)">${esc(v)}</div>`).join('');
+  if (emoEl) emoEl.innerHTML = (fieldConfig.emotions||[]).map(v => `<div class="chip${recShared.emo.includes(v)?' sel-g':''}" data-v="${esc(v)}" onclick="shChip(this,'emo',true)">${esc(v)}</div>`).join('');
+  if (!recShared.dis.length && (fieldConfig.disabilities||[]).includes('None observed')) {
+    recShared.dis = ['None observed'];
+    document.querySelector('#sh-dis .chip[data-v="None observed"]')?.classList.add('sel-g');
+  }
+  if (!recShared.emo.length && (fieldConfig.emotions||[]).includes('Neutral')) {
+    recShared.emo = ['Neutral'];
+    document.querySelector('#sh-emo .chip[data-v="Neutral"]')?.classList.add('sel-g');
+  }
+  const qAge = document.getElementById('q-age');
+  const qGen = document.getElementById('q-gen');
+  if (qAge) qAge.innerHTML = (fieldConfig.ages||[]).map(v => `<div class="qchip" data-v="${esc(v)}" onclick="qC(this,'age')">${esc(v)}</div>`).join('');
+  if (qGen) qGen.innerHTML = (fieldConfig.genders||[]).map(v => `<div class="qchip" data-v="${esc(v)}" onclick="qC(this,'gen')">${esc(v)}</div>`).join('');
+}
+
+function addMember() {
+  const id = recMid++;
+  recMembers.push({ id, age: null, gender: null, eth: null });
+  renderM();
+  setTimeout(() => { collapseAll(); document.querySelector(`.mcard[data-id="${id}"]`)?.classList.add('open'); }, 30);
+}
+
+function collapseAll() { document.querySelectorAll('.mcard').forEach(c => c.classList.remove('open')); }
+
+function renderM() {
+  if (!fieldConfig) return;
+  const list = document.getElementById('mlist');
+  if (!list) return;
+  list.innerHTML = recMembers.map((m, i) => {
+    const cc = REC_AC[i % 5];
+    const parts = [m.age, m.gender, m.eth].filter(Boolean);
+    const sub = parts.length ? esc(parts.join(' · ')) : '<span style="color:var(--ink3);font-weight:400">no fields selected</span>';
+    const ageChips = (fieldConfig.ages||[]).map(v => `<div class="chip${m.age===v?' sel':''}" data-mid="${m.id}" data-f="age" data-v="${esc(v)}">${esc(v)}</div>`).join('');
+    const genChips = (fieldConfig.genders||[]).map(v => `<div class="chip${m.gender===v?' sel':''}" data-mid="${m.id}" data-f="gender" data-v="${esc(v)}">${esc(v)}</div>`).join('');
+    const ethChips = (fieldConfig.ethnicities||[]).map(v => `<div class="chip${m.eth===v?' sel':''}" data-mid="${m.id}" data-f="eth" data-v="${esc(v)}">${esc(v)}</div>`).join('');
+    return `<div class="mcard" data-id="${m.id}">
+      <div class="mhead" data-tog="${m.id}"><div class="mav ${cc}">${i+1}</div><div class="mtitle">Person ${i+1} <span class="msub">${sub}</span></div>${recMembers.length>1?`<div class="mremove" data-rem="${m.id}">×</div>`:''}</div>
+      <div class="mbody">
+        <div class="mf"><div class="mfl">Age range</div><div class="chips">${ageChips}</div></div>
+        <div class="mf"><div class="mfl">Gender presentation</div><div class="chips">${genChips}</div></div>
+        <div class="mf"><div class="mfl">Race / ethnicity</div><div class="chips">${ethChips}</div></div>
+      </div>
+    </div>`;
+  }).join('');
+  list.querySelectorAll('[data-tog]').forEach(el => el.addEventListener('click', e => {
+    if (e.target.dataset.rem) return;
+    const c = list.querySelector(`.mcard[data-id="${el.dataset.tog}"]`);
+    const was = c.classList.contains('open');
+    collapseAll(); if (!was) c.classList.add('open');
+  }));
+  list.querySelectorAll('[data-rem]').forEach(el => el.addEventListener('click', e => {
+    e.stopPropagation();
+    recMembers = recMembers.filter(m => String(m.id) !== el.dataset.rem);
+    if (!recMembers.length) addMember(); else renderM();
+  }));
+  list.querySelectorAll('.chip[data-mid]').forEach(el => el.addEventListener('click', () => {
+    const m = recMembers.find(x => String(x.id) === el.dataset.mid);
+    if (!m) return;
+    m[el.dataset.f] = el.dataset.v;
+    renderM();
+    list.querySelector(`.mcard[data-id="${el.dataset.mid}"]`)?.classList.add('open');
+  }));
+}
+
+function shChip(el, f, single) {
+  const v = el.dataset.v;
+  if (single) {
+    recShared[f] = [v];
+    document.querySelectorAll('#sh-' + f + ' .chip').forEach(c => c.classList.remove('sel','sel-g'));
+    el.classList.add('sel-g');
+  } else {
+    if (v === 'None observed') {
+      recShared[f] = ['None observed'];
+      document.querySelectorAll('#sh-' + f + ' .chip').forEach(c => c.classList.remove('sel','sel-g'));
+      el.classList.add('sel-g');
+    } else {
+      document.querySelector('#sh-' + f + ' .chip[data-v="None observed"]')?.classList.remove('sel','sel-g');
+      recShared[f] = recShared[f].filter(x => x !== 'None observed');
+      if (recShared[f].includes(v)) {
+        recShared[f] = recShared[f].filter(x => x !== v);
+        el.classList.remove('sel','sel-g');
+      } else {
+        recShared[f].push(v);
+        el.classList.add('sel-g');
+      }
+    }
+  }
+}
+
+function resetFull() {
+  recMembers = []; recMid = 0;
+  recShared = { dis: [], emo: [] };
+  renderSharedChips();
+  addMember();
+}
+
+function submitFull() {
+  const e = {
+    id: recEntries.length + 1, ts: new Date(), type: 'full',
+    loc: recSess.loc, ses: recSess.name, obs: currentUser.username,
+    members: recMembers.map(m => ({ age: m.age, gender: m.gender, eth: m.eth })),
+    dis: [...recShared.dis], emo: [...recShared.emo], missed: false,
+  };
+  recEntries.push(e);
+  const a = document.getElementById('success-area');
+  a.innerHTML = `<div class="flash"><div class="chk"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2.5 7L5.5 10L11.5 4" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div><div class="flash-t">Logged #${e.id} · ${e.members.length} ${e.members.length===1?'person':'people'}</div><div class="flash-s">${esc(e.members.map(m => [m.age, m.gender].filter(Boolean).join(' ') || 'partial').join(' · '))}</div></div></div>`;
+  setTimeout(() => { a.innerHTML = ''; }, 4000);
+  resetFull();
+}
+
+function qC(el, f) {
+  document.querySelectorAll('#q-' + f + ' .qchip').forEach(c => c.classList.remove('sel'));
+  el.classList.add('sel');
+  recQs[f] = el.dataset.v;
+}
+
+function submitQuick() {
+  if (!recQs.age || !recQs.gen || !recQs.sz) { showToast('Select age, gender and group size'); return; }
+  recEntries.push({
+    id: recEntries.length + 1, ts: new Date(), type: 'quick',
+    loc: recSess.loc, ses: recSess.name, obs: currentUser.username,
+    members: [{ age: recQs.age, gender: recQs.gen, eth: '—' }],
+    groupSize: recQs.sz, dis: [], emo: [], missed: false,
+  });
+  document.querySelectorAll('.qchip').forEach(c => c.classList.remove('sel'));
+  recQs = { age: null, gen: null, sz: null };
+  showToast('Quick log saved');
+}
+
+function incMissed() {
+  if (!recSess.t) { showToast('Start a session first'); return; }
+  recMissed++;
+  document.getElementById('missed-n').textContent = recMissed;
+  recEntries.push({
+    id: recEntries.length + 1, ts: new Date(), type: 'missed',
+    loc: recSess.loc, ses: recSess.name, obs: currentUser.username,
+    members: [], dis: [], emo: [], missed: true,
+  });
+  showToast('Missed group recorded');
+}
+
+function renderE() {
+  const list = document.getElementById('elist');
+  document.getElementById('ecount').textContent = recEntries.length + (recEntries.length === 1 ? ' entry' : ' entries');
+  if (!recEntries.length) { list.innerHTML = '<div class="empty-state"><div class="empty-state-sub">No entries yet</div></div>'; return; }
+  list.innerHTML = recEntries.slice().reverse().map(e => {
+    const t = e.ts.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    if (e.missed) return `<div class="ecard"><div class="emeta"><span>#${e.id}</span><span>${esc(t)}</span><span>${esc(e.obs)}</span></div><div class="etags"><div class="etag missed">Missed group</div></div></div>`;
+    const mr = e.members.map((m, i) => `<div class="emrow"><div class="edot ${REC_AC[i%5]}"></div>${esc(m.age||'?')} · ${esc(m.gender||'?')}${m.eth && m.eth !== '—' ? ' · ' + esc(m.eth) : ''}</div>`).join('');
+    const tags = [...(e.dis||[]), ...(e.emo||[])].filter(Boolean);
+    return `<div class="ecard"><div class="emeta"><span>#${e.id}</span><span>${esc(t)}</span><span>${esc(e.obs)}</span><span>${e.type==='quick'?'Quick':'Full'}</span></div>${mr?`<div class="emrows">${mr}</div>`:''}${tags.length?`<div class="etags">${tags.map(t => `<div class="etag">${esc(t)}</div>`).join('')}</div>`:''}</div>`;
+  }).join('');
+}
+
+function renderS() {
+  const el = document.getElementById('scontent');
+  const real = recEntries.filter(e => !e.missed);
+  const total = real.length;
+  const tp = real.reduce((s, e) => s + e.members.length, 0);
+  const ms = recEntries.filter(e => e.missed).length;
+  if (!total && !ms) { el.innerHTML = '<div class="empty-state"><div class="empty-state-sub">No data yet</div></div>'; return; }
+  const fr = k => { const c = {}; real.forEach(e => e.members.forEach(m => { const v = m[k] || '?'; c[v] = (c[v]||0) + 1; })); return Object.entries(c).sort((a,b) => b[1]-a[1]); };
+  const frs = k => { const c = {}; real.forEach(e => (e[k]||[]).forEach(v => { c[v] = (c[v]||0) + 1; })); return Object.entries(c).sort((a,b) => b[1]-a[1]); };
+  const bars = (pairs, cls='') => pairs.slice(0,5).map(([l,c]) => {
+    const p = tp ? Math.round(c/tp*100) : 0;
+    return `<div class="bar-section"><div class="bar-lbl"><span>${esc(l)}</span><span class="bar-pct">${c} · ${p}%</span></div><div class="bar-track"><div class="bar-fill ${cls}" style="width:${p}%"></div></div></div>`;
+  }).join('');
+  el.innerHTML = `
+    <div class="stat-row">
+      <div class="stat-card accent"><div class="stat-num">${total}</div><div class="stat-lbl">Observations</div></div>
+      <div class="stat-card"><div class="stat-num">${tp}</div><div class="stat-lbl">People logged</div></div>
+      <div class="stat-card"><div class="stat-num">${total?(tp/total).toFixed(1):0}</div><div class="stat-lbl">Avg group size</div></div>
+      <div class="stat-card"><div class="stat-num" style="color:var(--warn)">${ms}</div><div class="stat-lbl">Missed groups</div></div>
+    </div>
+    <div class="chart-grid">
+      <div class="card"><div class="card-header"><div class="card-title">Age ranges</div></div><div class="card-body">${bars(fr('age'),'p') || '<div class="empty-state-sub">No data</div>'}</div></div>
+      <div class="card"><div class="card-header"><div class="card-title">Gender</div></div><div class="card-body">${bars(fr('gender')) || '<div class="empty-state-sub">No data</div>'}</div></div>
+      <div class="card"><div class="card-header"><div class="card-title">Ethnicity</div></div><div class="card-body">${bars(fr('eth'),'p') || '<div class="empty-state-sub">No data</div>'}</div></div>
+      <div class="card"><div class="card-header"><div class="card-title">Emotional state</div></div><div class="card-body">${bars(frs('emo'),'w') || '<div class="empty-state-sub">No data</div>'}</div></div>
+    </div>
+  `;
+}
 </script>
 </body>
 </html>
