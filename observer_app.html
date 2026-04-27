@@ -394,6 +394,7 @@ async function doLogin(){
   try{
     const res=await api('/auth',{action:'login',username:u,pin:p});
     if(!res.success){err.textContent=res.error||'Login failed';err.style.display='block';hideLoading();btn.disabled=false;return;}
+    if(res.user.role==='Business'){err.textContent='Please use the web dashboard at https://observer-backend.netlify.app';err.style.display='block';hideLoading();btn.disabled=false;return;}
     user={username:u,role:res.user.role,name:res.user.name};
     err.style.display='none';
     await loadFieldConfig();

@@ -96,7 +96,13 @@ tbody tr:hover td{background:var(--surface2)}
 .badge.suspended{background:var(--warn-light);color:var(--warn)}
 .badge.rejected{background:var(--surface2);color:var(--ink3)}
 .badge.admin{background:var(--purple-light);color:var(--purple)}
+.badge.business{background:#E6F1FB;color:#185FA5}
 .badge.observer{background:var(--accent-light);color:var(--accent)}
+.welcome-row{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.welcome-name{font-family:'Syne',sans-serif;font-size:18px;font-weight:600;color:var(--ink)}
+.sidebar-loc-list{padding:8px 24px 16px}
+.sidebar-loc-label{font-size:10px;font-weight:500;color:rgba(255,255,255,.3);letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px}
+.sidebar-loc-item{font-size:12px;color:rgba(255,255,255,.6);padding:3px 0;line-height:1.3}
 .badge.retail{background:#E6F1FB;color:#185FA5}
 .badge.restaurant{background:#FFF3E0;color:#B45309}
 .badge.event{background:var(--purple-light);color:var(--purple)}
@@ -223,11 +229,19 @@ tbody tr:hover td{background:var(--surface2)}
         <svg width="16" height="16" fill="none" viewBox="0 0 16 16"><circle cx="8" cy="5" r="3" stroke="currentColor" stroke-width="1.3"/><path d="M2 14c0-3.314 2.686-6 6-6s6 2.686 6 6" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
         Users
       </div>
+      <div class="nav-item admin-only" onclick="navTo('config')" id="nav-config" style="display:none">
+        <svg width="16" height="16" fill="none" viewBox="0 0 16 16"><circle cx="8" cy="8" r="2" stroke="currentColor" stroke-width="1.3"/><path d="M8 1v2M8 13v2M1 8h2M13 8h2M3 3l1.4 1.4M11.6 11.6L13 13M3 13l1.4-1.4M11.6 4.4L13 3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+        Field Options
+      </div>
       <div class="nav-item observer-only" onclick="navTo('mydata')" id="nav-mydata" style="display:none">
         <svg width="16" height="16" fill="none" viewBox="0 0 16 16"><circle cx="8" cy="5" r="3" stroke="currentColor" stroke-width="1.3"/><path d="M2 14c0-3.314 2.686-6 6-6s6 2.686 6 6" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
-        My data
+        My Sessions
       </div>
     </nav>
+    <div class="sidebar-loc-list" id="sb-business-locs" style="display:none">
+      <div class="sidebar-loc-label">Your locations</div>
+      <div id="sb-business-locs-items"></div>
+    </div>
     <div class="sidebar-footer">
       <div class="logout-link" onclick="doLogout()">Sign out</div>
     </div>
@@ -239,6 +253,7 @@ tbody tr:hover td{background:var(--surface2)}
     <!-- DASHBOARD -->
     <div class="page active" id="page-dashboard">
       <div class="page-header">
+        <div class="welcome-row"><div class="welcome-name" id="dash-welcome">Welcome</div><span class="badge" id="dash-role-badge"></span></div>
         <div class="page-title">Dashboard</div>
         <div class="page-sub" id="dash-sub">Overview of all observations</div>
       </div>
@@ -298,16 +313,39 @@ tbody tr:hover td{background:var(--surface2)}
     <div class="page" id="page-users">
       <div class="page-header">
         <div style="display:flex;align-items:center;justify-content:space-between">
-          <div><div class="page-title">Users</div><div class="page-sub">Manage observer accounts</div></div>
+          <div><div class="page-title">Users</div><div class="page-sub">Manage observer, admin, and business accounts</div></div>
           <button class="btn-sm primary" onclick="openCreateUserModal()">+ Create user</button>
         </div>
       </div>
-      <div class="card">
+      <div class="card" style="margin-bottom:20px">
+        <div class="card-header"><div class="card-title">Admin & Observer accounts</div></div>
         <div class="table-wrap">
           <table>
             <thead><tr><th>Name</th><th>Username</th><th>Email</th><th>Role</th><th>Status</th><th>Actions</th></tr></thead>
             <tbody id="users-tbody"></tbody>
           </table>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header"><div class="card-title">Business accounts</div></div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Name</th><th>Username</th><th>Email</th><th>Locations</th><th>Status</th><th>Actions</th></tr></thead>
+            <tbody id="business-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- FIELD OPTIONS (admin) -->
+    <div class="page" id="page-config">
+      <div class="page-header">
+        <div class="page-title">Field Options</div>
+        <div class="page-sub">Configure values shown to observers in the app</div>
+      </div>
+      <div class="card">
+        <div class="card-body" id="config-body">
+          <div style="color:var(--ink3);font-size:13px">Loading…</div>
         </div>
       </div>
     </div>
@@ -358,6 +396,13 @@ tbody tr:hover td{background:var(--surface2)}
           <button onclick="addObserverToLoc()" style="padding:8px 14px;background:var(--accent);color:#fff;border:none;border-radius:var(--r-sm);font-size:12px;font-weight:500;cursor:pointer">Add</button>
         </div>
       </div>
+      <div class="field"><label>Assigned businesses</label>
+        <div id="lm-businesses-list" style="display:flex;flex-wrap:wrap;gap:6px;min-height:36px;padding:8px;border:1px solid var(--border2);border-radius:var(--r-sm);background:var(--surface)"></div>
+        <div style="margin-top:8px;display:flex;gap:6px">
+          <select id="lm-biz-select" style="flex:1;padding:8px 10px;border-radius:var(--r-sm);border:1px solid var(--border2);font-family:'DM Sans',sans-serif;font-size:13px;color:var(--ink);outline:none"></select>
+          <button onclick="addBusinessToLoc()" style="padding:8px 14px;background:var(--accent);color:#fff;border:none;border-radius:var(--r-sm);font-size:12px;font-weight:500;cursor:pointer">Add</button>
+        </div>
+      </div>
       <div class="field"><label>Status</label>
         <select id="lm-active">
           <option value="true">Active</option>
@@ -386,10 +431,18 @@ tbody tr:hover td{background:var(--surface2)}
       <div class="field"><label>App PIN</label><input type="password" id="um-pin" placeholder="••••" maxlength="6"></div>
       <div class="field"><label>Website password</label><input type="password" id="um-password" placeholder="••••••••"></div>
       <div class="field"><label>Role</label>
-        <select id="um-role">
+        <select id="um-role" onchange="onUmRoleChange()">
           <option value="Observer">Observer</option>
           <option value="Admin">Admin</option>
+          <option value="Business">Business</option>
         </select>
+      </div>
+      <div class="field" id="um-biz-locs-field" style="display:none"><label>Assigned locations</label>
+        <div id="um-biz-locs-list" style="display:flex;flex-wrap:wrap;gap:6px;min-height:36px;padding:8px;border:1px solid var(--border2);border-radius:var(--r-sm);background:var(--surface)"></div>
+        <div style="margin-top:8px;display:flex;gap:6px">
+          <select id="um-biz-loc-select" style="flex:1;padding:8px 10px;border-radius:var(--r-sm);border:1px solid var(--border2);font-family:'DM Sans',sans-serif;font-size:13px;color:var(--ink);outline:none"></select>
+          <button onclick="addBizLocToUser()" style="padding:8px 14px;background:var(--accent);color:#fff;border:none;border-radius:var(--r-sm);font-size:12px;font-weight:500;cursor:pointer">Add</button>
+        </div>
       </div>
       <div style="font-size:12px;color:var(--warn)" id="um-err" style="display:none"></div>
     </div>
@@ -413,8 +466,25 @@ let authToken = null;
 let allObservations = [];
 let allUsers = [];
 let allLocations = [];
+let fieldConfig = null;
 let editingLocId = null;
 let locAssignedObservers = [];
+let locAssignedBusinesses = [];
+let umBizAssignedLocs = [];
+let observerPseudonyms = {};
+
+function isRole(r) { return currentUser?.role === r; }
+function isAdmin() { return isRole('Admin'); }
+function isBusiness() { return isRole('Business'); }
+function isObserver() { return isRole('Observer'); }
+function pseudonymFor(observerName) {
+  if (!observerName) return '—';
+  if (!(observerName in observerPseudonyms)) {
+    observerPseudonyms[observerName] = 'Observer ' + (Object.keys(observerPseudonyms).length + 1);
+  }
+  return observerPseudonyms[observerName];
+}
+function displayObserver(o) { return isBusiness() ? pseudonymFor(o) : o; }
 
 async function api(endpoint, body) {
   const headers = {'Content-Type':'application/json'};
@@ -498,11 +568,29 @@ function initApp() {
   document.getElementById('app-shell').classList.add('active');
   document.getElementById('sb-name').textContent = currentUser.name || currentUser.username;
   document.getElementById('sb-role').textContent = currentUser.role;
-  const isAdmin = currentUser.role === 'Admin';
-  document.querySelectorAll('.admin-only').forEach(el => el.style.display = isAdmin ? 'flex' : 'none');
-  document.querySelectorAll('.observer-only').forEach(el => el.style.display = !isAdmin ? 'flex' : 'none');
-  document.getElementById('dash-filter-obs').style.display = isAdmin ? 'block' : 'none';
-  document.getElementById('data-filter-obs').style.display = isAdmin ? 'block' : 'none';
+  observerPseudonyms = {};
+
+  document.querySelectorAll('.admin-only').forEach(el => el.style.display = isAdmin() ? 'flex' : 'none');
+  document.querySelectorAll('.observer-only').forEach(el => el.style.display = isObserver() ? 'flex' : 'none');
+  document.getElementById('nav-data').style.display = isObserver() ? 'none' : 'flex';
+  document.getElementById('sb-business-locs').style.display = isBusiness() ? 'block' : 'none';
+
+  document.getElementById('dash-filter-obs').style.display = isAdmin() ? 'block' : 'none';
+  document.getElementById('data-filter-obs').style.display = isAdmin() ? 'block' : 'none';
+
+  document.getElementById('dash-welcome').textContent = 'Welcome, ' + (currentUser.name || currentUser.username);
+  const badge = document.getElementById('dash-role-badge');
+  badge.textContent = currentUser.role;
+  badge.className = 'badge ' + (currentUser.role || '').toLowerCase();
+
+  if (isBusiness()) {
+    document.getElementById('dash-sub').textContent = 'Overview of observations at your locations';
+  } else if (isObserver()) {
+    document.getElementById('dash-sub').textContent = 'Your observation activity';
+  } else {
+    document.getElementById('dash-sub').textContent = 'Overview of all observations';
+  }
+
   loadAllData();
   navTo('dashboard');
 }
@@ -518,17 +606,22 @@ function navTo(page) {
   if (page === 'locations') renderLocations();
   if (page === 'users') renderUsers();
   if (page === 'mydata') renderMyData();
+  if (page === 'config') renderFieldConfig();
 }
 
 // ── LOAD DATA ──
 async function loadAllData() {
   try {
-    const [obsRes, usersRes, locsRes] = await Promise.all([
+    const calls = [
       api('/data', { action: 'getObservations' }),
-      api('/web-auth', { action: 'getWebUsers' }),
       api('/locations', { action: 'getLocations' }),
-    ]);
-    // normalise field names from backend camelCase to match table column names
+    ];
+    if (isAdmin()) calls.push(api('/web-auth', { action: 'getWebUsers' }));
+    const results = await Promise.all(calls);
+    const obsRes = results[0];
+    const locsRes = results[1];
+    const usersRes = isAdmin() ? results[2] : { users: [] };
+
     allObservations = (obsRes.observations || []).map(o => ({
       'Entry ID': o.entryId,
       'Timestamp': o.timestamp,
@@ -546,10 +639,18 @@ async function loadAllData() {
     }));
     allUsers = (usersRes.users || []).filter(u => u.username !== currentUser.username);
     allLocations = locsRes.locations || [];
+    renderBusinessSidebarLocs();
     populateFilters();
     renderDashboard();
-    if (currentUser.role !== 'Admin') renderMyData();
+    if (isObserver()) renderMyData();
   } catch(e) { console.error('Load error:', e); showToast('Error loading data'); }
+}
+
+function renderBusinessSidebarLocs() {
+  if (!isBusiness()) return;
+  const el = document.getElementById('sb-business-locs-items');
+  if (!allLocations.length) { el.innerHTML = '<div class="sidebar-loc-item">No locations assigned</div>'; return; }
+  el.innerHTML = allLocations.map(l => `<div class="sidebar-loc-item">${esc(l.name)}</div>`).join('');
 }
 
 // ── FILTERS ──
@@ -576,7 +677,7 @@ function getFilteredObs() {
   const from = document.getElementById('dash-filter-from').value;
   const to = document.getElementById('dash-filter-to').value;
   return allObservations.filter(o => {
-    if (currentUser.role !== 'Admin' && o.Observer !== currentUser.username) return false;
+    if (isObserver() && o.Observer !== currentUser.username) return false;
     if (loc && o.Location !== loc) return false;
     if (obs && o.Observer !== obs) return false;
     if (from && o.Timestamp && o.Timestamp < from) return false;
@@ -641,7 +742,7 @@ function renderDataTable() {
   const to = document.getElementById('data-filter-to').value;
   const type = document.getElementById('data-filter-type').value;
   let data = allObservations.filter(o => {
-    if (currentUser.role !== 'Admin' && o.Observer !== currentUser.username) return false;
+    if (isObserver() && o.Observer !== currentUser.username) return false;
     if (loc && o.Location !== loc) return false;
     if (obs && o.Observer !== obs) return false;
     if (type && o.Type !== type) return false;
@@ -655,7 +756,7 @@ function renderDataTable() {
     return `<tr>
       <td style="font-family:'DM Mono',monospace;font-size:12px;color:var(--ink3)">${esc(o['Entry ID'])||'—'}</td>
       <td style="white-space:nowrap">${esc(t)}</td>
-      <td>${esc(o.Observer)||'—'}</td>
+      <td>${esc(displayObserver(o.Observer))||'—'}</td>
       <td>${esc(o.Location)||'—'}</td>
       <td style="color:var(--ink3)">${esc(o.Session)||'—'}</td>
       <td><span class="badge ${esc(o.Type||'other')}">${esc(o.Type)||'—'}</span></td>
@@ -708,7 +809,8 @@ function renderLocations() {
         <span class="badge ${esc((l.type||'other').toLowerCase())}">${esc(l.type||'Other')}</span>
         ${l.active===false?'<span class="badge rejected">Inactive</span>':'<span class="badge active">Active</span>'}
       </div>
-      <div class="loc-card-observers">${l.observers?.length ? l.observers.map(esc).join(', ') : 'No observers assigned'}</div>
+      <div class="loc-card-observers">Observers: ${l.observers?.length ? l.observers.map(esc).join(', ') : '<span style="color:var(--ink3)">none</span>'}</div>
+      <div class="loc-card-observers">Businesses: ${l.businesses?.length ? l.businesses.map(esc).join(', ') : '<span style="color:var(--ink3)">none</span>'}</div>
       <div class="loc-card-actions">
         <button class="btn-sm outline" data-loc-id="${esc(l.id)}">Edit</button>
       </div>
@@ -719,13 +821,16 @@ function renderLocations() {
 function openLocModal(loc) {
   editingLocId = null;
   locAssignedObservers = [];
+  locAssignedBusinesses = [];
   document.getElementById('lm-name').value = '';
   document.getElementById('lm-addr').value = '';
   document.getElementById('lm-type').value = 'Retail';
   document.getElementById('lm-active').value = 'true';
   document.getElementById('loc-modal-title').textContent = 'Add location';
   populateObserverSelect();
+  populateBusinessSelect();
   renderLocObservers();
+  renderLocBusinesses();
   document.getElementById('loc-modal').classList.add('open');
 }
 
@@ -734,13 +839,16 @@ function editLocation(id) {
   if (!l) return;
   editingLocId = id;
   locAssignedObservers = [...(l.observers || [])];
+  locAssignedBusinesses = [...(l.businesses || [])];
   document.getElementById('lm-name').value = l.name;
   document.getElementById('lm-addr').value = l.address || '';
   document.getElementById('lm-type').value = l.type || 'Retail';
   document.getElementById('lm-active').value = l.active === false ? 'false' : 'true';
   document.getElementById('loc-modal-title').textContent = 'Edit location';
   populateObserverSelect();
+  populateBusinessSelect();
   renderLocObservers();
+  renderLocBusinesses();
   document.getElementById('loc-modal').classList.add('open');
 }
 
@@ -748,6 +856,12 @@ function populateObserverSelect() {
   const sel = document.getElementById('lm-obs-select');
   const observers = allUsers.filter(u => u.role === 'Observer' && u.status === 'Active');
   sel.innerHTML = '<option value="">Select observer…</option>' + observers.map(u => `<option value="${u.username}">${u.name} (@${u.username})</option>`).join('');
+}
+
+function populateBusinessSelect() {
+  const sel = document.getElementById('lm-biz-select');
+  const businesses = allUsers.filter(u => u.role === 'Business' && u.status === 'Active');
+  sel.innerHTML = '<option value="">Select business…</option>' + businesses.map(u => `<option value="${u.username}">${u.name} (@${u.username})</option>`).join('');
 }
 
 function addObserverToLoc() {
@@ -759,6 +873,15 @@ function addObserverToLoc() {
   sel.value = '';
 }
 
+function addBusinessToLoc() {
+  const sel = document.getElementById('lm-biz-select');
+  const v = sel.value;
+  if (!v || locAssignedBusinesses.includes(v)) return;
+  locAssignedBusinesses.push(v);
+  renderLocBusinesses();
+  sel.value = '';
+}
+
 function renderLocObservers() {
   const list = document.getElementById('lm-observers-list');
   list.innerHTML = locAssignedObservers.map(o =>
@@ -767,9 +890,22 @@ function renderLocObservers() {
   list.querySelectorAll('[data-obs]').forEach(btn => btn.addEventListener('click', () => removeLocObserver(btn.dataset.obs)));
 }
 
+function renderLocBusinesses() {
+  const list = document.getElementById('lm-businesses-list');
+  list.innerHTML = locAssignedBusinesses.map(o =>
+    `<span style="display:inline-flex;align-items:center;gap:4px;background:#E6F1FB;color:#185FA5;padding:4px 10px;border-radius:var(--r-pill);font-size:12px;font-weight:500">${esc(o)}<button data-biz="${esc(o)}" style="background:none;border:none;color:#185FA5;font-size:14px;cursor:pointer;line-height:1;padding:0 0 0 2px">×</button></span>`
+  ).join('');
+  list.querySelectorAll('[data-biz]').forEach(btn => btn.addEventListener('click', () => removeLocBusiness(btn.dataset.biz)));
+}
+
 function removeLocObserver(username) {
   locAssignedObservers = locAssignedObservers.filter(o => o !== username);
   renderLocObservers();
+}
+
+function removeLocBusiness(username) {
+  locAssignedBusinesses = locAssignedBusinesses.filter(o => o !== username);
+  renderLocBusinesses();
 }
 
 function closeLocModal() { document.getElementById('loc-modal').classList.remove('open'); }
@@ -781,6 +917,7 @@ async function saveLocation() {
     name, address: document.getElementById('lm-addr').value.trim(),
     type: document.getElementById('lm-type').value,
     observers: locAssignedObservers,
+    businesses: locAssignedBusinesses,
     active: document.getElementById('lm-active').value === 'true',
   };
   try {
@@ -801,25 +938,31 @@ async function saveLocation() {
 }
 
 // ── USERS ──
-function renderUsers() {
-  const tbody = document.getElementById('users-tbody');
-  if (!allUsers.length) { tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:40px;color:var(--ink3)">No users yet</td></tr>'; return; }
-  tbody.innerHTML = allUsers.map(u => `
-    <tr>
-      <td style="font-weight:500">${esc(u.name)||'—'}</td>
-      <td style="font-family:'DM Mono',monospace;font-size:12px">@${esc(u.username)}</td>
-      <td style="color:var(--ink3)">${esc(u.email)||'—'}</td>
-      <td><span class="badge ${esc((u.role||'').toLowerCase())}">${esc(u.role)}</span></td>
-      <td><span class="badge ${esc((u.status||'').toLowerCase())}">${esc(u.status)}</span></td>
-      <td>
-        <div style="display:flex;gap:6px;flex-wrap:wrap">
-          ${u.status==='Pending'?`<button class="btn-sm primary" style="padding:5px 10px;font-size:11px" data-action="approve" data-uid="${esc(u.id)}">Approve</button><button class="btn-sm danger" style="padding:5px 10px;font-size:11px" data-action="reject" data-uid="${esc(u.id)}">Reject</button>`:''}
-          ${u.status==='Active'?`<button class="btn-sm outline" style="padding:5px 10px;font-size:11px" data-action="suspend" data-uid="${esc(u.id)}">Suspend</button>`:''}
-          ${u.status==='Suspended'||u.status==='Rejected'?`<button class="btn-sm primary" style="padding:5px 10px;font-size:11px" data-action="reactivate" data-uid="${esc(u.id)}">Reactivate</button>`:''}
-          <button class="btn-sm purple" style="padding:5px 10px;font-size:11px" data-action="resetpwd" data-uid="${esc(u.id)}" data-uname="${esc(u.username)}">Reset pwd</button>
-        </div>
-      </td>
-    </tr>`).join('');
+function userRowHtml(u, opts) {
+  const cells = [
+    `<td style="font-weight:500">${esc(u.name)||'—'}</td>`,
+    `<td style="font-family:'DM Mono',monospace;font-size:12px">@${esc(u.username)}</td>`,
+    `<td style="color:var(--ink3)">${esc(u.email)||'—'}</td>`,
+  ];
+  if (opts.showLocations) {
+    const locs = allLocations.filter(l => (l.businesses || []).includes(u.username)).map(l => l.name);
+    cells.push(`<td style="color:var(--ink3);font-size:12px">${locs.length ? locs.map(esc).join(', ') : '<span style="color:var(--ink3)">None</span>'}</td>`);
+  } else {
+    cells.push(`<td><span class="badge ${esc((u.role||'').toLowerCase())}">${esc(u.role)}</span></td>`);
+  }
+  cells.push(`<td><span class="badge ${esc((u.status||'').toLowerCase())}">${esc(u.status)}</span></td>`);
+  cells.push(`<td>
+    <div style="display:flex;gap:6px;flex-wrap:wrap">
+      ${u.status==='Pending'?`<button class="btn-sm primary" style="padding:5px 10px;font-size:11px" data-action="approve" data-uid="${esc(u.id)}">Approve</button><button class="btn-sm danger" style="padding:5px 10px;font-size:11px" data-action="reject" data-uid="${esc(u.id)}">Reject</button>`:''}
+      ${u.status==='Active'?`<button class="btn-sm outline" style="padding:5px 10px;font-size:11px" data-action="suspend" data-uid="${esc(u.id)}">Suspend</button>`:''}
+      ${u.status==='Suspended'||u.status==='Rejected'?`<button class="btn-sm primary" style="padding:5px 10px;font-size:11px" data-action="reactivate" data-uid="${esc(u.id)}">Reactivate</button>`:''}
+      <button class="btn-sm purple" style="padding:5px 10px;font-size:11px" data-action="resetpwd" data-uid="${esc(u.id)}" data-uname="${esc(u.username)}">Reset pwd</button>
+    </div>
+  </td>`);
+  return `<tr>${cells.join('')}</tr>`;
+}
+
+function bindUserActions(tbody) {
   const actionMap = { approve: {Status:'Active'}, reject: {Status:'Rejected'}, suspend: {Status:'Suspended'}, reactivate: {Status:'Active'} };
   tbody.querySelectorAll('[data-action]').forEach(btn => {
     btn.addEventListener('click', () => {
@@ -828,6 +971,17 @@ function renderUsers() {
       else if (actionMap[action]) { updateWebUser(btn.dataset.uid, actionMap[action]); }
     });
   });
+}
+
+function renderUsers() {
+  const adminObs = allUsers.filter(u => u.role !== 'Business');
+  const businesses = allUsers.filter(u => u.role === 'Business');
+  const tbody = document.getElementById('users-tbody');
+  const bizTbody = document.getElementById('business-tbody');
+  tbody.innerHTML = adminObs.length ? adminObs.map(u => userRowHtml(u, { showLocations: false })).join('') : '<tr><td colspan="6" style="text-align:center;padding:40px;color:var(--ink3)">No admin or observer users yet</td></tr>';
+  bizTbody.innerHTML = businesses.length ? businesses.map(u => userRowHtml(u, { showLocations: true })).join('') : '<tr><td colspan="6" style="text-align:center;padding:40px;color:var(--ink3)">No business accounts yet</td></tr>';
+  bindUserActions(tbody);
+  bindUserActions(bizTbody);
 }
 
 async function updateWebUser(id, fields) {
@@ -848,8 +1002,55 @@ async function promptResetPassword(id, username) {
   await updateWebUser(id, { Password: p });
 }
 
-function openCreateUserModal() { document.getElementById('user-modal').classList.add('open'); }
+function openCreateUserModal() {
+  ['um-name','um-username','um-email','um-pin','um-password'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('um-role').value = 'Observer';
+  document.getElementById('um-err').style.display = 'none';
+  umBizAssignedLocs = [];
+  onUmRoleChange();
+  document.getElementById('user-modal').classList.add('open');
+}
 function closeUserModal() { document.getElementById('user-modal').classList.remove('open'); }
+
+function onUmRoleChange() {
+  const role = document.getElementById('um-role').value;
+  const field = document.getElementById('um-biz-locs-field');
+  if (role === 'Business') {
+    field.style.display = 'block';
+    populateUmBizLocSelect();
+    renderUmBizLocs();
+  } else {
+    field.style.display = 'none';
+  }
+}
+
+function populateUmBizLocSelect() {
+  const sel = document.getElementById('um-biz-loc-select');
+  const active = allLocations.filter(l => l.active !== false);
+  sel.innerHTML = '<option value="">Select location…</option>' + active.map(l => `<option value="${esc(l.id)}">${esc(l.name)}</option>`).join('');
+}
+
+function addBizLocToUser() {
+  const sel = document.getElementById('um-biz-loc-select');
+  const v = sel.value;
+  if (!v || umBizAssignedLocs.includes(v)) return;
+  umBizAssignedLocs.push(v);
+  renderUmBizLocs();
+  sel.value = '';
+}
+
+function renderUmBizLocs() {
+  const list = document.getElementById('um-biz-locs-list');
+  list.innerHTML = umBizAssignedLocs.map(id => {
+    const l = allLocations.find(x => x.id === id);
+    const name = l?.name || id;
+    return `<span style="display:inline-flex;align-items:center;gap:4px;background:#E6F1FB;color:#185FA5;padding:4px 10px;border-radius:var(--r-pill);font-size:12px;font-weight:500">${esc(name)}<button data-locid="${esc(id)}" style="background:none;border:none;color:#185FA5;font-size:14px;cursor:pointer;line-height:1;padding:0 0 0 2px">×</button></span>`;
+  }).join('');
+  list.querySelectorAll('[data-locid]').forEach(btn => btn.addEventListener('click', () => {
+    umBizAssignedLocs = umBizAssignedLocs.filter(x => x !== btn.dataset.locid);
+    renderUmBizLocs();
+  }));
+}
 
 async function createWebUser() {
   const name = document.getElementById('um-name').value.trim();
@@ -862,13 +1063,66 @@ async function createWebUser() {
   if (!name||!username||!email||!pin||!password) { errEl.textContent='All fields required'; errEl.style.display='block'; return; }
   try {
     const res = await api('/web-auth', { action: 'webCreateUser', newUser: { name, username, email, pin, password, role } });
-    if (res.success) {
-      showToast('User created'); closeUserModal();
-      const r = await api('/web-auth', { action: 'getWebUsers' });
-      allUsers = (r.users||[]).filter(u => u.username !== currentUser.username);
-      renderUsers();
-    } else { errEl.textContent = res.error||'Failed'; errEl.style.display='block'; }
+    if (!res.success) { errEl.textContent = res.error||'Failed'; errEl.style.display='block'; return; }
+    if (role === 'Business' && umBizAssignedLocs.length) {
+      for (const locId of umBizAssignedLocs) {
+        const l = allLocations.find(x => x.id === locId);
+        if (!l) continue;
+        const businesses = [...new Set([...(l.businesses || []), username])];
+        await api('/locations', { action: 'updateLocation', locationId: locId, location: {
+          name: l.name, address: l.address || '', type: l.type || '',
+          observers: l.observers || [], businesses, active: l.active !== false,
+        }});
+      }
+    }
+    showToast('User created'); closeUserModal();
+    const [usersR, locsR] = await Promise.all([
+      api('/web-auth', { action: 'getWebUsers' }),
+      api('/locations', { action: 'getLocations' }),
+    ]);
+    allUsers = (usersR.users||[]).filter(u => u.username !== currentUser.username);
+    allLocations = locsR.locations || [];
+    renderUsers();
   } catch(e) { errEl.textContent='Error'; errEl.style.display='block'; }
+}
+
+// ── FIELD OPTIONS ──
+async function renderFieldConfig() {
+  const body = document.getElementById('config-body');
+  if (!fieldConfig) {
+    try {
+      const res = await api('/config', { action: 'getConfig' });
+      fieldConfig = res.config || {};
+    } catch(e) { body.innerHTML = '<div style="color:var(--warn)">Failed to load config</div>'; return; }
+  }
+  const groups = [
+    { key: 'ages', label: 'Age ranges' },
+    { key: 'genders', label: 'Gender presentation' },
+    { key: 'ethnicities', label: 'Ethnicities' },
+    { key: 'disabilities', label: 'Disabilities / aids' },
+    { key: 'emotions', label: 'Emotional states' },
+  ];
+  body.innerHTML = groups.map(g => `
+    <div class="field"><label>${esc(g.label)}</label>
+      <textarea id="cfg-${g.key}" rows="6" style="width:100%;padding:10px;border-radius:var(--r-sm);border:1px solid var(--border2);background:var(--surface);font-family:'DM Mono',monospace;font-size:13px;color:var(--ink);outline:none;resize:vertical">${esc((fieldConfig[g.key]||[]).join('\n'))}</textarea>
+      <div style="font-size:11px;color:var(--ink3);margin-top:4px">One value per line</div>
+    </div>
+  `).join('') + `<button class="btn-sm primary" onclick="saveFieldConfig()">Save changes</button>`;
+}
+
+async function saveFieldConfig() {
+  const config = {
+    ages: document.getElementById('cfg-ages').value.split('\n').map(s => s.trim()).filter(Boolean),
+    genders: document.getElementById('cfg-genders').value.split('\n').map(s => s.trim()).filter(Boolean),
+    ethnicities: document.getElementById('cfg-ethnicities').value.split('\n').map(s => s.trim()).filter(Boolean),
+    disabilities: document.getElementById('cfg-disabilities').value.split('\n').map(s => s.trim()).filter(Boolean),
+    emotions: document.getElementById('cfg-emotions').value.split('\n').map(s => s.trim()).filter(Boolean),
+  };
+  try {
+    const res = await api('/config', { action: 'updateConfig', config });
+    if (res.success) { fieldConfig = config; showToast('Field options saved'); }
+    else showToast(res.error || 'Save failed');
+  } catch(e) { showToast('Error saving'); }
 }
 
 // ── CSV EXPORT ──
@@ -879,7 +1133,7 @@ function exportFilteredCSV() {
   const to = document.getElementById('data-filter-to').value;
   const type = document.getElementById('data-filter-type').value;
   let data = allObservations.filter(o => {
-    if (currentUser.role !== 'Admin' && o.Observer !== currentUser.username) return false;
+    if (isObserver() && o.Observer !== currentUser.username) return false;
     if (loc && o.Location !== loc) return false;
     if (obs && o.Observer !== obs) return false;
     if (type && o.Type !== type) return false;
@@ -888,6 +1142,7 @@ function exportFilteredCSV() {
     return true;
   });
   if (!data.length) { showToast('No data to export'); return; }
+  if (isBusiness()) data = data.map(o => ({ ...o, Observer: pseudonymFor(o.Observer) }));
   const cols = ['Entry ID','Timestamp','Type','Observer','Location','Session','Person #','Age','Gender','Ethnicity','Disability','Emotion','Missed'];
   const rows = [cols, ...data.map(o => cols.map(c => o[c]||''))];
   const csv = rows.map(r => r.map(v => `"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');

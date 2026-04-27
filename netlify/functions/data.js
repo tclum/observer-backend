@@ -1,5 +1,9 @@
 import { atGetAll, verifyToken, corsHeaders, json, parseBody } from './_utils.js';
 
+function escapeFormulaString(s) {
+  return String(s).replace(/"/g, '\\"');
+}
+
 export const handler = async (event) => {
   const cors = corsHeaders(event);
   if (event.httpMethod === 'OPTIONS') return { statusCode: 200, headers: cors, body: '' };
@@ -13,7 +17,20 @@ export const handler = async (event) => {
     if (!payload) return json(401, { error: 'Session expired. Please sign in again.' }, cors);
 
     if (action === 'getObservations') {
-      const formula = payload.role === 'Admin' ? '' : `{Observer}="${payload.username}"`;
+      let formula = '';
+      if (payload.role === 'Admin') {
+        formula = '';
+      } else if (payload.role === 'Business') {
+        const locRecords = await atGetAll('Locations', `AND(FIND("${payload.username}",{Businesses}),{Active}=TRUE())`);
+        const locationNames = locRecords.map(r => r.fields.Name || '').filter(Boolean);
+        if (locationNames.length === 0) {
+          return json(200, { success: true, observations: [], total: 0 }, cors);
+        }
+        const locClauses = locationNames.map(n => `{Location}="${escapeFormulaString(n)}"`).join(',');
+        formula = `OR(${locClauses})`;
+      } else {
+        formula = `{Observer}="${payload.username}"`;
+      }
       const records = await atGetAll('Observations', formula);
       const observations = records.map(r => ({
         entryId: r.fields['Entry ID'] || '',

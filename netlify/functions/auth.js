@@ -32,6 +32,8 @@ export const handler = async (event) => {
         hashPassword(pin).then(h => atUpdate('Users', rec.id, { PIN: h })).catch(() => {});
       }
 
+      if (u.Role === 'Business') return json(403, { error: 'Please use the web dashboard at https://observer-backend.netlify.app to sign in.' }, cors);
+
       if (u.Status === 'Pending') return json(403, { error: 'Your account is pending approval by an admin.' }, cors);
       if (u.Status === 'Suspended') return json(403, { error: 'Your account has been suspended. Contact an admin.' }, cors);
       if (u.Status !== 'Active') return json(403, { error: 'Account not active.' }, cors);
