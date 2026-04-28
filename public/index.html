@@ -404,10 +404,6 @@ tbody tr:hover td{background:var(--surface2)}
           <input type="text" id="bz-look-loc" placeholder="City or zip">
         </div>
         <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
-          <div class="lookup-toggle" id="bz-look-src">
-            <button class="active" data-src="google" type="button">Google</button>
-            <button data-src="yelp" type="button">Yelp</button>
-          </div>
           <button class="btn-sm primary" type="button" onclick="bzDoLookup()">Search</button>
         </div>
         <div class="lookup-results" id="bz-look-results"></div>
@@ -1029,10 +1025,6 @@ tbody tr:hover td{background:var(--surface2)}
           <input type="text" id="bm-look-loc" placeholder="City or zip">
         </div>
         <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
-          <div class="lookup-toggle" id="bm-look-src">
-            <button class="active" data-src="google" type="button">Google</button>
-            <button data-src="yelp" type="button">Yelp</button>
-          </div>
           <button class="btn-sm primary" type="button" onclick="bmDoLookup()">Search</button>
         </div>
         <div class="lookup-results" id="bm-look-results"></div>
@@ -3348,31 +3340,15 @@ function closeJobPanel() {
   panel.setAttribute('aria-hidden', 'true');
 }
 
-// ── BUSINESS LOOKUP (Google / Yelp) ──
-function _wireSourceToggle(rootId) {
-  const root = document.getElementById(rootId);
-  if (!root || root.dataset.wired) return;
-  root.dataset.wired = '1';
-  root.querySelectorAll('button').forEach(b => b.addEventListener('click', () => {
-    root.querySelectorAll('button').forEach(x => x.classList.remove('active'));
-    b.classList.add('active');
-  }));
-}
-function _activeSource(rootId) {
-  const a = document.querySelector(`#${rootId} button.active`);
-  return a?.dataset.src || 'google';
-}
-
-async function _runLookup({ qId, locId, srcRootId, resultsId, onPick }) {
-  _wireSourceToggle(srcRootId);
+// ── BUSINESS LOOKUP (Google Places) ──
+async function _runLookup({ qId, locId, resultsId, onPick }) {
   const q = document.getElementById(qId).value.trim();
   const location = document.getElementById(locId).value.trim();
-  const source = _activeSource(srcRootId);
   const results = document.getElementById(resultsId);
   if (!q) { results.innerHTML = '<div class="attn-empty">Enter a business name to search</div>'; return; }
   results.innerHTML = '<div class="loading"><div class="spinner"></div>Searching…</div>';
   try {
-    const res = await api('/business-lookup', { action: 'searchBusinesses', query: q, location, source });
+    const res = await api('/business-lookup', { action: 'searchBusinesses', query: q, location });
     if (!res.success) { results.innerHTML = `<div class="attn-empty">${esc(res.error || 'Search failed')}</div>`; return; }
     const list = res.results || [];
     if (!list.length) { results.innerHTML = '<div class="attn-empty">No matches</div>'; return; }
@@ -3397,7 +3373,7 @@ function bmToggleLookup(show) {
 }
 async function bmDoLookup() {
   await _runLookup({
-    qId: 'bm-look-q', locId: 'bm-look-loc', srcRootId: 'bm-look-src',
+    qId: 'bm-look-q', locId: 'bm-look-loc',
     resultsId: 'bm-look-results', onPick: bmPickResult,
   });
 }
@@ -3406,7 +3382,7 @@ async function bmPickResult(brief) {
   fields.innerHTML = '<div class="loading"><div class="spinner"></div>Loading details…</div>';
   let detail = brief;
   try {
-    const res = await api('/business-lookup', { action: 'getBusinessDetails', placeId: brief.placeId, source: brief.source });
+    const res = await api('/business-lookup', { action: 'getBusinessDetails', placeId: brief.placeId });
     if (res.success && res.result) detail = { ...brief, ...res.result };
   } catch(e) {}
   fields.innerHTML = `
@@ -3454,14 +3430,14 @@ function bzToggleLookup(show) {
 }
 async function bzDoLookup() {
   await _runLookup({
-    qId: 'bz-look-q', locId: 'bz-look-loc', srcRootId: 'bz-look-src',
+    qId: 'bz-look-q', locId: 'bz-look-loc',
     resultsId: 'bz-look-results', onPick: bzPickResult,
   });
 }
 async function bzPickResult(brief) {
   let detail = brief;
   try {
-    const res = await api('/business-lookup', { action: 'getBusinessDetails', placeId: brief.placeId, source: brief.source });
+    const res = await api('/business-lookup', { action: 'getBusinessDetails', placeId: brief.placeId });
     if (res.success && res.result) detail = { ...brief, ...res.result };
   } catch(e) {}
   if (detail.name) document.getElementById('bz-name').value = detail.name;
