@@ -21,7 +21,7 @@ export const handler = async (event) => {
       if (payload.role === 'Admin') {
         formula = '';
       } else if (payload.role === 'Business') {
-        const locRecords = await atGetAll('Locations', `AND(FIND("${payload.username}",{Businesses}),{Active}=TRUE())`);
+        const locRecords = await atGetAll('Locations', `AND(OR(FIND("${payload.username}",{Businesses}),{BusinessUsername}="${payload.username}"),{Active}=TRUE())`);
         const locationNames = locRecords.map(r => r.fields.Name || '').filter(Boolean);
         if (locationNames.length === 0) {
           return json(200, { success: true, observations: [], total: 0 }, cors);

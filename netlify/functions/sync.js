@@ -10,8 +10,9 @@ export const handler = async (event) => {
   const payload = await verifyToken(event, body);
   if (!payload) return json(401, { error: 'Session expired. Please sign in again.' }, cors);
 
-  const { AIRTABLE_TOKEN, AIRTABLE_BASE_ID, AIRTABLE_TABLE_NAME } = process.env;
-  if (!AIRTABLE_TOKEN || !AIRTABLE_BASE_ID || !AIRTABLE_TABLE_NAME) {
+  const { AIRTABLE_TOKEN, AIRTABLE_BASE_ID } = process.env;
+  const AIRTABLE_TABLE_NAME = process.env.AIRTABLE_TABLE_NAME || 'Observations';
+  if (!AIRTABLE_TOKEN || !AIRTABLE_BASE_ID) {
     return json(500, { error: 'Airtable environment variables not configured.' }, cors);
   }
 
