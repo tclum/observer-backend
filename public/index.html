@@ -392,6 +392,18 @@ tbody tr:hover td{background:var(--surface2)}
         <svg width="16" height="16" fill="none" viewBox="0 0 16 16"><circle cx="8" cy="5" r="3" stroke="currentColor" stroke-width="1.3"/><path d="M2 14c0-3.314 2.686-6 6-6s6 2.686 6 6" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
         My Sessions
       </div>
+      <div class="nav-item business-only" onclick="navTo('requestjob')" id="nav-requestjob" style="display:none">
+        <svg width="16" height="16" fill="none" viewBox="0 0 16 16"><path d="M3 2h7l3 3v9H3V2z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/><path d="M10 2v3h3" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/><path d="M5.5 8.5h5M5.5 11h5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+        Request Job
+      </div>
+      <div class="nav-item admin-only" onclick="navTo('jobreqs')" id="nav-jobreqs" style="display:none">
+        <svg width="16" height="16" fill="none" viewBox="0 0 16 16"><path d="M2 4h12v9H2z" stroke="currentColor" stroke-width="1.3"/><path d="M5 7h6M5 10h4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+        Job Requests
+      </div>
+      <div class="nav-item" onclick="navTo('jobs')" id="nav-jobs">
+        <svg width="16" height="16" fill="none" viewBox="0 0 16 16"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.3"/><path d="M5.5 8l2 2 3-4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Open Jobs
+      </div>
     </nav>
     <div class="sidebar-loc-list" id="sb-business-locs" style="display:none">
       <div class="sidebar-loc-label">Your locations</div>
@@ -663,6 +675,78 @@ tbody tr:hover td{background:var(--surface2)}
           <table>
             <thead><tr><th>#</th><th>Time</th><th>Location</th><th>Session</th><th>Type</th><th>Age</th><th>Gender</th><th>Ethnicity</th><th>Emotion</th></tr></thead>
             <tbody id="my-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- REQUEST JOB (Business) -->
+    <div class="page" id="page-requestjob">
+      <div class="page-header">
+        <div class="page-title">Request data collection</div>
+        <div class="page-sub">Submit a job request for observers. An admin will review and approve.</div>
+      </div>
+      <div class="card" style="max-width:640px">
+        <div class="card-body">
+          <div class="field"><label>Location</label>
+            <select id="rj-location"><option value="">Select a location…</option></select>
+          </div>
+          <div class="field"><label>Job type</label>
+            <select id="rj-type">
+              <option value="Visit Audit">Visit Audit</option>
+              <option value="Mystery Shop">Mystery Shop</option>
+              <option value="Inventory Check">Inventory Check</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+          <div class="field"><label>Target observation count</label>
+            <input type="number" id="rj-count" min="1" placeholder="e.g. 50">
+          </div>
+          <div class="field"><label>Deadline</label>
+            <input type="date" id="rj-deadline">
+          </div>
+          <div class="field"><label>Reward (optional)</label>
+            <input type="text" id="rj-reward" placeholder="e.g. $25 per session">
+          </div>
+          <div class="field"><label>Instructions</label>
+            <textarea id="rj-instructions" rows="4" placeholder="What should observers focus on?" style="width:100%;padding:12px 14px;border-radius:var(--r-sm);border:1px solid var(--border2);background:var(--surface);font-family:'DM Sans',sans-serif;font-size:14px;color:var(--ink);outline:none;resize:vertical"></textarea>
+          </div>
+          <div class="login-err" id="rj-err"></div>
+          <div class="login-success" id="rj-success">Request submitted. An admin will review and approve it.</div>
+          <button class="btn-full" id="rj-btn" onclick="doSubmitJobRequest()">Submit request</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ADMIN JOB REQUESTS -->
+    <div class="page" id="page-jobreqs">
+      <div class="page-header">
+        <div class="page-title">Job Requests</div>
+        <div class="page-sub">Pending job requests from businesses</div>
+      </div>
+      <div class="card">
+        <div class="card-header"><div class="card-title" id="jr-count">Loading…</div></div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Business</th><th>Location</th><th>Type</th><th>Target</th><th>Deadline</th><th>Reward</th><th>Submitted</th><th>Actions</th></tr></thead>
+            <tbody id="jr-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- OPEN JOBS -->
+    <div class="page" id="page-jobs">
+      <div class="page-header">
+        <div class="page-title">Open Jobs</div>
+        <div class="page-sub" id="jobs-sub">Jobs available for data collection</div>
+      </div>
+      <div class="card">
+        <div class="card-header"><div class="card-title" id="jobs-count">Loading…</div></div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Business</th><th>Location</th><th>Type</th><th>Target</th><th>Deadline</th><th>Reward</th><th>Instructions</th><th>Status</th></tr></thead>
+            <tbody id="jobs-tbody"></tbody>
           </table>
         </div>
       </div>
@@ -993,6 +1077,7 @@ function initApp() {
 
   document.querySelectorAll('.admin-only').forEach(el => el.style.display = isAdmin() ? 'flex' : 'none');
   document.querySelectorAll('.observer-only').forEach(el => el.style.display = isObserver() ? 'flex' : 'none');
+  document.querySelectorAll('.business-only').forEach(el => el.style.display = isBusiness() ? 'flex' : 'none');
   document.getElementById('nav-data').style.display = isObserver() ? 'none' : 'flex';
   document.getElementById('sb-business-locs').style.display = isBusiness() ? 'block' : 'none';
 
@@ -1026,7 +1111,7 @@ function toggleMobileSidebar(open) {
   document.getElementById('sidebar-backdrop').classList.toggle('open', open);
 }
 
-const PAGE_TITLES = { dashboard: 'Dashboard', data: 'Data', locations: 'Locations', users: 'Users', config: 'Field Options', record: 'Record', mydata: 'My Sessions' };
+const PAGE_TITLES = { dashboard: 'Dashboard', data: 'Data', locations: 'Locations', users: 'Users', config: 'Field Options', record: 'Record', mydata: 'My Sessions', requestjob: 'Request Job', jobreqs: 'Job Requests', jobs: 'Open Jobs' };
 
 function navTo(page) {
   if (page !== 'record' && hasUnsyncedSession()) {
@@ -1046,6 +1131,9 @@ function navTo(page) {
   if (page === 'mydata') renderMyData();
   if (page === 'config') renderFieldConfig();
   if (page === 'record') initRecordPage();
+  if (page === 'requestjob') initRequestJobPage();
+  if (page === 'jobreqs') renderJobRequests();
+  if (page === 'jobs') renderOpenJobs();
 }
 
 window.addEventListener('beforeunload', e => {
@@ -2188,6 +2276,141 @@ function renderS() {
       <div class="card"><div class="card-header"><div class="card-title">Emotional state</div></div><div class="card-body">${bars(frs('emo'),'w') || '<div class="empty-state-sub">No data</div>'}</div></div>
     </div>
   `;
+}
+
+// ── JOBS ──
+let allJobs = [];
+
+function initRequestJobPage() {
+  const sel = document.getElementById('rj-location');
+  sel.innerHTML = '<option value="">Select a location…</option>';
+  const myLocs = (allLocations || []).filter(l => l.Active !== false);
+  myLocs.forEach(l => {
+    const opt = document.createElement('option');
+    opt.value = l.Name || l.name || '';
+    opt.textContent = l.Name || l.name || '';
+    sel.appendChild(opt);
+  });
+  document.getElementById('rj-success').style.display = 'none';
+  document.getElementById('rj-err').style.display = 'none';
+  document.getElementById('rj-btn').style.display = 'block';
+}
+
+async function doSubmitJobRequest() {
+  const locationName = document.getElementById('rj-location').value.trim();
+  const type = document.getElementById('rj-type').value;
+  const targetCount = document.getElementById('rj-count').value;
+  const deadline = document.getElementById('rj-deadline').value;
+  const reward = document.getElementById('rj-reward').value.trim();
+  const instructions = document.getElementById('rj-instructions').value.trim();
+  const err = document.getElementById('rj-err');
+  const ok = document.getElementById('rj-success');
+  const btn = document.getElementById('rj-btn');
+  err.style.display = 'none'; ok.style.display = 'none';
+  if (!locationName) { err.textContent = 'Please select a location'; err.style.display = 'block'; return; }
+  if (!type) { err.textContent = 'Please choose a job type'; err.style.display = 'block'; return; }
+  btn.disabled = true; btn.textContent = 'Submitting…';
+  try {
+    const res = await api('/jobs', { action: 'submitJobRequest', locationName, type, targetCount, deadline, reward, instructions });
+    if (res.success) {
+      ok.style.display = 'block';
+      btn.style.display = 'none';
+      ['rj-count','rj-deadline','rj-reward','rj-instructions'].forEach(id => document.getElementById(id).value = '');
+    } else {
+      err.textContent = res.error || 'Submission failed'; err.style.display = 'block';
+      btn.disabled = false; btn.textContent = 'Submit request';
+    }
+  } catch(e) {
+    err.textContent = 'Could not reach server.'; err.style.display = 'block';
+    btn.disabled = false; btn.textContent = 'Submit request';
+  }
+}
+
+function fmtJobDate(s) {
+  if (!s) return '—';
+  try { return new Date(s).toLocaleDateString(); } catch { return s; }
+}
+
+async function renderJobRequests() {
+  const tbody = document.getElementById('jr-tbody');
+  const count = document.getElementById('jr-count');
+  tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;color:var(--ink3);padding:24px">Loading…</td></tr>';
+  try {
+    const res = await api('/jobs', { action: 'getJobs', status: 'Pending' });
+    const jobs = res.jobs || [];
+    count.textContent = jobs.length + (jobs.length === 1 ? ' pending request' : ' pending requests');
+    if (!jobs.length) {
+      tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;color:var(--ink3);padding:24px">No pending requests</td></tr>';
+      return;
+    }
+    tbody.innerHTML = jobs.map(j => `
+      <tr>
+        <td>${esc(j.businessName || j.businessUsername)}</td>
+        <td>${esc(j.locationName)}</td>
+        <td>${esc(j.type)}</td>
+        <td>${esc(j.targetCount) || '—'}</td>
+        <td>${esc(fmtJobDate(j.deadline))}</td>
+        <td>${esc(j.reward) || '—'}</td>
+        <td>${esc(fmtJobDate(j.createdAt))}</td>
+        <td>
+          <button class="btn-sm primary" onclick="updateJobStatus('${j.id}','Open')">Approve</button>
+          <button class="btn-sm danger" onclick="updateJobStatus('${j.id}','Rejected')">Reject</button>
+        </td>
+      </tr>
+    `).join('');
+  } catch(e) {
+    tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;color:var(--warn);padding:24px">Failed to load</td></tr>';
+  }
+}
+
+async function updateJobStatus(jobId, status) {
+  try {
+    const res = await api('/jobs', { action: 'updateJob', jobId, status });
+    if (res.success) {
+      showToast(status === 'Open' ? 'Job approved' : 'Job rejected');
+      renderJobRequests();
+    } else {
+      showToast(res.error || 'Update failed');
+    }
+  } catch(e) { showToast('Could not reach server'); }
+}
+
+async function renderOpenJobs() {
+  const tbody = document.getElementById('jobs-tbody');
+  const count = document.getElementById('jobs-count');
+  const sub = document.getElementById('jobs-sub');
+  if (isBusiness()) sub.textContent = 'Your job requests and their status';
+  else if (isObserver()) sub.textContent = 'Open jobs available for data collection';
+  else sub.textContent = 'All jobs across the platform';
+  tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;color:var(--ink3);padding:24px">Loading…</td></tr>';
+  try {
+    const params = { action: 'getJobs' };
+    if (isAdmin()) params.status = '';
+    const res = await api('/jobs', params);
+    const jobs = res.jobs || [];
+    allJobs = jobs;
+    count.textContent = jobs.length + (jobs.length === 1 ? ' job' : ' jobs');
+    if (!jobs.length) {
+      tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;color:var(--ink3);padding:24px">No jobs to show</td></tr>';
+      return;
+    }
+    tbody.innerHTML = jobs.map(j => {
+      const statusClass = j.status === 'Open' ? 'active' : j.status === 'Pending' ? 'pending' : j.status === 'Rejected' ? 'rejected' : 'admin';
+      return `
+      <tr>
+        <td>${esc(j.businessName || j.businessUsername)}</td>
+        <td>${esc(j.locationName)}</td>
+        <td>${esc(j.type)}</td>
+        <td>${esc(j.targetCount) || '—'}</td>
+        <td>${esc(fmtJobDate(j.deadline))}</td>
+        <td>${esc(j.reward) || '—'}</td>
+        <td style="max-width:240px;white-space:normal">${esc(j.instructions) || '—'}</td>
+        <td><span class="badge ${statusClass}">${esc(j.status)}</span></td>
+      </tr>`;
+    }).join('');
+  } catch(e) {
+    tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;color:var(--warn);padding:24px">Failed to load</td></tr>';
+  }
 }
 </script>
 </body>

@@ -87,6 +87,47 @@ export function tplRejected() {
   };
 }
 
+export function tplJobSubmitted({ BusinessName, LocationName, Type, TargetCount, Deadline, Instructions, Reward }) {
+  return {
+    subject: `New job request from ${BusinessName} — ${Type}`,
+    html: `<div style="font-family:Arial,sans-serif;color:#18160F">
+      <h2 style="margin:0 0 12px">New job request</h2>
+      <table>
+        ${row('Business', escapeHtml(BusinessName))}
+        ${row('Location', escapeHtml(LocationName))}
+        ${row('Type', escapeHtml(Type))}
+        ${row('Target count', escapeHtml(TargetCount) || '—')}
+        ${row('Deadline', escapeHtml(Deadline) || '—')}
+        ${row('Reward', escapeHtml(Reward) || '—')}
+        ${row('Instructions', escapeHtml(Instructions) || '—')}
+      </table>
+      <p style="margin-top:16px"><a href="${APP_URL}" style="color:#1B3A2D">Review in dashboard →</a></p>
+    </div>`,
+  };
+}
+
+export function tplJobApproved({ Type, LocationName }) {
+  return {
+    subject: 'Your job request has been approved',
+    html: `<div style="font-family:Arial,sans-serif;color:#18160F">
+      <p>Your job request (<strong>${escapeHtml(Type)}</strong> at <strong>${escapeHtml(LocationName)}</strong>) has been approved and is now live for observers.</p>
+      <p><a href="${APP_URL}" style="color:#1B3A2D">View in dashboard →</a></p>
+    </div>`,
+  };
+}
+
+export function tplJobRejected({ Type, LocationName }) {
+  const adminEmail = process.env.ADMIN_EMAIL || '';
+  const contact = adminEmail ? `Contact <a href="mailto:${escapeHtml(adminEmail)}">${escapeHtml(adminEmail)}</a> for more information.` : 'Contact an administrator for more information.';
+  return {
+    subject: 'Update on your job request',
+    html: `<div style="font-family:Arial,sans-serif;color:#18160F">
+      <p>Your job request (<strong>${escapeHtml(Type)}</strong> at <strong>${escapeHtml(LocationName)}</strong>) was not approved at this time.</p>
+      <p>${contact}</p>
+    </div>`,
+  };
+}
+
 export function tplPasswordReset({ code }) {
   return {
     subject: 'Your Observer password reset code',
