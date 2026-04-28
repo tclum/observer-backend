@@ -255,6 +255,97 @@ tbody tr:hover td{background:var(--surface2)}
 @media(max-width:640px){
   .stat-row{grid-template-columns:1fr 1fr}
 }
+
+/* ── DASHBOARD ACTION COLUMNS ── */
+.attn-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px;margin-bottom:24px}
+.attn-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;display:flex;flex-direction:column;min-height:200px}
+.attn-head{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.attn-title{font-family:'Syne',sans-serif;font-size:14px;font-weight:600;color:var(--ink)}
+.attn-count{font-size:11px;background:var(--accent-light);color:var(--accent);padding:3px 9px;border-radius:var(--r-pill);font-weight:500}
+.attn-count.zero{background:var(--surface2);color:var(--ink3)}
+.attn-list{padding:6px;flex:1;overflow-y:auto;max-height:380px}
+.attn-item{display:flex;flex-direction:column;gap:6px;padding:10px 12px;border-radius:var(--r-sm);transition:background .12s}
+.attn-item + .attn-item{border-top:1px solid var(--border)}
+.attn-item:hover{background:var(--surface2)}
+.attn-item-name{font-size:13px;font-weight:500;color:var(--ink)}
+.attn-item-meta{font-size:11px;color:var(--ink3)}
+.attn-item-actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:4px}
+.attn-empty{padding:30px 16px;text-align:center;font-size:13px;color:var(--ink3)}
+
+/* ── COLLAPSIBLE SECTION ── */
+.collapsible{margin-top:8px}
+.collapsible-toggle{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;background:var(--surface);border:1px solid var(--border2);border-radius:var(--r-pill);font-size:13px;font-weight:500;color:var(--ink2);cursor:pointer;margin-bottom:14px;transition:all .12s}
+.collapsible-toggle:hover{background:var(--surface2)}
+.collapsible-toggle .arrow{display:inline-block;transition:transform .15s}
+.collapsible.open .collapsible-toggle .arrow{transform:rotate(180deg)}
+.collapsible-body{display:none}
+.collapsible.open .collapsible-body{display:block}
+
+/* ── SLIDE-IN PANEL ── */
+.slide-overlay{display:none;position:fixed;inset:0;background:rgba(24,22,15,.4);z-index:90}
+.slide-overlay.open{display:block}
+.slide-panel{position:fixed;top:0;right:0;height:100vh;width:520px;max-width:100vw;background:var(--surface);border-left:1px solid var(--border);z-index:91;transform:translateX(100%);transition:transform .22s ease;display:flex;flex-direction:column}
+.slide-panel.open{transform:translateX(0)}
+.slide-head{padding:18px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:10px}
+.slide-title{font-family:'Syne',sans-serif;font-size:16px;font-weight:600;color:var(--ink);flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.slide-body{flex:1;overflow-y:auto;padding:18px 20px;display:flex;flex-direction:column;gap:18px}
+.slide-section{display:flex;flex-direction:column;gap:8px}
+.slide-section-label{font-size:11px;font-weight:500;color:var(--ink3);letter-spacing:.06em;text-transform:uppercase}
+.slide-meta-row{display:grid;grid-template-columns:120px 1fr;gap:6px 14px;font-size:13px;color:var(--ink2)}
+.slide-meta-row .k{color:var(--ink3)}
+.slide-foot{padding:14px 20px;border-top:1px solid var(--border);font-size:12px;color:var(--ink3);display:flex;justify-content:space-between;align-items:center}
+@media(max-width:640px){
+  .slide-panel{width:100%}
+}
+
+/* ── JOB CARDS ── */
+.job-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px}
+.job-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:18px;cursor:pointer;transition:all .12s;display:flex;flex-direction:column;gap:8px}
+.job-card:hover{border-color:var(--purple-mid);transform:translateY(-1px);box-shadow:0 4px 12px rgba(0,0,0,.04)}
+.job-card-title{font-size:15px;font-weight:600;color:var(--ink)}
+.job-card-biz{font-size:12px;color:var(--ink3)}
+.job-card-meta{display:flex;gap:6px;flex-wrap:wrap;margin-top:4px}
+.job-card-foot{display:flex;align-items:center;justify-content:space-between;font-size:11px;color:var(--ink3);margin-top:6px;padding-top:10px;border-top:1px solid var(--border)}
+
+/* ── DRAGGABLE PILLS (Field Options) ── */
+.pill-bag{display:flex;flex-wrap:wrap;gap:6px;padding:10px;border:1px dashed var(--border2);border-radius:var(--r-sm);background:var(--surface);min-height:54px}
+.pill-bag.empty{align-items:center;justify-content:center;color:var(--ink3);font-size:12px}
+.pill{display:inline-flex;align-items:center;gap:6px;padding:6px 10px 6px 12px;background:var(--accent-light);color:var(--accent);border:1px solid rgba(27,58,45,.15);border-radius:var(--r-pill);font-size:12px;font-weight:500;cursor:grab;user-select:none}
+.pill.dragging{opacity:.4}
+.pill .pill-edit{background:none;border:none;color:var(--accent);cursor:pointer;padding:0;line-height:1;font-size:12px;display:inline-flex;align-items:center}
+.pill .pill-rm{background:none;border:none;color:var(--accent);cursor:pointer;font-size:14px;line-height:1;padding:0 2px}
+.pill input{background:#fff;border:1px solid var(--accent-mid);border-radius:var(--r-pill);font-size:12px;padding:3px 8px;font-family:'DM Sans',sans-serif;outline:none;width:120px}
+.pill-add-row{display:flex;gap:8px;margin-top:8px}
+.pill-add-row input{flex:1;padding:8px 12px;border-radius:var(--r-sm);border:1px solid var(--border2);background:var(--surface);font-family:'DM Sans',sans-serif;font-size:13px;outline:none}
+.fc-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:18px;display:grid;grid-template-columns:1fr 220px;gap:18px;margin-bottom:14px}
+.fc-card-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.fc-card-title{font-size:14px;font-weight:600;color:var(--ink)}
+.fc-card-actions{display:flex;gap:6px}
+.fc-preview{padding:12px;border-left:1px solid var(--border);background:var(--surface2);border-radius:var(--r-sm)}
+.fc-preview-label{font-size:10px;font-weight:500;color:var(--ink3);letter-spacing:.06em;text-transform:uppercase;margin-bottom:8px}
+.fc-unsaved{background:#FFF6DC;color:#8B6A0F;border:1px solid #F2D78A;padding:2px 8px;border-radius:var(--r-pill);font-size:10px;font-weight:600;letter-spacing:.04em}
+@media(max-width:760px){
+  .fc-card{grid-template-columns:1fr}
+  .fc-preview{border-left:none;border-top:1px solid var(--border)}
+}
+
+/* ── BUSINESS LOOKUP ── */
+.lookup-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+.lookup-row input{flex:1;min-width:140px;padding:9px 12px;border-radius:var(--r-sm);border:1px solid var(--border2);background:var(--surface);font-size:13px;outline:none}
+.lookup-toggle{display:inline-flex;background:var(--surface2);border-radius:var(--r-pill);padding:3px}
+.lookup-toggle button{padding:6px 14px;font-size:12px;font-weight:500;border-radius:var(--r-pill);cursor:pointer;color:var(--ink3);border:none;background:none}
+.lookup-toggle button.active{background:var(--surface);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.06)}
+.lookup-results{display:flex;flex-direction:column;gap:8px;margin-top:8px;max-height:280px;overflow-y:auto}
+.lookup-card{display:flex;gap:10px;padding:10px 12px;border:1px solid var(--border2);border-radius:var(--r-sm);background:var(--surface);align-items:flex-start}
+.lookup-thumb{width:54px;height:54px;border-radius:8px;background:var(--surface2);object-fit:cover;flex-shrink:0}
+.lookup-card-info{flex:1;min-width:0}
+.lookup-card-name{font-size:13px;font-weight:500;color:var(--ink);margin-bottom:2px}
+.lookup-card-meta{font-size:11px;color:var(--ink3);line-height:1.4}
+.lookup-card-meta .star{color:#B45309;font-weight:500}
+.import-fields{display:flex;flex-direction:column;gap:6px;margin-top:10px;padding:12px;background:var(--surface2);border-radius:var(--r-sm)}
+.import-fields label{font-size:12px;color:var(--ink2);display:flex;align-items:flex-start;gap:8px}
+.import-fields input[type=checkbox]{margin-top:2px}
+.import-fields .iv{color:var(--ink3);font-size:11px}
 </style>
 </head>
 <body>
@@ -302,6 +393,27 @@ tbody tr:hover td{background:var(--surface2)}
     <div id="business-view" style="display:none">
       <div class="login-logo">Spottly</div>
       <div class="login-sub">Request a business account</div>
+
+      <div id="bz-lookup-section" style="margin-bottom:14px;padding:12px;border:1px solid var(--border2);border-radius:var(--r-sm);background:var(--surface)">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+          <div style="font-size:12px;font-weight:600;color:var(--ink2)">Find your business</div>
+          <span style="font-size:11px;color:var(--ink3);cursor:pointer;text-decoration:underline" onclick="bzToggleLookup(false)">Fill manually</span>
+        </div>
+        <div class="lookup-row">
+          <input type="text" id="bz-look-q" placeholder="Business name">
+          <input type="text" id="bz-look-loc" placeholder="City or zip">
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
+          <div class="lookup-toggle" id="bz-look-src">
+            <button class="active" data-src="google" type="button">Google</button>
+            <button data-src="yelp" type="button">Yelp</button>
+          </div>
+          <button class="btn-sm primary" type="button" onclick="bzDoLookup()">Search</button>
+        </div>
+        <div class="lookup-results" id="bz-look-results"></div>
+      </div>
+      <div id="bz-show-lookup" style="display:none;font-size:12px;color:var(--accent);cursor:pointer;text-decoration:underline;margin-bottom:14px" onclick="bzToggleLookup(true)">Find my business automatically</div>
+
       <div class="field"><label>Business name</label><input type="text" id="bz-name" placeholder="e.g. Gen Korean BBQ"></div>
       <div class="field"><label>Contact person</label><input type="text" id="bz-contact" placeholder="Your full name"></div>
       <div class="field"><label>Email</label><input type="email" id="bz-email" placeholder="contact@business.com"></div>
@@ -442,29 +554,42 @@ tbody tr:hover td{background:var(--surface2)}
     <div class="page active" id="page-dashboard">
       <div class="page-header">
         <div class="welcome-row"><div class="welcome-name" id="dash-welcome">Welcome</div><span class="badge" id="dash-role-badge"></span></div>
-        <div class="page-title">Dashboard</div>
+        <div class="page-title" id="dash-section-title">Needs your attention</div>
         <div class="page-sub" id="dash-sub">Overview of all observations</div>
       </div>
-      <div class="filter-bar">
-        <select class="filter-select" id="dash-filter-loc" onchange="loadDashboard()"><option value="">All locations</option></select>
-        <select class="filter-select" id="dash-filter-preset" onchange="applyDatePreset('dash')">
-          <option value="all">All time</option>
-          <option value="today">Today</option>
-          <option value="week">This week</option>
-          <option value="month">This month</option>
-          <option value="30d" selected>Last 30 days</option>
-          <option value="custom">Custom</option>
-        </select>
-        <input class="filter-input" type="date" id="dash-filter-from" onchange="loadDashboard()" style="display:none">
-        <input class="filter-input" type="date" id="dash-filter-to" onchange="loadDashboard()" style="display:none">
-        <select class="filter-select" id="dash-filter-obs" onchange="loadDashboard()" style="display:none"><option value="">All observers</option></select>
-        <button class="btn-sm outline" onclick="clearDashFilters()">Clear</button>
-      </div>
-      <div class="stat-row" id="dash-stats"></div>
-      <div class="chart-grid" id="dash-charts"></div>
-      <div class="card" style="margin-top:16px">
-        <div class="card-header"><div class="card-title">Observations over time</div><div style="font-size:11px;color:var(--ink3)" id="trend-period"></div></div>
-        <div class="card-body"><div id="trend-chart"></div></div>
+
+      <!-- Action panels (role-specific) -->
+      <div class="attn-grid" id="dash-attn-grid"></div>
+
+      <!-- Collapsible analytics -->
+      <div class="collapsible" id="dash-analytics">
+        <button class="collapsible-toggle" onclick="toggleAnalytics()">
+          <span id="analytics-label">View analytics</span>
+          <span class="arrow">▾</span>
+        </button>
+        <div class="collapsible-body">
+          <div class="filter-bar">
+            <select class="filter-select" id="dash-filter-loc" onchange="loadDashboard()"><option value="">All locations</option></select>
+            <select class="filter-select" id="dash-filter-preset" onchange="applyDatePreset('dash')">
+              <option value="all">All time</option>
+              <option value="today">Today</option>
+              <option value="week">This week</option>
+              <option value="month">This month</option>
+              <option value="30d" selected>Last 30 days</option>
+              <option value="custom">Custom</option>
+            </select>
+            <input class="filter-input" type="date" id="dash-filter-from" onchange="loadDashboard()" style="display:none">
+            <input class="filter-input" type="date" id="dash-filter-to" onchange="loadDashboard()" style="display:none">
+            <select class="filter-select" id="dash-filter-obs" onchange="loadDashboard()" style="display:none"><option value="">All observers</option></select>
+            <button class="btn-sm outline" onclick="clearDashFilters()">Clear</button>
+          </div>
+          <div class="stat-row" id="dash-stats"></div>
+          <div class="chart-grid" id="dash-charts"></div>
+          <div class="card" style="margin-top:16px">
+            <div class="card-header"><div class="card-title">Observations over time</div><div style="font-size:11px;color:var(--ink3)" id="trend-period"></div></div>
+            <div class="card-body"><div id="trend-chart"></div></div>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -548,14 +673,12 @@ tbody tr:hover td{background:var(--surface2)}
     <!-- FIELD OPTIONS (admin) -->
     <div class="page" id="page-config">
       <div class="page-header">
-        <div class="page-title">Field Options</div>
-        <div class="page-sub">Configure values shown to observers in the app</div>
-      </div>
-      <div class="card">
-        <div class="card-body" id="config-body">
-          <div style="color:var(--ink3);font-size:13px">Loading…</div>
+        <div style="display:flex;align-items:center;justify-content:space-between">
+          <div><div class="page-title">Field Options</div><div class="page-sub">Drag to reorder · click pencil to edit · click × to remove</div></div>
+          <button class="btn-sm primary" onclick="saveFieldConfig()">Save all</button>
         </div>
       </div>
+      <div id="config-cards"></div>
     </div>
 
     <!-- RECORD (observer data collection) -->
@@ -742,19 +865,11 @@ tbody tr:hover td{background:var(--surface2)}
     <div class="page" id="page-bizjobs">
       <div class="page-header">
         <div style="display:flex;align-items:center;justify-content:space-between">
-          <div><div class="page-title">Jobs</div><div class="page-sub">Post and manage your job listings</div></div>
+          <div><div class="page-title">Jobs</div><div class="page-sub" id="bizjobs-count">Post and manage your job listings</div></div>
           <button class="btn-sm primary" onclick="openBizJobModal()">+ Post a job</button>
         </div>
       </div>
-      <div class="card">
-        <div class="card-header"><div class="card-title" id="bizjobs-count">Loading…</div></div>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>Title</th><th>Location</th><th>Schedule</th><th>Applications</th><th>Status</th><th>Actions</th></tr></thead>
-            <tbody id="bizjobs-tbody"></tbody>
-          </table>
-        </div>
-      </div>
+      <div class="job-grid" id="bizjobs-grid"></div>
     </div>
 
     <!-- BUSINESS OBSERVERS -->
@@ -787,17 +902,9 @@ tbody tr:hover td{background:var(--surface2)}
     <div class="page" id="page-adminjobs">
       <div class="page-header">
         <div class="page-title">Jobs</div>
-        <div class="page-sub">All jobs across the platform</div>
+        <div class="page-sub" id="adminjobs-count">All jobs across the platform</div>
       </div>
-      <div class="card">
-        <div class="card-header"><div class="card-title" id="adminjobs-count">Loading…</div></div>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>Title</th><th>Business</th><th>Location</th><th>Applications</th><th>Status</th><th>Actions</th></tr></thead>
-            <tbody id="adminjobs-tbody"></tbody>
-          </table>
-        </div>
-      </div>
+      <div class="job-grid" id="adminjobs-grid"></div>
     </div>
 
   </div>
@@ -905,12 +1012,34 @@ tbody tr:hover td{background:var(--surface2)}
 
 <!-- BIZ LOCATION MODAL -->
 <div class="modal-overlay" id="bizloc-modal">
-  <div class="modal">
+  <div class="modal" style="max-width:560px">
     <div class="modal-header">
       <div class="modal-title" id="bizloc-modal-title">Add location</div>
       <button class="modal-close" onclick="closeBizLocModal()">×</button>
     </div>
     <div class="modal-body">
+
+      <div id="bm-lookup-section" style="margin-bottom:14px;padding:12px;border:1px solid var(--border2);border-radius:var(--r-sm);background:var(--surface)">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+          <div style="font-size:12px;font-weight:600;color:var(--ink2)">Find your business</div>
+          <span style="font-size:11px;color:var(--ink3);cursor:pointer;text-decoration:underline" onclick="bmToggleLookup(false)">Fill manually</span>
+        </div>
+        <div class="lookup-row">
+          <input type="text" id="bm-look-q" placeholder="Business name">
+          <input type="text" id="bm-look-loc" placeholder="City or zip">
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
+          <div class="lookup-toggle" id="bm-look-src">
+            <button class="active" data-src="google" type="button">Google</button>
+            <button data-src="yelp" type="button">Yelp</button>
+          </div>
+          <button class="btn-sm primary" type="button" onclick="bmDoLookup()">Search</button>
+        </div>
+        <div class="lookup-results" id="bm-look-results"></div>
+        <div id="bm-import-fields"></div>
+      </div>
+      <div id="bm-show-lookup" style="display:none;font-size:12px;color:var(--accent);cursor:pointer;text-decoration:underline;margin-bottom:10px" onclick="bmToggleLookup(true)">Find my business automatically</div>
+
       <div class="field"><label>Location name</label><input type="text" id="bm-name" placeholder="e.g. Ala Moana"></div>
       <div class="field"><label>Address</label><input type="text" id="bm-addr" placeholder="123 Main St"></div>
       <div class="field"><label>Type</label>
@@ -976,6 +1105,20 @@ tbody tr:hover td{background:var(--surface2)}
     </div>
   </div>
 </div>
+
+<!-- JOB DETAIL SLIDE-IN -->
+<div class="slide-overlay" id="job-slide-overlay" onclick="closeJobPanel()"></div>
+<aside class="slide-panel" id="job-slide" aria-hidden="true">
+  <div class="slide-head">
+    <div class="slide-title" id="js-title">Job</div>
+    <span class="badge" id="js-status">—</span>
+    <button class="modal-close" onclick="closeJobPanel()" aria-label="Close">×</button>
+  </div>
+  <div class="slide-body" id="js-body"></div>
+  <div class="slide-foot">
+    <a id="js-airtable" href="#" target="_blank" rel="noopener" style="color:var(--accent);font-weight:500">View in Airtable →</a>
+  </div>
+</aside>
 
 <div class="toast" id="toast"></div>
 
@@ -1404,7 +1547,220 @@ function applyDatePreset(scope) {
 // ── DASHBOARD ──
 function loadDashboard() { renderDashboard(); }
 
+function toggleAnalytics() {
+  const c = document.getElementById('dash-analytics');
+  c.classList.toggle('open');
+  const lbl = document.getElementById('analytics-label');
+  lbl.textContent = c.classList.contains('open') ? 'Hide analytics' : (isObserver() ? 'View my stats' : 'View analytics');
+}
+
+async function renderAttentionPanel() {
+  const grid = document.getElementById('dash-attn-grid');
+  if (!grid) return;
+  const titleEl = document.getElementById('dash-section-title');
+  const subEl = document.getElementById('dash-sub');
+  const analyticsLbl = document.getElementById('analytics-label');
+  if (analyticsLbl) analyticsLbl.textContent = isObserver() ? 'View my stats' : 'View analytics';
+
+  if (isAdmin()) {
+    titleEl.textContent = 'Needs your attention';
+    subEl.textContent = 'Pending approvals, locations, and applications';
+    await renderAdminAttention(grid);
+  } else if (isBusiness()) {
+    titleEl.textContent = 'Needs your attention';
+    subEl.textContent = 'Applications and location status';
+    await renderBusinessAttention(grid);
+  } else {
+    titleEl.textContent = 'Your activity';
+    subEl.textContent = 'Active assignments and applications';
+    await renderObserverAttention(grid);
+  }
+}
+
+async function renderAdminAttention(grid) {
+  grid.innerHTML = `
+    <div class="attn-card"><div class="attn-head"><div class="attn-title">Pending approvals</div><span class="attn-count" id="ac-users">…</span></div><div class="attn-list" id="al-users"><div class="attn-empty">Loading…</div></div></div>
+    <div class="attn-card"><div class="attn-head"><div class="attn-title">Unactivated locations</div><span class="attn-count" id="ac-locs">…</span></div><div class="attn-list" id="al-locs"><div class="attn-empty">Loading…</div></div></div>
+    <div class="attn-card"><div class="attn-head"><div class="attn-title">Open job applications</div><span class="attn-count" id="ac-apps">…</span></div><div class="attn-list" id="al-apps"><div class="attn-empty">Loading…</div></div></div>
+  `;
+  try {
+    const [usersR, locsR, appsR] = await Promise.all([
+      api('/web-auth', { action: 'getWebUsers' }),
+      api('/locations', { action: 'getLocations' }),
+      api('/jobs', { action: 'getApplications' }),
+    ]);
+    const pendingUsers = (usersR.users || []).filter(u => u.status === 'Pending');
+    const inactiveLocs = (locsR.locations || []).filter(l => l.active === false);
+    const pendingApps = (appsR.applications || []).filter(a => a.status === 'Pending');
+
+    const setCount = (id, n) => { const el = document.getElementById(id); el.textContent = n; if (n === 0) el.classList.add('zero'); };
+    setCount('ac-users', pendingUsers.length);
+    setCount('ac-locs', inactiveLocs.length);
+    setCount('ac-apps', pendingApps.length);
+
+    const userListEl = document.getElementById('al-users');
+    userListEl.innerHTML = pendingUsers.length ? pendingUsers.map(u => `
+      <div class="attn-item">
+        <div class="attn-item-name">${esc(u.name || u.username)}</div>
+        <div class="attn-item-meta">${esc(u.role)} · @${esc(u.username)}</div>
+        <div class="attn-item-actions">
+          <button class="btn-sm primary" data-attn-approve-user="${esc(u.id)}">Approve</button>
+          <button class="btn-sm danger" data-attn-reject-user="${esc(u.id)}">Reject</button>
+        </div>
+      </div>`).join('') : '<div class="attn-empty">No pending approvals</div>';
+    userListEl.querySelectorAll('[data-attn-approve-user]').forEach(b => b.addEventListener('click', () => attnUpdateUser(b.dataset.attnApproveUser, 'Active')));
+    userListEl.querySelectorAll('[data-attn-reject-user]').forEach(b => b.addEventListener('click', () => attnUpdateUser(b.dataset.attnRejectUser, 'Rejected')));
+
+    const locListEl = document.getElementById('al-locs');
+    locListEl.innerHTML = inactiveLocs.length ? inactiveLocs.map(l => `
+      <div class="attn-item">
+        <div class="attn-item-name">${esc(l.name)}</div>
+        <div class="attn-item-meta">${esc(l.businessName || l.businessUsername || '—')} · ${esc(l.address || 'No address')}</div>
+        <div class="attn-item-actions"><button class="btn-sm primary" data-attn-act-loc="${esc(l.id)}">Activate</button></div>
+      </div>`).join('') : '<div class="attn-empty">All locations active</div>';
+    locListEl.querySelectorAll('[data-attn-act-loc]').forEach(b => b.addEventListener('click', () => attnActivateLoc(b.dataset.attnActLoc)));
+
+    const appListEl = document.getElementById('al-apps');
+    appListEl.innerHTML = pendingApps.length ? pendingApps.map(a => `
+      <div class="attn-item">
+        <div class="attn-item-name">${esc(a.observerName || a.observerUsername)}</div>
+        <div class="attn-item-meta">${esc(a.jobTitle)} · ${esc(a.businessUsername)} · ${esc(fmtDate(a.appliedAt))}</div>
+        <div class="attn-item-actions">
+          <button class="btn-sm primary" data-attn-approve-app="${esc(a.id)}">Approve</button>
+          <button class="btn-sm danger" data-attn-reject-app="${esc(a.id)}">Reject</button>
+        </div>
+      </div>`).join('') : '<div class="attn-empty">No pending applications</div>';
+    appListEl.querySelectorAll('[data-attn-approve-app]').forEach(b => b.addEventListener('click', () => attnUpdateApp(b.dataset.attnApproveApp, 'Approved')));
+    appListEl.querySelectorAll('[data-attn-reject-app]').forEach(b => b.addEventListener('click', () => attnUpdateApp(b.dataset.attnRejectApp, 'Rejected')));
+  } catch(e) { grid.innerHTML = '<div class="attn-empty">Failed to load</div>'; }
+}
+
+async function attnUpdateUser(id, status) {
+  try {
+    const res = await api('/web-auth', { action: 'webUpdateUser', targetId: id, fields: { Status: status }});
+    if (res.success) { showToast(status === 'Active' ? 'Approved' : 'Rejected'); renderAttentionPanel(); }
+    else showToast(res.error || 'Failed');
+  } catch(e) { showToast('Error'); }
+}
+async function attnActivateLoc(locId) {
+  const r = await api('/locations', { action: 'getLocations' });
+  const l = (r.locations || []).find(x => x.id === locId);
+  if (!l) return;
+  const res = await api('/locations', { action: 'updateLocation', locationId: locId, location: {
+    name: l.name, address: l.address || '', type: l.type || '',
+    observers: l.observers || [], businesses: l.businesses || [], active: true,
+    businessUsername: l.businessUsername || '', businessName: l.businessName || '',
+  }});
+  if (res.success) { showToast('Location activated'); renderAttentionPanel(); }
+  else showToast(res.error || 'Failed');
+}
+async function attnUpdateApp(id, status) {
+  try {
+    const res = await api('/jobs', { action: 'updateApplication', recordId: id, status });
+    if (res.success) { showToast('Updated'); renderAttentionPanel(); }
+    else showToast(res.error || 'Failed');
+  } catch(e) { showToast('Error'); }
+}
+
+async function renderBusinessAttention(grid) {
+  grid.innerHTML = `
+    <div class="attn-card"><div class="attn-head"><div class="attn-title">Pending applications</div><span class="attn-count" id="ac-bapps">…</span></div><div class="attn-list" id="al-bapps"><div class="attn-empty">Loading…</div></div></div>
+    <div class="attn-card"><div class="attn-head"><div class="attn-title">Your locations</div><span class="attn-count" id="ac-blocs">…</span></div><div class="attn-list" id="al-blocs"><div class="attn-empty">Loading…</div></div></div>
+  `;
+  try {
+    const [appsR, locsR] = await Promise.all([
+      api('/jobs', { action: 'getApplications' }),
+      api('/locations', { action: 'getLocations' }),
+    ]);
+    allLocations = locsR.locations || [];
+    const pendingApps = (appsR.applications || []).filter(a => a.status === 'Pending');
+    const myLocs = allLocations;
+    document.getElementById('ac-bapps').textContent = pendingApps.length;
+    if (!pendingApps.length) document.getElementById('ac-bapps').classList.add('zero');
+    document.getElementById('ac-blocs').textContent = myLocs.length;
+    if (!myLocs.length) document.getElementById('ac-blocs').classList.add('zero');
+
+    const appsEl = document.getElementById('al-bapps');
+    appsEl.innerHTML = pendingApps.length ? pendingApps.map(a => `
+      <div class="attn-item">
+        <div class="attn-item-name">${esc(a.observerName || a.observerUsername)}</div>
+        <div class="attn-item-meta">${esc(a.jobTitle)} · ${esc(fmtDate(a.appliedAt))}</div>
+        <div class="attn-item-actions">
+          <button class="btn-sm primary" data-biz-app-approve="${esc(a.id)}" data-app-obs="${esc(a.observerName || a.observerUsername)}">Approve</button>
+          <button class="btn-sm danger" data-biz-app-reject="${esc(a.id)}">Reject</button>
+        </div>
+      </div>`).join('') : '<div class="attn-empty">No pending applications</div>';
+    appsEl.querySelectorAll('[data-biz-app-approve]').forEach(b => b.addEventListener('click', () => openApproveAppModal(b.dataset.bizAppApprove, b.dataset.appObs)));
+    appsEl.querySelectorAll('[data-biz-app-reject]').forEach(b => b.addEventListener('click', () => updateAppStatus(b.dataset.bizAppReject, 'Rejected').then(() => renderAttentionPanel())));
+
+    const locsEl = document.getElementById('al-blocs');
+    locsEl.innerHTML = myLocs.length ? myLocs.map(l => {
+      const status = l.active ? `<span class="badge active">Active</span>` : `<span class="badge pending">Pending activation</span>`;
+      const sub = l.active ? `${(l.observers || []).length} observers assigned` : 'Waiting for admin activation';
+      return `
+        <div class="attn-item">
+          <div class="attn-item-name">${esc(l.name)} ${status}</div>
+          <div class="attn-item-meta">${esc(sub)}</div>
+        </div>`;
+    }).join('') : '<div class="attn-empty">No locations yet</div>';
+  } catch(e) { grid.innerHTML = '<div class="attn-empty">Failed to load</div>'; }
+}
+
+async function renderObserverAttention(grid) {
+  grid.innerHTML = `
+    <div class="attn-card"><div class="attn-head"><div class="attn-title">Active assignments</div><span class="attn-count" id="ac-oloc">…</span></div><div class="attn-list" id="al-oloc"><div class="attn-empty">Loading…</div></div></div>
+    <div class="attn-card"><div class="attn-head"><div class="attn-title">Application status</div><span class="attn-count" id="ac-oapp">…</span></div><div class="attn-list" id="al-oapp"><div class="attn-empty">Loading…</div></div></div>
+  `;
+  try {
+    const [locsR, appsR] = await Promise.all([
+      api('/locations', { action: 'getAssignedLocations' }),
+      api('/jobs', { action: 'getApplications' }),
+    ]);
+    const locs = locsR.locations || [];
+    const apps = appsR.applications || [];
+    document.getElementById('ac-oloc').textContent = locs.length;
+    if (!locs.length) document.getElementById('ac-oloc').classList.add('zero');
+    document.getElementById('ac-oapp').textContent = apps.length;
+    if (!apps.length) document.getElementById('ac-oapp').classList.add('zero');
+
+    const locEl = document.getElementById('al-oloc');
+    locEl.innerHTML = locs.length ? locs.map(l => {
+      const lastSession = (allObservations || []).filter(o => o.Location === l.name && o.Observer === currentUser.username).map(o => o.Timestamp).sort().pop();
+      return `
+        <div class="attn-item">
+          <div class="attn-item-name">${esc(l.name)}</div>
+          <div class="attn-item-meta">Last session: ${esc(lastSession ? new Date(lastSession).toLocaleDateString() : 'never')}</div>
+          <div class="attn-item-actions"><button class="btn-sm primary" data-start-rec="${esc(l.name)}">Start recording</button></div>
+        </div>`;
+    }).join('') : '<div class="attn-empty">Apply on the Job Board to get assigned</div>';
+    locEl.querySelectorAll('[data-start-rec]').forEach(b => b.addEventListener('click', () => startRecordAt(b.dataset.startRec)));
+
+    const appEl = document.getElementById('al-oapp');
+    appEl.innerHTML = apps.length ? apps.map(a => {
+      const blurb = a.status === 'Approved' ? `You're assigned at ${esc(a.locationName)}` : a.status === 'Pending' ? 'Under review' : 'Not selected';
+      return `
+        <div class="attn-item">
+          <div class="attn-item-name">${esc(a.jobTitle)} <span class="badge ${statusBadgeClass(a.status)}">${esc(a.status)}</span></div>
+          <div class="attn-item-meta">${esc(a.businessUsername)} · ${blurb}</div>
+        </div>`;
+    }).join('') : '<div class="attn-empty">No applications yet</div>';
+  } catch(e) { grid.innerHTML = '<div class="attn-empty">Failed to load</div>'; }
+}
+
+function startRecordAt(locName) {
+  navTo('record');
+  setTimeout(() => {
+    const sel = document.getElementById('rec-loc');
+    if (sel) { sel.value = locName; if (typeof recCheckStart === 'function') recCheckStart(); }
+  }, 60);
+}
+
 function renderDashboard() {
+  renderAttentionPanel();
+  _renderDashboardAnalytics();
+}
+
+function _renderDashboardAnalytics() {
   const obs = getFilteredObs();
   const real = obs.filter(o => o.Missed !== 'YES');
   const missed = obs.filter(o => o.Missed === 'YES').length;
@@ -1984,40 +2340,157 @@ async function createWebUser() {
 }
 
 // ── FIELD OPTIONS ──
+// ── FIELD OPTIONS (drag pills) ──
+const FC_GROUPS = [
+  { key: 'ages', label: 'Age ranges' },
+  { key: 'genders', label: 'Gender presentation' },
+  { key: 'ethnicities', label: 'Ethnicities' },
+  { key: 'disabilities', label: 'Disabilities / aids' },
+  { key: 'emotions', label: 'Emotional states' },
+];
+const FC_DEFAULTS = {
+  ages: ['Under 18','18–24','25–34','35–44','45–59','60+'],
+  genders: ['Male','Female','Non-binary','Unclear'],
+  ethnicities: ['Asian','Black','Hispanic / Latino','Middle Eastern','Pacific Islander','White','Mixed / other','Unclear'],
+  disabilities: ['None observed','Wheelchair','Walking aid','Visual aid','Hearing aid','Prosthetic'],
+  emotions: ['Happy','Neutral','Confused','Frustrated','Distressed'],
+};
+let fcDraft = null;
+let fcDirty = {};
+let fcDragKey = null;
+let fcDragIdx = null;
+
 async function renderFieldConfig() {
-  const body = document.getElementById('config-body');
+  const root = document.getElementById('config-cards');
   if (!fieldConfig) {
     try {
       const res = await api('/config', { action: 'getConfig' });
       fieldConfig = res.config || {};
-    } catch(e) { body.innerHTML = '<div style="color:var(--warn)">Failed to load config</div>'; return; }
+    } catch(e) { root.innerHTML = '<div style="color:var(--warn)">Failed to load config</div>'; return; }
   }
-  const groups = [
-    { key: 'ages', label: 'Age ranges' },
-    { key: 'genders', label: 'Gender presentation' },
-    { key: 'ethnicities', label: 'Ethnicities' },
-    { key: 'disabilities', label: 'Disabilities / aids' },
-    { key: 'emotions', label: 'Emotional states' },
-  ];
-  body.innerHTML = groups.map(g => `
-    <div class="field"><label>${esc(g.label)}</label>
-      <textarea id="cfg-${g.key}" rows="6" style="width:100%;padding:10px;border-radius:var(--r-sm);border:1px solid var(--border2);background:var(--surface);font-family:'DM Mono',monospace;font-size:13px;color:var(--ink);outline:none;resize:vertical">${esc((fieldConfig[g.key]||[]).join('\n'))}</textarea>
-      <div style="font-size:11px;color:var(--ink3);margin-top:4px">One value per line</div>
-    </div>
-  `).join('') + `<button class="btn-sm primary" onclick="saveFieldConfig()">Save changes</button>`;
+  fcDraft = JSON.parse(JSON.stringify(fieldConfig));
+  fcDirty = {};
+  renderFcCards();
+}
+
+function renderFcCards() {
+  const root = document.getElementById('config-cards');
+  root.innerHTML = FC_GROUPS.map(g => fcCardHtml(g)).join('');
+  FC_GROUPS.forEach(g => {
+    bindFcPills(g.key);
+    const addBtn = document.getElementById(`fc-add-${g.key}`);
+    addBtn?.addEventListener('click', () => fcAdd(g.key));
+    document.getElementById(`fc-input-${g.key}`)?.addEventListener('keydown', e => { if (e.key === 'Enter') fcAdd(g.key); });
+    document.getElementById(`fc-restore-${g.key}`)?.addEventListener('click', () => fcRestore(g.key));
+  });
+}
+
+function fcCardHtml(g) {
+  const items = (fcDraft[g.key] || []);
+  const dirty = fcDirty[g.key];
+  return `
+    <div class="fc-card">
+      <div>
+        <div class="fc-card-head">
+          <div class="fc-card-title">${esc(g.label)}</div>
+          <div class="fc-card-actions">
+            ${dirty ? '<span class="fc-unsaved">Unsaved</span>' : ''}
+            <button class="btn-sm outline" id="fc-restore-${g.key}">Restore defaults</button>
+          </div>
+        </div>
+        <div class="pill-bag ${items.length?'':'empty'}" data-fc-bag="${esc(g.key)}">
+          ${items.length ? items.map((v, i) => fcPillHtml(g.key, v, i)).join('') : 'No options yet'}
+        </div>
+        <div class="pill-add-row">
+          <input type="text" id="fc-input-${g.key}" placeholder="Add new option…">
+          <button class="btn-sm primary" id="fc-add-${g.key}">Add</button>
+        </div>
+      </div>
+      <div class="fc-preview">
+        <div class="fc-preview-label">Preview</div>
+        <div class="chips">${items.map(v => `<div class="chip">${esc(v)}</div>`).join('')}</div>
+      </div>
+    </div>`;
+}
+
+function fcPillHtml(key, value, i) {
+  return `<div class="pill" draggable="true" data-fc-key="${esc(key)}" data-fc-idx="${i}">
+    <span data-fc-label>${esc(value)}</span>
+    <button class="pill-edit" title="Edit" data-fc-edit="${i}">✎</button>
+    <button class="pill-rm" title="Remove" data-fc-rm="${i}">×</button>
+  </div>`;
+}
+
+function bindFcPills(key) {
+  const bag = document.querySelector(`[data-fc-bag="${key}"]`);
+  if (!bag) return;
+  bag.querySelectorAll('.pill').forEach(p => {
+    p.addEventListener('dragstart', e => { fcDragKey = key; fcDragIdx = +p.dataset.fcIdx; p.classList.add('dragging'); e.dataTransfer.effectAllowed = 'move'; });
+    p.addEventListener('dragend', () => p.classList.remove('dragging'));
+    p.addEventListener('dragover', e => { e.preventDefault(); });
+    p.addEventListener('drop', e => {
+      e.preventDefault();
+      if (fcDragKey !== key || fcDragIdx == null) return;
+      const target = +p.dataset.fcIdx;
+      if (target === fcDragIdx) return;
+      const arr = fcDraft[key];
+      const [moved] = arr.splice(fcDragIdx, 1);
+      arr.splice(target, 0, moved);
+      fcDirty[key] = true;
+      fcDragKey = null; fcDragIdx = null;
+      renderFcCards();
+    });
+  });
+  bag.querySelectorAll('[data-fc-rm]').forEach(b => b.addEventListener('click', e => {
+    e.stopPropagation();
+    fcDraft[key].splice(+b.dataset.fcRm, 1);
+    fcDirty[key] = true;
+    renderFcCards();
+  }));
+  bag.querySelectorAll('[data-fc-edit]').forEach(b => b.addEventListener('click', e => {
+    e.stopPropagation();
+    const idx = +b.dataset.fcEdit;
+    const pill = b.closest('.pill');
+    const labelEl = pill.querySelector('[data-fc-label]');
+    const old = fcDraft[key][idx];
+    labelEl.outerHTML = `<input type="text" value="${esc(old)}" data-fc-edit-input>`;
+    const input = pill.querySelector('[data-fc-edit-input]');
+    input.focus(); input.select();
+    const commit = () => {
+      const v = input.value.trim();
+      if (v && v !== old) { fcDraft[key][idx] = v; fcDirty[key] = true; }
+      renderFcCards();
+    };
+    input.addEventListener('blur', commit);
+    input.addEventListener('keydown', ev => { if (ev.key === 'Enter') input.blur(); if (ev.key === 'Escape') renderFcCards(); });
+  }));
+}
+
+function fcAdd(key) {
+  const input = document.getElementById(`fc-input-${key}`);
+  const v = input.value.trim();
+  if (!v) return;
+  fcDraft[key] = fcDraft[key] || [];
+  if (fcDraft[key].includes(v)) { showToast('Already in list'); return; }
+  fcDraft[key].push(v);
+  fcDirty[key] = true;
+  input.value = '';
+  renderFcCards();
+}
+
+function fcRestore(key) {
+  fcDraft[key] = [...(FC_DEFAULTS[key] || [])];
+  fcDirty[key] = true;
+  renderFcCards();
 }
 
 async function saveFieldConfig() {
-  const config = {
-    ages: document.getElementById('cfg-ages').value.split('\n').map(s => s.trim()).filter(Boolean),
-    genders: document.getElementById('cfg-genders').value.split('\n').map(s => s.trim()).filter(Boolean),
-    ethnicities: document.getElementById('cfg-ethnicities').value.split('\n').map(s => s.trim()).filter(Boolean),
-    disabilities: document.getElementById('cfg-disabilities').value.split('\n').map(s => s.trim()).filter(Boolean),
-    emotions: document.getElementById('cfg-emotions').value.split('\n').map(s => s.trim()).filter(Boolean),
-  };
+  if (!fcDraft) return;
+  const config = {};
+  FC_GROUPS.forEach(g => { config[g.key] = (fcDraft[g.key] || []).map(s => String(s).trim()).filter(Boolean); });
   try {
     const res = await api('/config', { action: 'updateConfig', config });
-    if (res.success) { fieldConfig = config; showToast('Field options saved'); }
+    if (res.success) { fieldConfig = config; fcDraft = JSON.parse(JSON.stringify(config)); fcDirty = {}; renderFcCards(); showToast('Field options saved'); }
     else showToast(res.error || 'Save failed');
   } catch(e) { showToast('Error saving'); }
 }
@@ -2572,6 +3045,10 @@ function openBizLocModal(locId) {
   document.getElementById('bm-name').value = loc?.name || '';
   document.getElementById('bm-addr').value = loc?.address || '';
   document.getElementById('bm-type').value = loc?.type || 'Retail';
+  ['bm-look-q','bm-look-loc'].forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
+  const r = document.getElementById('bm-look-results'); if (r) r.innerHTML = '';
+  const f = document.getElementById('bm-import-fields'); if (f) f.innerHTML = '';
+  bmToggleLookup(!locId);
   document.getElementById('bizloc-modal').classList.add('open');
 }
 function closeBizLocModal() { document.getElementById('bizloc-modal').classList.remove('open'); }
@@ -2598,9 +3075,9 @@ async function saveBizLocation() {
 
 // ── BUSINESS: JOBS ──
 async function renderBizJobs() {
-  const tbody = document.getElementById('bizjobs-tbody');
+  const grid = document.getElementById('bizjobs-grid');
   const count = document.getElementById('bizjobs-count');
-  tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--ink3);padding:24px">Loading…</td></tr>';
+  grid.innerHTML = '<div class="loading"><div class="spinner"></div>Loading…</div>';
   try {
     const [jobsRes, appsRes, locsRes] = await Promise.all([
       api('/jobs', { action: 'getJobs' }),
@@ -2612,34 +3089,11 @@ async function renderBizJobs() {
     allApps = appsRes.applications || [];
     allLocations = locsRes.locations || [];
     count.textContent = jobs.length + (jobs.length === 1 ? ' job' : ' jobs');
-    if (!jobs.length) {
-      tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--ink3);padding:24px">You haven\'t posted any jobs yet</td></tr>';
-      return;
-    }
-    tbody.innerHTML = jobs.map(j => {
-      const appCount = allApps.filter(a => a.jobId === j.jobId).length;
-      const closeBtn = j.status === 'Open'
-        ? `<button class="btn-sm outline" data-close-job="${esc(j.id)}">Close</button>`
-        : `<button class="btn-sm outline" data-reopen-job="${esc(j.id)}">Reopen</button>`;
-      return `
-        <tr>
-          <td><strong>${esc(j.title)}</strong></td>
-          <td>${esc(j.locationName)}</td>
-          <td style="color:var(--ink3)">${esc(j.requiredSessions) || '—'}</td>
-          <td><a href="#" data-view-apps="${esc(j.jobId)}" style="color:var(--accent);font-weight:500">${appCount}</a></td>
-          <td><span class="badge ${statusBadgeClass(j.status)}">${esc(j.status)}</span></td>
-          <td>
-            <button class="btn-sm outline" data-edit-job="${esc(j.id)}">Edit</button>
-            ${closeBtn}
-          </td>
-        </tr>`;
-    }).join('');
-    tbody.querySelectorAll('[data-edit-job]').forEach(b => b.addEventListener('click', () => openBizJobModal(b.dataset.editJob)));
-    tbody.querySelectorAll('[data-close-job]').forEach(b => b.addEventListener('click', () => updateBizJobStatus(b.dataset.closeJob, 'Closed')));
-    tbody.querySelectorAll('[data-reopen-job]').forEach(b => b.addEventListener('click', () => updateBizJobStatus(b.dataset.reopenJob, 'Open')));
-    tbody.querySelectorAll('[data-view-apps]').forEach(a => a.addEventListener('click', e => { e.preventDefault(); navTo('bizobservers'); }));
+    if (!jobs.length) { grid.innerHTML = '<div class="empty-state"><div class="empty-state-title">No jobs yet</div><div class="empty-state-sub">Click "Post a job" to create your first listing</div></div>'; return; }
+    grid.innerHTML = jobs.map(j => renderJobCardHtml(j)).join('');
+    grid.querySelectorAll('[data-job-card]').forEach(c => c.addEventListener('click', () => openJobPanel(c.dataset.jobCard)));
   } catch(e) {
-    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--warn);padding:24px">Failed to load</td></tr>';
+    grid.innerHTML = '<div class="empty-state"><div class="empty-state-title">Failed to load</div></div>';
   }
 }
 
@@ -2762,9 +3216,9 @@ async function updateAppStatus(recordId, status) {
 
 // ── ADMIN JOBS ──
 async function renderAdminJobs() {
-  const tbody = document.getElementById('adminjobs-tbody');
+  const grid = document.getElementById('adminjobs-grid');
   const count = document.getElementById('adminjobs-count');
-  tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--ink3);padding:24px">Loading…</td></tr>';
+  grid.innerHTML = '<div class="loading"><div class="spinner"></div>Loading…</div>';
   try {
     const [jobsRes, appsRes] = await Promise.all([
       api('/jobs', { action: 'getJobs' }),
@@ -2774,27 +3228,254 @@ async function renderAdminJobs() {
     allJobs = jobs;
     allApps = appsRes.applications || [];
     count.textContent = jobs.length + (jobs.length === 1 ? ' job' : ' jobs');
-    if (!jobs.length) { tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--ink3);padding:24px">No jobs yet</td></tr>'; return; }
-    tbody.innerHTML = jobs.map(j => {
-      const appCount = allApps.filter(a => a.jobId === j.jobId).length;
-      const toggleBtn = j.status === 'Open'
-        ? `<button class="btn-sm outline" data-admin-close="${esc(j.id)}">Close</button>`
-        : `<button class="btn-sm outline" data-admin-reopen="${esc(j.id)}">Reopen</button>`;
-      return `
-        <tr>
-          <td><strong>${esc(j.title)}</strong></td>
-          <td>${esc(j.businessName || j.businessUsername)}</td>
-          <td>${esc(j.locationName)}</td>
-          <td>${appCount}</td>
-          <td><span class="badge ${statusBadgeClass(j.status)}">${esc(j.status)}</span></td>
-          <td>${toggleBtn}</td>
-        </tr>`;
-    }).join('');
-    tbody.querySelectorAll('[data-admin-close]').forEach(b => b.addEventListener('click', () => updateBizJobStatus(b.dataset.adminClose, 'Closed').then(() => renderAdminJobs())));
-    tbody.querySelectorAll('[data-admin-reopen]').forEach(b => b.addEventListener('click', () => updateBizJobStatus(b.dataset.adminReopen, 'Open').then(() => renderAdminJobs())));
+    if (!jobs.length) { grid.innerHTML = '<div class="empty-state"><div class="empty-state-title">No jobs yet</div></div>'; return; }
+    grid.innerHTML = jobs.map(j => renderJobCardHtml(j)).join('');
+    grid.querySelectorAll('[data-job-card]').forEach(c => c.addEventListener('click', () => openJobPanel(c.dataset.jobCard)));
   } catch(e) {
-    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--warn);padding:24px">Failed to load</td></tr>';
+    grid.innerHTML = '<div class="empty-state"><div class="empty-state-title">Failed to load</div></div>';
   }
+}
+
+// ── JOB CARD + SLIDE-IN PANEL ──
+function renderJobCardHtml(j) {
+  const appCount = (allApps || []).filter(a => a.jobId === j.jobId).length;
+  return `
+    <div class="job-card" data-job-card="${esc(j.id)}" role="button" tabindex="0">
+      <div class="job-card-title">${esc(j.title)}</div>
+      <div class="job-card-biz">${esc(j.businessName || j.businessUsername)} · ${esc(j.locationName)}</div>
+      <div class="job-card-meta">
+        <span class="badge ${statusBadgeClass(j.status)}">${esc(j.status)}</span>
+        ${j.requiredSessions ? `<span class="badge other">${esc(j.requiredSessions)}</span>` : ''}
+      </div>
+      <div class="job-card-foot">
+        <span>${appCount} ${appCount===1?'application':'applications'}</span>
+        <span>${esc(fmtDate(j.createdAt))}</span>
+      </div>
+    </div>`;
+}
+
+function openJobPanel(recordId) {
+  const job = (allJobs || []).find(j => j.id === recordId);
+  if (!job) return;
+  const apps = (allApps || []).filter(a => a.jobId === job.jobId);
+  document.getElementById('js-title').textContent = job.title || 'Job';
+  const statusEl = document.getElementById('js-status');
+  statusEl.textContent = job.status;
+  statusEl.className = 'badge ' + statusBadgeClass(job.status);
+
+  const isOwnerOrAdmin = isAdmin() || (isBusiness() && job.businessUsername === currentUser?.username);
+  const baseId = (window.AIRTABLE_BASE_ID_PUBLIC || '');
+  const airtableLink = baseId ? `https://airtable.com/${esc(baseId)}` : 'https://airtable.com';
+  document.getElementById('js-airtable').href = airtableLink;
+
+  const body = document.getElementById('js-body');
+  body.innerHTML = `
+    <div class="slide-section">
+      <div class="slide-section-label">Job info</div>
+      <div class="slide-meta-row">
+        <div class="k">Business</div><div>${esc(job.businessName || job.businessUsername)}</div>
+        <div class="k">Location</div><div>${esc(job.locationName)}</div>
+        <div class="k">Schedule</div><div>${esc(job.requiredSessions) || '—'}</div>
+        <div class="k">Created</div><div>${esc(fmtDate(job.createdAt))}</div>
+        <div class="k">Posted by</div><div>${esc(job.businessUsername)}</div>
+      </div>
+      ${job.description ? `<div style="margin-top:8px;font-size:13px;color:var(--ink2);white-space:pre-wrap">${esc(job.description)}</div>` : ''}
+      ${job.notes ? `<div style="margin-top:8px;font-size:12px;color:var(--ink3);white-space:pre-wrap"><strong>Notes:</strong> ${esc(job.notes)}</div>` : ''}
+    </div>
+
+    <div class="slide-section">
+      <div class="slide-section-label">Applications (${apps.length})</div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Observer</th><th>Applied</th><th>Status</th>${isOwnerOrAdmin?'<th>Actions</th>':''}</tr></thead>
+          <tbody>
+            ${apps.length ? apps.map(a => `
+              <tr>
+                <td>${esc(a.observerName || a.observerUsername)}</td>
+                <td>${esc(fmtDate(a.appliedAt))}</td>
+                <td><span class="badge ${statusBadgeClass(a.status)}">${esc(a.status)}</span></td>
+                ${isOwnerOrAdmin ? `<td>${a.status === 'Pending' ? `<button class="btn-sm primary" data-app-approve="${esc(a.id)}" data-obs="${esc(a.observerName||a.observerUsername)}">Approve</button> <button class="btn-sm danger" data-app-reject="${esc(a.id)}">Reject</button>` : '—'}</td>` : ''}
+              </tr>`).join('') : `<tr><td colspan="${isOwnerOrAdmin?4:3}" style="text-align:center;color:var(--ink3);padding:14px">No applications yet</td></tr>`}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    ${isOwnerOrAdmin ? `
+    <div class="slide-section">
+      <div class="slide-section-label">Manage</div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <select class="filter-select" id="js-status-select">
+          <option value="Open" ${job.status==='Open'?'selected':''}>Open</option>
+          <option value="Paused" ${job.status==='Paused'?'selected':''}>Paused</option>
+          <option value="Closed" ${job.status==='Closed'?'selected':''}>Closed</option>
+        </select>
+        <button class="btn-sm primary" data-js-save-status="${esc(job.id)}">Save</button>
+        <button class="btn-sm danger" data-js-delete="${esc(job.id)}" style="margin-left:auto">Delete</button>
+      </div>
+    </div>` : ''}
+  `;
+
+  if (isOwnerOrAdmin) {
+    body.querySelectorAll('[data-app-approve]').forEach(b => b.addEventListener('click', () => openApproveAppModal(b.dataset.appApprove, b.dataset.obs)));
+    body.querySelectorAll('[data-app-reject]').forEach(b => b.addEventListener('click', async () => { await updateAppStatus(b.dataset.appReject, 'Rejected'); openJobPanel(recordId); }));
+    body.querySelector('[data-js-save-status]')?.addEventListener('click', async (e) => {
+      const newStatus = document.getElementById('js-status-select').value;
+      await api('/jobs', { action: 'updateJob', recordId, fields: { Status: newStatus }});
+      showToast('Status saved');
+      if (isAdmin()) await renderAdminJobs(); else await renderBizJobs();
+      openJobPanel(recordId);
+    });
+    body.querySelector('[data-js-delete]')?.addEventListener('click', async () => {
+      if (!confirm('Delete this job? This cannot be undone.')) return;
+      await api('/jobs', { action: 'updateJob', recordId, fields: { Status: 'Closed' }});
+      showToast('Job closed');
+      closeJobPanel();
+      if (isAdmin()) renderAdminJobs(); else renderBizJobs();
+    });
+  }
+
+  document.getElementById('job-slide-overlay').classList.add('open');
+  const panel = document.getElementById('job-slide');
+  panel.classList.add('open');
+  panel.setAttribute('aria-hidden', 'false');
+}
+
+function closeJobPanel() {
+  document.getElementById('job-slide-overlay').classList.remove('open');
+  const panel = document.getElementById('job-slide');
+  panel.classList.remove('open');
+  panel.setAttribute('aria-hidden', 'true');
+}
+
+// ── BUSINESS LOOKUP (Google / Yelp) ──
+function _wireSourceToggle(rootId) {
+  const root = document.getElementById(rootId);
+  if (!root || root.dataset.wired) return;
+  root.dataset.wired = '1';
+  root.querySelectorAll('button').forEach(b => b.addEventListener('click', () => {
+    root.querySelectorAll('button').forEach(x => x.classList.remove('active'));
+    b.classList.add('active');
+  }));
+}
+function _activeSource(rootId) {
+  const a = document.querySelector(`#${rootId} button.active`);
+  return a?.dataset.src || 'google';
+}
+
+async function _runLookup({ qId, locId, srcRootId, resultsId, onPick }) {
+  _wireSourceToggle(srcRootId);
+  const q = document.getElementById(qId).value.trim();
+  const location = document.getElementById(locId).value.trim();
+  const source = _activeSource(srcRootId);
+  const results = document.getElementById(resultsId);
+  if (!q) { results.innerHTML = '<div class="attn-empty">Enter a business name to search</div>'; return; }
+  results.innerHTML = '<div class="loading"><div class="spinner"></div>Searching…</div>';
+  try {
+    const res = await api('/business-lookup', { action: 'searchBusinesses', query: q, location, source });
+    if (!res.success) { results.innerHTML = `<div class="attn-empty">${esc(res.error || 'Search failed')}</div>`; return; }
+    const list = res.results || [];
+    if (!list.length) { results.innerHTML = '<div class="attn-empty">No matches</div>'; return; }
+    results.innerHTML = list.map((r, i) => `
+      <div class="lookup-card">
+        ${r.photoUrl ? `<img class="lookup-thumb" src="${esc(r.photoUrl)}" alt="">` : '<div class="lookup-thumb"></div>'}
+        <div class="lookup-card-info">
+          <div class="lookup-card-name">${esc(r.name)}</div>
+          <div class="lookup-card-meta">${esc(r.address || '')}${r.rating?` · <span class="star">★ ${r.rating}</span>`:''}${r.phone?` · ${esc(r.phone)}`:''}</div>
+          <div class="lookup-card-meta" style="margin-top:4px"><span class="badge ${esc(r.type.toLowerCase())}">${esc(r.type)}</span></div>
+        </div>
+        <button class="btn-sm primary" data-pick="${i}">Import</button>
+      </div>`).join('');
+    results.querySelectorAll('[data-pick]').forEach(btn => btn.addEventListener('click', () => onPick(list[+btn.dataset.pick])));
+  } catch(e) { results.innerHTML = '<div class="attn-empty">Could not reach server</div>'; }
+}
+
+// ── Add Location modal lookup ──
+function bmToggleLookup(show) {
+  document.getElementById('bm-lookup-section').style.display = show ? 'block' : 'none';
+  document.getElementById('bm-show-lookup').style.display = show ? 'none' : 'block';
+}
+async function bmDoLookup() {
+  await _runLookup({
+    qId: 'bm-look-q', locId: 'bm-look-loc', srcRootId: 'bm-look-src',
+    resultsId: 'bm-look-results', onPick: bmPickResult,
+  });
+}
+async function bmPickResult(brief) {
+  const fields = document.getElementById('bm-import-fields');
+  fields.innerHTML = '<div class="loading"><div class="spinner"></div>Loading details…</div>';
+  let detail = brief;
+  try {
+    const res = await api('/business-lookup', { action: 'getBusinessDetails', placeId: brief.placeId, source: brief.source });
+    if (res.success && res.result) detail = { ...brief, ...res.result };
+  } catch(e) {}
+  fields.innerHTML = `
+    <div class="import-fields">
+      <div style="font-weight:600;font-size:12px;color:var(--ink2);margin-bottom:4px">Select fields to import:</div>
+      ${detail.name?`<label><input type="checkbox" data-imp="name" checked><span>Business name <span class="iv">→ ${esc(detail.name)}</span></span></label>`:''}
+      ${detail.address?`<label><input type="checkbox" data-imp="address" checked><span>Address <span class="iv">→ ${esc(detail.address)}</span></span></label>`:''}
+      ${detail.type?`<label><input type="checkbox" data-imp="type" checked><span>Type <span class="iv">→ ${esc(detail.type)}</span></span></label>`:''}
+      ${detail.phone?`<label><input type="checkbox" data-imp="phone" checked><span>Phone (saved as note) <span class="iv">→ ${esc(detail.phone)}</span></span></label>`:''}
+      ${detail.website?`<label><input type="checkbox" data-imp="website" checked><span>Website (note) <span class="iv">→ ${esc(detail.website)}</span></span></label>`:''}
+      ${detail.hours?`<label><input type="checkbox" data-imp="hours" checked><span>Hours (note)</span></label>`:''}
+      ${detail.description?`<label><input type="checkbox" data-imp="description" checked><span>Description (note)</span></label>`:''}
+      ${detail.rating?`<label><input type="checkbox" data-imp="rating"><span>Rating (note) <span class="iv">→ ${esc(detail.rating)}</span></span></label>`:''}
+      ${detail.photoUrl?`<label><input type="checkbox" data-imp="photoUrl"><span>Photo URL (note)</span></label>`:''}
+      <button class="btn-sm primary" type="button" id="bm-apply-import" style="margin-top:6px">Apply selected</button>
+    </div>`;
+  document.getElementById('bm-apply-import').addEventListener('click', () => {
+    const sel = id => document.querySelector(`[data-imp="${id}"]`)?.checked;
+    if (sel('name')) document.getElementById('bm-name').value = detail.name || '';
+    if (sel('address')) document.getElementById('bm-addr').value = detail.address || '';
+    if (sel('type')) {
+      const opt = ['Retail','Restaurant','Event','Other'].includes(detail.type) ? detail.type : 'Other';
+      document.getElementById('bm-type').value = opt;
+    }
+    const extras = [];
+    if (sel('phone') && detail.phone) extras.push(`Phone: ${detail.phone}`);
+    if (sel('website') && detail.website) extras.push(`Website: ${detail.website}`);
+    if (sel('hours') && detail.hours) extras.push(`Hours:\n${detail.hours}`);
+    if (sel('description') && detail.description) extras.push(`Description: ${detail.description}`);
+    if (sel('rating') && detail.rating) extras.push(`Rating: ${detail.rating}`);
+    if (sel('photoUrl') && detail.photoUrl) extras.push(`Photo: ${detail.photoUrl}`);
+    if (extras.length) {
+      const cur = document.getElementById('bm-addr').value.trim();
+      document.getElementById('bm-addr').value = cur + (cur ? '\n— Imported notes —\n' : '') + extras.join('\n');
+    }
+    showToast('Imported — review and save');
+    fields.innerHTML = '';
+  });
+}
+
+// ── Business registration form lookup ──
+function bzToggleLookup(show) {
+  document.getElementById('bz-lookup-section').style.display = show ? 'block' : 'none';
+  document.getElementById('bz-show-lookup').style.display = show ? 'none' : 'block';
+}
+async function bzDoLookup() {
+  await _runLookup({
+    qId: 'bz-look-q', locId: 'bz-look-loc', srcRootId: 'bz-look-src',
+    resultsId: 'bz-look-results', onPick: bzPickResult,
+  });
+}
+async function bzPickResult(brief) {
+  let detail = brief;
+  try {
+    const res = await api('/business-lookup', { action: 'getBusinessDetails', placeId: brief.placeId, source: brief.source });
+    if (res.success && res.result) detail = { ...brief, ...res.result };
+  } catch(e) {}
+  if (detail.name) document.getElementById('bz-name').value = detail.name;
+  if (detail.type && ['Retail','Restaurant','Event','Other'].includes(detail.type)) document.getElementById('bz-type').value = detail.type;
+  if (detail.phone) document.getElementById('bz-phone').value = detail.phone;
+  if (detail.address) {
+    const cur = document.getElementById('bz-locs').value.trim();
+    document.getElementById('bz-locs').value = cur ? `${cur}\n${detail.name} — ${detail.address}` : `${detail.name} — ${detail.address}`;
+  }
+  if (detail.description) {
+    const cur = document.getElementById('bz-desc').value.trim();
+    document.getElementById('bz-desc').value = cur ? cur + '\n\n' + detail.description : detail.description;
+  }
+  showToast('Pre-filled — review and submit');
 }
 </script>
 </body>
