@@ -213,16 +213,46 @@ tbody tr:hover td{background:var(--surface2)}
 .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--ink);color:#fff;padding:10px 20px;border-radius:var(--r-pill);font-size:13px;opacity:0;pointer-events:none;transition:opacity .2s;white-space:nowrap;z-index:200}
 .toast.show{opacity:1}
 
+/* ── MOBILE TOPBAR (hidden by default) ── */
+.mobile-topbar{display:none;position:fixed;top:0;left:0;right:0;height:52px;background:var(--accent);color:#fff;align-items:center;padding:0 16px;z-index:50;gap:12px}
+.mobile-topbar .hamburger{background:none;border:none;color:#fff;font-size:22px;cursor:pointer;padding:6px;line-height:1}
+.mobile-topbar .mt-title{font-family:'Syne',sans-serif;font-size:15px;font-weight:600}
+.sidebar-backdrop{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:55}
+.sidebar-backdrop.open{display:block}
+.sidebar-close{display:none;position:absolute;top:14px;right:14px;background:rgba(255,255,255,.1);border:none;color:#fff;width:32px;height:32px;border-radius:50%;font-size:20px;cursor:pointer;line-height:1}
+
 /* ── RESPONSIVE ── */
 @media(max-width:900px){
   :root{--sidebar:200px}
   .stat-row{grid-template-columns:repeat(2,1fr)}
   .chart-grid{grid-template-columns:1fr}
 }
+@media(max-width:768px){
+  .mobile-topbar{display:flex}
+  .sidebar{transform:translateX(-100%);transition:transform .22s ease;z-index:60;width:260px}
+  .sidebar.open{transform:translateX(0)}
+  .sidebar-close{display:flex;align-items:center;justify-content:center}
+  .main-content{margin-left:0;padding-top:52px}
+  .page{padding:18px}
+  .stat-row{grid-template-columns:1fr 1fr;gap:10px}
+  .chip{padding:11px 16px;font-size:13px;min-height:44px;display:inline-flex;align-items:center;line-height:1.2}
+  .qchip{padding:13px 18px;font-size:14px;min-height:44px}
+  .session-banner{position:sticky;top:52px;z-index:5;flex-direction:row;align-items:center;padding:12px 14px}
+  .mcard{margin-bottom:8px}
+  .mhead{padding:14px}
+  .mav{width:32px;height:32px;font-size:13px}
+  .modal{max-width:none;border-radius:12px 12px 0 0;margin-top:auto}
+  .modal-overlay{align-items:flex-end;padding:0}
+  /* sticky CTA bar on Log tab */
+  #rec-pane-log .btn-row{position:sticky;bottom:0;background:var(--bg);padding:12px 0;margin-bottom:0;z-index:4;box-shadow:0 -1px 0 var(--border)}
+  #rec-pane-log .btn-row .btn-lg{flex:1}
+  .filter-bar{flex-direction:column;align-items:stretch}
+  .filter-bar .filter-select,.filter-bar .filter-input,.filter-bar .btn-sm{width:100%;min-width:0}
+  /* login full width */
+  .login-page{padding:0}
+  .login-card{border-radius:0;max-width:none;min-height:100vh;padding:32px 22px}
+}
 @media(max-width:640px){
-  .sidebar{display:none}
-  .main-content{margin-left:0}
-  .page{padding:20px}
   .stat-row{grid-template-columns:1fr 1fr}
 }
 </style>
@@ -241,7 +271,61 @@ tbody tr:hover td{background:var(--surface2)}
       <div class="field"><label>Password</label><input type="password" id="l-pass" placeholder="••••••••"></div>
       <div class="login-err" id="login-err"></div>
       <button class="btn-full" id="login-btn" onclick="doWebLogin()">Sign in</button>
-      <div class="login-toggle">Don't have an account? <span onclick="toggleAuthView('signup')">Create one</span></div>
+      <div class="login-toggle">Don't have an account? <span onclick="toggleAuthView('signup')">Create one</span> · <span onclick="toggleAuthView('forgot')">Forgot password?</span></div>
+      <div style="margin-top:18px;padding-top:16px;border-top:1px solid var(--border);text-align:center">
+        <span style="font-size:12px;color:var(--ink3);cursor:pointer" onclick="toggleAuthView('business')">Are you a business? Request access →</span>
+      </div>
+    </div>
+
+    <!-- FORGOT PASSWORD VIEW -->
+    <div id="forgot-view" style="display:none">
+      <div class="login-logo">Spottly</div>
+      <div class="login-sub" id="forgot-sub">Reset your password</div>
+      <div id="forgot-step1">
+        <div class="field"><label>Email</label><input type="email" id="fp-email" placeholder="your@email.com"></div>
+        <div class="login-err" id="forgot-err"></div>
+        <button class="btn-full" id="forgot-btn1" onclick="doRequestReset()">Send reset code</button>
+      </div>
+      <div id="forgot-step2" style="display:none">
+        <div class="login-success" style="display:block;margin-bottom:14px" id="forgot-step2-msg">If that email exists, a reset code has been sent. Check your inbox.</div>
+        <div class="field"><label>Reset code</label><input type="text" id="fp-code" placeholder="6-character code" maxlength="6" style="text-transform:uppercase;font-family:'DM Mono',monospace;letter-spacing:2px"></div>
+        <div class="field"><label>New password</label><input type="password" id="fp-newpass" placeholder="Min. 8 characters"></div>
+        <div class="field"><label>Confirm new password</label><input type="password" id="fp-newpass2" placeholder="••••••••"></div>
+        <div class="login-err" id="forgot-err2"></div>
+        <button class="btn-full" id="forgot-btn2" onclick="doConfirmReset()">Reset password</button>
+      </div>
+      <div class="login-success" id="forgot-done" style="display:none">Password updated. You can now sign in.</div>
+      <div class="login-toggle"><span onclick="toggleAuthView('signin')">← Back to sign in</span></div>
+    </div>
+
+    <!-- BUSINESS REGISTRATION VIEW -->
+    <div id="business-view" style="display:none">
+      <div class="login-logo">Spottly</div>
+      <div class="login-sub">Request a business account</div>
+      <div class="field"><label>Business name</label><input type="text" id="bz-name" placeholder="e.g. Gen Korean BBQ"></div>
+      <div class="field"><label>Contact person</label><input type="text" id="bz-contact" placeholder="Your full name"></div>
+      <div class="field"><label>Email</label><input type="email" id="bz-email" placeholder="contact@business.com"></div>
+      <div class="field"><label>Password</label><input type="password" id="bz-pass" placeholder="Min. 8 characters"></div>
+      <div class="field"><label>Confirm password</label><input type="password" id="bz-pass2" placeholder="••••••••"></div>
+      <div class="field"><label>Business type</label>
+        <select id="bz-type">
+          <option value="Retail">Retail</option>
+          <option value="Restaurant">Restaurant</option>
+          <option value="Event">Event</option>
+          <option value="Other">Other</option>
+        </select>
+      </div>
+      <div class="field"><label>Location(s) you operate</label>
+        <textarea id="bz-locs" rows="3" placeholder="e.g. Ala Moana Center&#10;Kailua Branch" style="width:100%;padding:12px 14px;border-radius:var(--r-sm);border:1px solid var(--border2);background:var(--surface);font-family:'DM Sans',sans-serif;font-size:14px;color:var(--ink);outline:none;resize:vertical"></textarea>
+      </div>
+      <div class="field"><label>Phone (optional)</label><input type="tel" id="bz-phone" placeholder="(808) 555-0100"></div>
+      <div class="field"><label>Brief description / reason for access (optional)</label>
+        <textarea id="bz-desc" rows="3" placeholder="Tell us about your business and why you'd like access" style="width:100%;padding:12px 14px;border-radius:var(--r-sm);border:1px solid var(--border2);background:var(--surface);font-family:'DM Sans',sans-serif;font-size:14px;color:var(--ink);outline:none;resize:vertical"></textarea>
+      </div>
+      <div class="login-err" id="business-err"></div>
+      <div class="login-success" id="business-success">Your request has been submitted. An admin will be in touch soon.</div>
+      <button class="btn-full" id="business-btn" onclick="doBusinessRegister()">Request access</button>
+      <div class="login-toggle">Already have an account? <span onclick="toggleAuthView('signin')">Sign in</span></div>
     </div>
 
     <!-- SIGN UP VIEW -->
@@ -264,8 +348,16 @@ tbody tr:hover td{background:var(--surface2)}
 
 <!-- APP SHELL -->
 <div class="app-shell" id="app-shell">
+  <!-- MOBILE TOPBAR -->
+  <div class="mobile-topbar">
+    <button class="hamburger" onclick="toggleMobileSidebar(true)" aria-label="Open menu">☰</button>
+    <div class="mt-title" id="mt-title">Observer</div>
+  </div>
+  <div class="sidebar-backdrop" id="sidebar-backdrop" onclick="toggleMobileSidebar(false)"></div>
+
   <!-- SIDEBAR -->
-  <div class="sidebar">
+  <div class="sidebar" id="sidebar">
+    <button class="sidebar-close" onclick="toggleMobileSidebar(false)" aria-label="Close menu">×</button>
     <div class="sidebar-logo">Observer</div>
     <div class="sidebar-user">
       <div class="sidebar-user-name" id="sb-name"></div>
@@ -322,13 +414,25 @@ tbody tr:hover td{background:var(--surface2)}
       </div>
       <div class="filter-bar">
         <select class="filter-select" id="dash-filter-loc" onchange="loadDashboard()"><option value="">All locations</option></select>
-        <input class="filter-input" type="date" id="dash-filter-from" onchange="loadDashboard()">
-        <input class="filter-input" type="date" id="dash-filter-to" onchange="loadDashboard()">
+        <select class="filter-select" id="dash-filter-preset" onchange="applyDatePreset('dash')">
+          <option value="all">All time</option>
+          <option value="today">Today</option>
+          <option value="week">This week</option>
+          <option value="month">This month</option>
+          <option value="30d" selected>Last 30 days</option>
+          <option value="custom">Custom</option>
+        </select>
+        <input class="filter-input" type="date" id="dash-filter-from" onchange="loadDashboard()" style="display:none">
+        <input class="filter-input" type="date" id="dash-filter-to" onchange="loadDashboard()" style="display:none">
         <select class="filter-select" id="dash-filter-obs" onchange="loadDashboard()" style="display:none"><option value="">All observers</option></select>
         <button class="btn-sm outline" onclick="clearDashFilters()">Clear</button>
       </div>
       <div class="stat-row" id="dash-stats"></div>
       <div class="chart-grid" id="dash-charts"></div>
+      <div class="card" style="margin-top:16px">
+        <div class="card-header"><div class="card-title">Observations over time</div><div style="font-size:11px;color:var(--ink3)" id="trend-period"></div></div>
+        <div class="card-body"><div id="trend-chart"></div></div>
+      </div>
     </div>
 
     <!-- DATA TABLE -->
@@ -342,8 +446,16 @@ tbody tr:hover td{background:var(--surface2)}
       <div class="filter-bar">
         <select class="filter-select" id="data-filter-loc"><option value="">All locations</option></select>
         <select class="filter-select" id="data-filter-obs" style="display:none"><option value="">All observers</option></select>
-        <input class="filter-input" type="date" id="data-filter-from">
-        <input class="filter-input" type="date" id="data-filter-to">
+        <select class="filter-select" id="data-filter-preset" onchange="applyDatePreset('data')">
+          <option value="all">All time</option>
+          <option value="today">Today</option>
+          <option value="week">This week</option>
+          <option value="month">This month</option>
+          <option value="30d" selected>Last 30 days</option>
+          <option value="custom">Custom</option>
+        </select>
+        <input class="filter-input" type="date" id="data-filter-from" style="display:none">
+        <input class="filter-input" type="date" id="data-filter-to" style="display:none">
         <select class="filter-select" id="data-filter-type"><option value="">All types</option><option value="full">Full</option><option value="quick">Quick</option><option value="missed">Missed</option></select>
         <button class="btn-sm primary" onclick="applyDataFilters()">Filter</button>
         <button class="btn-sm outline" onclick="clearDataFilters()">Clear</button>
@@ -418,6 +530,14 @@ tbody tr:hover td{background:var(--surface2)}
       <div class="page-header">
         <div class="page-title">Record</div>
         <div class="page-sub">Log observations from the field</div>
+      </div>
+
+      <!-- RECOVERY BANNER -->
+      <div id="rec-recovery" class="session-banner" style="display:none;background:var(--purple-light);border-color:var(--purple-mid)">
+        <div style="font-size:13px;color:var(--purple)" id="rec-recovery-msg"></div>
+        <div class="sb-spacer"></div>
+        <button class="btn-sm primary" id="rec-recovery-recover">Recover</button>
+        <button class="btn-sm outline" id="rec-recovery-discard">Discard</button>
       </div>
 
       <!-- SETUP CARD (no active session) -->
@@ -633,6 +753,24 @@ tbody tr:hover td{background:var(--surface2)}
   </div>
 </div>
 
+<!-- APPROVE BUSINESS MODAL -->
+<div class="modal-overlay" id="approve-biz-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">Approve business account</div>
+      <button class="modal-close" onclick="closeApproveBizModal()">×</button>
+    </div>
+    <div class="modal-body">
+      <div style="font-size:13px;color:var(--ink2);margin-bottom:14px">Select the locations to assign to <strong id="approve-biz-name"></strong>. Pre-selected entries are matched from their requested locations.</div>
+      <div id="approve-biz-locs" style="max-height:300px;overflow-y:auto;border:1px solid var(--border2);border-radius:var(--r-sm);padding:8px 12px;background:var(--surface)"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-sm outline" onclick="closeApproveBizModal()">Cancel</button>
+      <button class="btn-sm primary" onclick="confirmApproveBiz()">Approve & assign</button>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
@@ -691,9 +829,104 @@ async function api(endpoint, body) {
 function toggleAuthView(view) {
   document.getElementById('signin-view').style.display = view === 'signin' ? 'block' : 'none';
   document.getElementById('signup-view').style.display = view === 'signup' ? 'block' : 'none';
+  document.getElementById('business-view').style.display = view === 'business' ? 'block' : 'none';
+  document.getElementById('forgot-view').style.display = view === 'forgot' ? 'block' : 'none';
   document.getElementById('login-err').style.display = 'none';
   document.getElementById('signup-err').style.display = 'none';
   document.getElementById('signup-success').style.display = 'none';
+  document.getElementById('business-err').style.display = 'none';
+  document.getElementById('business-success').style.display = 'none';
+  if (view === 'forgot') {
+    document.getElementById('forgot-step1').style.display = 'block';
+    document.getElementById('forgot-step2').style.display = 'none';
+    document.getElementById('forgot-done').style.display = 'none';
+    document.getElementById('forgot-err').style.display = 'none';
+    document.getElementById('forgot-err2').style.display = 'none';
+    document.getElementById('forgot-btn1').style.display = 'block';
+    document.getElementById('forgot-btn1').disabled = false;
+    document.getElementById('forgot-btn1').textContent = 'Send reset code';
+  }
+}
+
+async function doRequestReset() {
+  const email = document.getElementById('fp-email').value.trim();
+  const err = document.getElementById('forgot-err');
+  const btn = document.getElementById('forgot-btn1');
+  if (!email) { err.textContent = 'Email is required'; err.style.display = 'block'; return; }
+  err.style.display = 'none';
+  btn.disabled = true; btn.textContent = 'Sending…';
+  try {
+    const res = await api('/web-auth', { action: 'requestPasswordReset', email });
+    document.getElementById('forgot-step1').style.display = 'none';
+    document.getElementById('forgot-step2').style.display = 'block';
+    if (res.message) document.getElementById('forgot-step2-msg').textContent = res.message;
+  } catch(e) {
+    err.textContent = 'Could not reach server.'; err.style.display = 'block';
+    btn.disabled = false; btn.textContent = 'Send reset code';
+  }
+}
+
+async function doConfirmReset() {
+  const email = document.getElementById('fp-email').value.trim();
+  const code = document.getElementById('fp-code').value.trim().toUpperCase();
+  const newPassword = document.getElementById('fp-newpass').value;
+  const confirm2 = document.getElementById('fp-newpass2').value;
+  const err = document.getElementById('forgot-err2');
+  const btn = document.getElementById('forgot-btn2');
+  err.style.display = 'none';
+  if (!code || !newPassword) { err.textContent = 'Code and new password are required'; err.style.display = 'block'; return; }
+  if (newPassword !== confirm2) { err.textContent = 'Passwords do not match'; err.style.display = 'block'; return; }
+  if (newPassword.length < 8) { err.textContent = 'Password must be at least 8 characters'; err.style.display = 'block'; return; }
+  btn.disabled = true; btn.textContent = 'Resetting…';
+  try {
+    const res = await api('/web-auth', { action: 'confirmPasswordReset', email, code, newPassword });
+    if (res.success) {
+      document.getElementById('forgot-step2').style.display = 'none';
+      document.getElementById('forgot-done').style.display = 'block';
+      ['fp-email','fp-code','fp-newpass','fp-newpass2'].forEach(id => document.getElementById(id).value = '');
+    } else {
+      err.textContent = res.error || 'Reset failed'; err.style.display = 'block';
+      btn.disabled = false; btn.textContent = 'Reset password';
+    }
+  } catch(e) {
+    err.textContent = 'Could not reach server.'; err.style.display = 'block';
+    btn.disabled = false; btn.textContent = 'Reset password';
+  }
+}
+
+async function doBusinessRegister() {
+  const businessName = document.getElementById('bz-name').value.trim();
+  const contactPerson = document.getElementById('bz-contact').value.trim();
+  const email = document.getElementById('bz-email').value.trim();
+  const password = document.getElementById('bz-pass').value;
+  const password2 = document.getElementById('bz-pass2').value;
+  const businessType = document.getElementById('bz-type').value;
+  const requestedLocations = document.getElementById('bz-locs').value.split('\n').map(s => s.trim()).filter(Boolean);
+  const phone = document.getElementById('bz-phone').value.trim();
+  const description = document.getElementById('bz-desc').value.trim();
+  const err = document.getElementById('business-err');
+  const ok = document.getElementById('business-success');
+  const btn = document.getElementById('business-btn');
+  err.style.display = 'none'; ok.style.display = 'none';
+  if (!businessName || !contactPerson || !email || !password || !businessType) { err.textContent = 'Please fill in all required fields'; err.style.display = 'block'; return; }
+  if (password !== password2) { err.textContent = 'Passwords do not match'; err.style.display = 'block'; return; }
+  if (password.length < 8) { err.textContent = 'Password must be at least 8 characters'; err.style.display = 'block'; return; }
+  btn.disabled = true; btn.textContent = 'Submitting…';
+  try {
+    const res = await api('/web-auth', { action: 'registerBusiness', businessName, contactPerson, email, password, businessType, requestedLocations, phone, description });
+    if (res.success) {
+      ok.textContent = res.message || 'Your request has been submitted. An admin will be in touch soon.';
+      ok.style.display = 'block';
+      btn.style.display = 'none';
+      ['bz-name','bz-contact','bz-email','bz-pass','bz-pass2','bz-locs','bz-phone','bz-desc'].forEach(id => document.getElementById(id).value = '');
+    } else {
+      err.textContent = res.error || 'Request failed'; err.style.display = 'block';
+      btn.disabled = false; btn.textContent = 'Request access';
+    }
+  } catch(e) {
+    err.textContent = 'Could not reach server.'; err.style.display = 'block';
+    btn.disabled = false; btn.textContent = 'Request access';
+  }
 }
 
 async function doSignup() {
@@ -779,12 +1012,21 @@ function initApp() {
     document.getElementById('dash-sub').textContent = 'Overview of all observations';
   }
 
+  applyDatePreset('dash');
+  applyDatePreset('data');
   loadAllData();
   navTo('dashboard');
 }
 
 // ── NAVIGATION ──
 function hasUnsyncedSession() { return recSess.t && recEntries.length > 0; }
+
+function toggleMobileSidebar(open) {
+  document.getElementById('sidebar').classList.toggle('open', open);
+  document.getElementById('sidebar-backdrop').classList.toggle('open', open);
+}
+
+const PAGE_TITLES = { dashboard: 'Dashboard', data: 'Data', locations: 'Locations', users: 'Users', config: 'Field Options', record: 'Record', mydata: 'My Sessions' };
 
 function navTo(page) {
   if (page !== 'record' && hasUnsyncedSession()) {
@@ -794,6 +1036,9 @@ function navTo(page) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.getElementById('nav-' + page)?.classList.add('active');
   document.getElementById('page-' + page)?.classList.add('active');
+  const title = document.getElementById('mt-title');
+  if (title) title.textContent = PAGE_TITLES[page] || 'Observer';
+  toggleMobileSidebar(false);
   if (page === 'dashboard') renderDashboard();
   if (page === 'data') renderDataTable();
   if (page === 'locations') renderLocations();
@@ -886,11 +1131,52 @@ function getFilteredObs() {
 
 function clearDashFilters() {
   ['dash-filter-loc','dash-filter-obs','dash-filter-from','dash-filter-to'].forEach(id => { document.getElementById(id).value = ''; });
-  renderDashboard();
+  document.getElementById('dash-filter-preset').value = 'all';
+  applyDatePreset('dash');
 }
 function clearDataFilters() {
   ['data-filter-loc','data-filter-obs','data-filter-from','data-filter-to','data-filter-type'].forEach(id => { document.getElementById(id).value = ''; });
-  renderDataTable();
+  document.getElementById('data-filter-preset').value = 'all';
+  applyDatePreset('data');
+}
+
+function presetRange(preset) {
+  const today = new Date();
+  const fmt = d => d.toISOString().slice(0, 10);
+  const start = new Date(today); start.setHours(0,0,0,0);
+  switch (preset) {
+    case 'today': return { from: fmt(start), to: fmt(today) };
+    case 'week': {
+      const d = new Date(start);
+      const day = d.getDay() === 0 ? 6 : d.getDay() - 1;
+      d.setDate(d.getDate() - day);
+      return { from: fmt(d), to: fmt(today) };
+    }
+    case 'month': return { from: fmt(new Date(today.getFullYear(), today.getMonth(), 1)), to: fmt(today) };
+    case '30d': {
+      const d = new Date(start); d.setDate(d.getDate() - 29);
+      return { from: fmt(d), to: fmt(today) };
+    }
+    default: return { from: '', to: '' };
+  }
+}
+
+function applyDatePreset(scope) {
+  const preset = document.getElementById(scope + '-filter-preset').value;
+  const fromEl = document.getElementById(scope + '-filter-from');
+  const toEl = document.getElementById(scope + '-filter-to');
+  if (preset === 'custom') {
+    fromEl.style.display = ''; toEl.style.display = '';
+  } else if (preset === 'all') {
+    fromEl.style.display = 'none'; toEl.style.display = 'none';
+    fromEl.value = ''; toEl.value = '';
+  } else {
+    fromEl.style.display = 'none'; toEl.style.display = 'none';
+    const r = presetRange(preset);
+    fromEl.value = r.from; toEl.value = r.to;
+  }
+  if (scope === 'dash') renderDashboard();
+  else renderDataTable();
 }
 
 // ── DASHBOARD ──
@@ -928,6 +1214,78 @@ function renderDashboard() {
     <div class="card"><div class="card-header"><div class="card-title">Ethnicity</div></div><div class="card-body">${bars(freq('Ethnicity'),'p') || '<div class="empty-state"><div class="empty-state-sub">No data</div></div>'}</div></div>
     <div class="card"><div class="card-header"><div class="card-title">Emotional state</div></div><div class="card-body">${bars(freq('Emotion'),'w') || '<div class="empty-state"><div class="empty-state-sub">No data</div></div>'}</div></div>
   `;
+
+  renderTrendChart(real);
+}
+
+function renderTrendChart(rows) {
+  const el = document.getElementById('trend-chart');
+  const periodLabel = document.getElementById('trend-period');
+  if (!rows.length) {
+    el.innerHTML = '<div class="empty-state"><div class="empty-state-sub">No data</div></div>';
+    periodLabel.textContent = '';
+    return;
+  }
+  const dates = rows.map(r => r.Timestamp).filter(Boolean).map(t => new Date(t)).filter(d => !isNaN(d));
+  if (!dates.length) { el.innerHTML = '<div class="empty-state"><div class="empty-state-sub">No dated entries</div></div>'; periodLabel.textContent = ''; return; }
+
+  const fromV = document.getElementById('dash-filter-from').value;
+  const toV = document.getElementById('dash-filter-to').value;
+  const minD = fromV ? new Date(fromV + 'T00:00:00') : new Date(Math.min(...dates));
+  const maxD = toV ? new Date(toV + 'T23:59:59') : new Date(Math.max(...dates));
+  const spanDays = Math.max(1, Math.ceil((maxD - minD) / 86400000));
+
+  let bucket, label;
+  if (spanDays <= 30) { bucket = 'day'; label = 'Daily'; }
+  else if (spanDays <= 90) { bucket = 'week'; label = 'Weekly'; }
+  else { bucket = 'month'; label = 'Monthly'; }
+  periodLabel.textContent = label;
+
+  const keyOf = d => {
+    if (bucket === 'day') return d.toISOString().slice(0, 10);
+    if (bucket === 'week') {
+      const x = new Date(d); x.setHours(0,0,0,0);
+      const day = x.getDay() === 0 ? 6 : x.getDay() - 1;
+      x.setDate(x.getDate() - day);
+      return x.toISOString().slice(0, 10);
+    }
+    return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0');
+  };
+  const labelOf = key => {
+    if (bucket === 'day') { const d = new Date(key + 'T00:00:00'); return d.toLocaleDateString([], { month: 'short', day: 'numeric' }); }
+    if (bucket === 'week') { const d = new Date(key + 'T00:00:00'); return 'wk of ' + d.toLocaleDateString([], { month: 'short', day: 'numeric' }); }
+    const [y, m] = key.split('-'); return new Date(+y, +m - 1, 1).toLocaleDateString([], { month: 'short', year: '2-digit' });
+  };
+
+  const buckets = {};
+  rows.forEach(r => { const d = new Date(r.Timestamp); if (isNaN(d)) return; const k = keyOf(d); buckets[k] = (buckets[k] || 0) + 1; });
+  const entries = Object.entries(buckets).sort((a,b) => a[0] < b[0] ? -1 : 1);
+  const max = Math.max(...entries.map(e => e[1]), 1);
+  const W = 600, H = 180, padL = 32, padB = 28, padT = 8, padR = 8;
+  const cw = (W - padL - padR);
+  const ch = (H - padT - padB);
+  const n = entries.length;
+  const barW = Math.max(2, Math.min(36, (cw - (n - 1) * 4) / n));
+  const step = (cw - barW) / Math.max(1, n - 1);
+  const ticks = 4;
+  const tickLines = Array.from({length: ticks + 1}, (_, i) => {
+    const v = Math.round(max * (ticks - i) / ticks);
+    const y = padT + ch * i / ticks;
+    return `<line x1="${padL}" x2="${W - padR}" y1="${y}" y2="${y}" stroke="rgba(24,22,15,.06)" /><text x="${padL - 4}" y="${y + 3}" font-size="9" fill="#9E9890" text-anchor="end" font-family="DM Mono,monospace">${v}</text>`;
+  }).join('');
+  const bars = entries.map(([k, v], i) => {
+    const x = n === 1 ? padL + cw / 2 - barW / 2 : padL + i * step;
+    const h = (v / max) * ch;
+    const y = padT + ch - h;
+    return `<rect x="${x}" y="${y}" width="${barW}" height="${h}" rx="2" fill="#1B3A2D"><title>${esc(labelOf(k))}: ${v}</title></rect>`;
+  }).join('');
+  const labelEvery = Math.max(1, Math.ceil(n / 10));
+  const xLabels = entries.map(([k], i) => {
+    if (i % labelEvery !== 0 && i !== n - 1) return '';
+    const x = n === 1 ? padL + cw / 2 : padL + i * step + barW / 2;
+    return `<text x="${x}" y="${H - 8}" font-size="9" fill="#9E9890" text-anchor="middle" font-family="DM Mono,monospace">${esc(labelOf(k))}</text>`;
+  }).join('');
+  el.innerHTML = `<svg viewBox="0 0 ${W} ${H}" width="100%" preserveAspectRatio="none" style="display:block">${tickLines}${bars}${xLabels}</svg>`;
 }
 
 // ── DATA TABLE ──
@@ -1136,6 +1494,11 @@ async function saveLocation() {
 }
 
 // ── USERS ──
+function parseUserNotes(notes) {
+  if (!notes) return null;
+  try { return JSON.parse(notes); } catch { return null; }
+}
+
 function userRowHtml(u, opts) {
   const cells = [
     `<td style="font-weight:500">${esc(u.name)||'—'}</td>`,
@@ -1149,15 +1512,104 @@ function userRowHtml(u, opts) {
     cells.push(`<td><span class="badge ${esc((u.role||'').toLowerCase())}">${esc(u.role)}</span></td>`);
   }
   cells.push(`<td><span class="badge ${esc((u.status||'').toLowerCase())}">${esc(u.status)}</span></td>`);
+  const isBiz = opts.showLocations;
+  const approveBtn = (isBiz && u.status === 'Pending')
+    ? `<button class="btn-sm primary" style="padding:5px 10px;font-size:11px" data-action="approve-biz" data-uid="${esc(u.id)}" data-uname="${esc(u.username)}">Approve</button>`
+    : `<button class="btn-sm primary" style="padding:5px 10px;font-size:11px" data-action="approve" data-uid="${esc(u.id)}">Approve</button>`;
   cells.push(`<td>
     <div style="display:flex;gap:6px;flex-wrap:wrap">
-      ${u.status==='Pending'?`<button class="btn-sm primary" style="padding:5px 10px;font-size:11px" data-action="approve" data-uid="${esc(u.id)}">Approve</button><button class="btn-sm danger" style="padding:5px 10px;font-size:11px" data-action="reject" data-uid="${esc(u.id)}">Reject</button>`:''}
+      ${isBiz?`<button class="btn-sm outline" style="padding:5px 10px;font-size:11px" data-action="toggle-biz" data-uid="${esc(u.id)}">Details</button>`:''}
+      ${u.status==='Pending'?`${approveBtn}<button class="btn-sm danger" style="padding:5px 10px;font-size:11px" data-action="reject" data-uid="${esc(u.id)}">Reject</button>`:''}
       ${u.status==='Active'?`<button class="btn-sm outline" style="padding:5px 10px;font-size:11px" data-action="suspend" data-uid="${esc(u.id)}">Suspend</button>`:''}
       ${u.status==='Suspended'||u.status==='Rejected'?`<button class="btn-sm primary" style="padding:5px 10px;font-size:11px" data-action="reactivate" data-uid="${esc(u.id)}">Reactivate</button>`:''}
       <button class="btn-sm purple" style="padding:5px 10px;font-size:11px" data-action="resetpwd" data-uid="${esc(u.id)}" data-uname="${esc(u.username)}">Reset pwd</button>
     </div>
   </td>`);
-  return `<tr>${cells.join('')}</tr>`;
+
+  let html = `<tr data-userrow="${esc(u.id)}">${cells.join('')}</tr>`;
+  if (isBiz) {
+    const meta = parseUserNotes(u.notes);
+    const reqLocs = meta?.requestedLocations || [];
+    const detail = meta ? `
+      <div style="display:grid;grid-template-columns:auto 1fr;gap:6px 14px;font-size:13px;color:var(--ink2);max-width:720px">
+        <div style="color:var(--ink3)">Contact person:</div><div>${esc(meta.contactPerson||'—')}</div>
+        <div style="color:var(--ink3)">Business type:</div><div>${esc(meta.businessType||'—')}</div>
+        <div style="color:var(--ink3)">Requested locations:</div><div>${reqLocs.length ? reqLocs.map(esc).join(', ') : '<span style="color:var(--ink3)">None listed</span>'}</div>
+        <div style="color:var(--ink3)">Phone:</div><div>${esc(meta.phone||'—')}</div>
+        <div style="color:var(--ink3)">Description:</div><div style="white-space:pre-wrap">${esc(meta.description||'—')}</div>
+      </div>` : '<div style="font-size:12px;color:var(--ink3)">No registration metadata stored.</div>';
+    html += `<tr data-detailrow="${esc(u.id)}" style="display:none"><td colspan="6" style="background:var(--surface2);padding:14px 18px">${detail}</td></tr>`;
+  }
+  return html;
+}
+
+let approvingBiz = null;
+let approveSelectedLocs = new Set();
+
+function openApproveBizModal(uid, username) {
+  const u = allUsers.find(x => x.id === uid);
+  if (!u) return;
+  approvingBiz = u;
+  const meta = parseUserNotes(u.notes) || {};
+  const requested = (meta.requestedLocations || []).map(s => s.toLowerCase().trim());
+  approveSelectedLocs = new Set();
+  allLocations.forEach(l => {
+    if (requested.includes((l.name || '').toLowerCase().trim())) approveSelectedLocs.add(l.id);
+  });
+  document.getElementById('approve-biz-name').textContent = u.name + ' (@' + u.username + ')';
+  renderApproveBizLocs();
+  document.getElementById('approve-biz-modal').classList.add('open');
+}
+
+function renderApproveBizLocs() {
+  const list = document.getElementById('approve-biz-locs');
+  const active = allLocations.filter(l => l.active !== false);
+  if (!active.length) { list.innerHTML = '<div style="font-size:13px;color:var(--ink3)">No active locations exist yet — create some on the Locations page first.</div>'; return; }
+  list.innerHTML = active.map(l => {
+    const checked = approveSelectedLocs.has(l.id) ? 'checked' : '';
+    return `<label style="display:flex;align-items:center;gap:8px;padding:6px 0;font-size:13px;cursor:pointer">
+      <input type="checkbox" data-locid="${esc(l.id)}" ${checked}>
+      <span>${esc(l.name)}${l.address?` <span style="color:var(--ink3)">— ${esc(l.address)}</span>`:''}</span>
+    </label>`;
+  }).join('');
+  list.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.addEventListener('change', () => {
+    if (cb.checked) approveSelectedLocs.add(cb.dataset.locid);
+    else approveSelectedLocs.delete(cb.dataset.locid);
+  }));
+}
+
+function closeApproveBizModal() {
+  document.getElementById('approve-biz-modal').classList.remove('open');
+  approvingBiz = null;
+}
+
+async function confirmApproveBiz() {
+  if (!approvingBiz) return;
+  const uid = approvingBiz.id;
+  const username = approvingBiz.username;
+  const selectedIds = [...approveSelectedLocs];
+  try {
+    for (const locId of selectedIds) {
+      const l = allLocations.find(x => x.id === locId);
+      if (!l) continue;
+      const businesses = [...new Set([...(l.businesses || []), username])];
+      await api('/locations', { action: 'updateLocation', locationId: locId, location: {
+        name: l.name, address: l.address || '', type: l.type || '',
+        observers: l.observers || [], businesses, active: l.active !== false,
+      }});
+    }
+    const res = await api('/web-auth', { action: 'webUpdateUser', targetId: uid, fields: { Status: 'Active' } });
+    if (!res.success) { showToast(res.error || 'Failed to update status'); return; }
+    showToast('Business account approved and locations assigned');
+    closeApproveBizModal();
+    const [usersR, locsR] = await Promise.all([
+      api('/web-auth', { action: 'getWebUsers' }),
+      api('/locations', { action: 'getLocations' }),
+    ]);
+    allUsers = (usersR.users||[]).filter(u => u.username !== currentUser.username);
+    allLocations = locsR.locations || [];
+    renderUsers();
+  } catch(e) { showToast('Error approving business'); }
 }
 
 function bindUserActions(tbody) {
@@ -1166,6 +1618,11 @@ function bindUserActions(tbody) {
     btn.addEventListener('click', () => {
       const action = btn.dataset.action;
       if (action === 'resetpwd') { promptResetPassword(btn.dataset.uid, btn.dataset.uname); }
+      else if (action === 'approve-biz') { openApproveBizModal(btn.dataset.uid, btn.dataset.uname); }
+      else if (action === 'toggle-biz') {
+        const row = tbody.querySelector(`[data-detailrow="${btn.dataset.uid}"]`);
+        if (row) row.style.display = row.style.display === 'none' ? 'table-row' : 'none';
+      }
       else if (actionMap[action]) { updateWebUser(btn.dataset.uid, actionMap[action]); }
     });
   });
@@ -1362,12 +1819,59 @@ document.getElementById('l-pass').addEventListener('keydown', e => { if (e.key =
 document.querySelectorAll('.modal-overlay').forEach(m => m.addEventListener('click', e => { if (e.target === m) m.classList.remove('open'); }));
 
 // ── RECORD PAGE ──
+function sessionStorageKey() {
+  return currentUser ? 'observer_session_' + currentUser.username : null;
+}
+
+function persistSession() {
+  const key = sessionStorageKey();
+  if (!key || !recSess.t) return;
+  try {
+    localStorage.setItem(key, JSON.stringify({
+      recSess: { loc: recSess.loc, name: recSess.name, t: recSess.t.toISOString() },
+      recEntries: recEntries.map(e => ({ ...e, ts: e.ts.toISOString() })),
+      recMissed,
+      timestamp: Date.now(),
+    }));
+  } catch(e) { /* localStorage may be full or disabled — ignore */ }
+}
+
+function clearPersistedSession() {
+  const key = sessionStorageKey();
+  if (key) { try { localStorage.removeItem(key); } catch(e) {} }
+}
+
+function loadPersistedSession() {
+  const key = sessionStorageKey();
+  if (!key) return null;
+  try {
+    const raw = localStorage.getItem(key);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw);
+    if (!parsed.timestamp || (Date.now() - parsed.timestamp) > 24 * 3600 * 1000) {
+      localStorage.removeItem(key);
+      return null;
+    }
+    return parsed;
+  } catch(e) { return null; }
+}
+
 async function initRecordPage() {
   if (!fieldConfig) {
     try { const res = await api('/config', { action: 'getConfig' }); fieldConfig = res.config || null; }
     catch(e) { showToast('Could not load field options'); return; }
   }
+
   if (!recSess.t) {
+    const saved = loadPersistedSession();
+    if (saved) {
+      const t = new Date(saved.timestamp).toLocaleString([], { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+      const banner = document.getElementById('rec-recovery');
+      banner.style.display = 'flex';
+      banner.querySelector('#rec-recovery-msg').textContent = `You have an unsynced session from ${t} (${saved.recEntries.length} entries). Recover it?`;
+      banner.querySelector('#rec-recovery-recover').onclick = () => recoverSession(saved);
+      banner.querySelector('#rec-recovery-discard').onclick = () => { clearPersistedSession(); banner.style.display = 'none'; };
+    }
     try {
       const res = await api('/locations', { action: 'getAssignedLocations' });
       const locs = res.locations || [];
@@ -1382,6 +1886,26 @@ async function initRecordPage() {
     renderSharedChips();
     renderM();
   }
+}
+
+function recoverSession(saved) {
+  recSess = { loc: saved.recSess.loc, name: saved.recSess.name, t: new Date(saved.recSess.t) };
+  recEntries = saved.recEntries.map(e => ({ ...e, ts: new Date(e.ts) }));
+  recMissed = saved.recMissed || 0;
+  recMembers = []; recMid = 0;
+  recShared = { dis: [], emo: [] };
+  document.getElementById('sb-loc').textContent = recSess.loc;
+  document.getElementById('sb-meta').textContent = recSess.name + ' · ' + recSess.t.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  document.getElementById('missed-n').textContent = recMissed;
+  document.getElementById('rec-setup').style.display = 'none';
+  document.getElementById('rec-active').style.display = 'block';
+  document.getElementById('rec-recovery').style.display = 'none';
+  document.getElementById('success-area').innerHTML = '';
+  switchRecTab('log');
+  setMode('full');
+  renderSharedChips();
+  resetFull();
+  setSyncBar('idle', `Recovered ${recEntries.length} unsynced entries · End session to sync`);
 }
 
 function recCheckStart() {
@@ -1450,6 +1974,7 @@ async function syncRecEntries() {
     const res = await api('/sync', { records: rows });
     if (!res.success) throw new Error(res.error || 'Sync failed');
     setSyncBar('ok', `Synced ${rows.length} rows to Airtable`);
+    clearPersistedSession();
     setTimeout(() => { document.getElementById('sync-bar').style.display = 'none'; }, 4000);
     return true;
   } catch(err) {
@@ -1583,6 +2108,7 @@ function submitFull() {
     dis: [...recShared.dis], emo: [...recShared.emo], missed: false,
   };
   recEntries.push(e);
+  persistSession();
   const a = document.getElementById('success-area');
   a.innerHTML = `<div class="flash"><div class="chk"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2.5 7L5.5 10L11.5 4" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div><div class="flash-t">Logged #${e.id} · ${e.members.length} ${e.members.length===1?'person':'people'}</div><div class="flash-s">${esc(e.members.map(m => [m.age, m.gender].filter(Boolean).join(' ') || 'partial').join(' · '))}</div></div></div>`;
   setTimeout(() => { a.innerHTML = ''; }, 4000);
@@ -1603,6 +2129,7 @@ function submitQuick() {
     members: [{ age: recQs.age, gender: recQs.gen, eth: '—' }],
     groupSize: recQs.sz, dis: [], emo: [], missed: false,
   });
+  persistSession();
   document.querySelectorAll('.qchip').forEach(c => c.classList.remove('sel'));
   recQs = { age: null, gen: null, sz: null };
   showToast('Quick log saved');
@@ -1617,6 +2144,7 @@ function incMissed() {
     loc: recSess.loc, ses: recSess.name, obs: currentUser.username,
     members: [], dis: [], emo: [], missed: true,
   });
+  persistSession();
   showToast('Missed group recorded');
 }
 

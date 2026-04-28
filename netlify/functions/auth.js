@@ -1,4 +1,5 @@
 import { atGet, atCreate, atUpdate, signJWT, verifyToken, hashPassword, verifyPassword, checkRateLimit, getClientIP, corsHeaders, json, parseBody } from './_utils.js';
+import { sendEmail, tplObserverRegistration } from './_email.js';
 
 const AT_BASE = `https://api.airtable.com/v0/${process.env.AIRTABLE_BASE_ID}`;
 const HEADERS = { 'Authorization': `Bearer ${process.env.AIRTABLE_TOKEN}`, 'Content-Type': 'application/json' };
@@ -70,6 +71,11 @@ export const handler = async (event) => {
 
       const hashedPin = await hashPassword(pin);
       await atCreate('Users', { Username: username, PIN: hashedPin, Name: name, Role: 'Observer', Status: 'Pending' });
+      const adminEmail = process.env.ADMIN_EMAIL;
+      if (adminEmail) {
+        const tpl = tplObserverRegistration({ name, username });
+        sendEmail(adminEmail, tpl.subject, tpl.html).catch(() => {});
+      }
       return json(200, { success: true }, cors);
     }
 
