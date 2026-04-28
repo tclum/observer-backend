@@ -4,6 +4,9 @@ import {
   tplJobApplication,
   tplApplicationApproved,
   tplApplicationRejected,
+  tplJobPosted,
+  tplJobPostingApproved,
+  tplJobPostingRejected,
 } from './_email.js';
 
 export const handler = async (event) => {
@@ -85,6 +88,8 @@ export const handler = async (event) => {
       }
 
       const jobIdStr = 'job_' + Date.now();
+      // Admin-created jobs go live immediately; business-created jobs require approval.
+      const initialStatus = isAdmin ? 'Open' : 'Pending';
       const created = await atCreate('Jobs', {
         JobID: jobIdStr,
         Title: title,
@@ -93,12 +98,21 @@ export const handler = async (event) => {
         LocationName: loc.fields.Name || '',
         BusinessUsername: businessUsername,
         BusinessName: businessName,
-        Status: 'Open',
+        Status: initialStatus,
         CreatedAt: new Date().toISOString(),
         RequiredSessions: requiredSessions || '',
         Notes: notes || '',
       });
-      return json(200, { success: true, id: created.records?.[0]?.id, jobId: jobIdStr }, cors);
+
+      if (initialStatus === 'Pending') {
+        const adminEmail = process.env.ADMIN_EMAIL;
+        if (adminEmail) {
+          const tpl = tplJobPosted({ businessName, title, locationName: loc.fields.Name || '', requiredSessions: requiredSessions || '', description: description || '' });
+          sendEmail(adminEmail, tpl.subject, tpl.html).catch(() => {});
+        }
+      }
+
+      return json(200, { success: true, id: created.records?.[0]?.id, jobId: jobIdStr, status: initialStatus }, cors);
     }
 
     if (action === 'updateJob') {
@@ -115,8 +129,88 @@ export const handler = async (event) => {
       ['Title', 'Description', 'Status', 'RequiredSessions', 'Notes'].forEach(k => {
         if (fields && fields[k] !== undefined) allowed[k] = fields[k];
       });
+      // Business cannot promote a job to Open — that requires admin approval.
+      if (isBusiness && allowed.Status === 'Open') {
+        return json(403, { error: 'Only an admin can approve a job. You can set Paused or Closed.' }, cors);
+      }
+      if (isBusiness && allowed.Status && !['Paused', 'Closed', 'Pending'].includes(allowed.Status)) {
+        return json(403, { error: 'You can only set Paused or Closed.' }, cors);
+      }
       await atUpdate('Jobs', recordId, allowed);
       return json(200, { success: true }, cors);
+    }
+
+    if (action === 'approveJob') {
+      if (!isAdmin) return json(403, { error: 'Admin access required' }, cors);
+      const { recordId } = body;
+      if (!recordId) return json(400, { error: 'recordId required' }, cors);
+      const existing = await atGet('Jobs', `RECORD_ID()="${recordId}"`);
+      const job = existing.records[0];
+      if (!job) return json(404, { error: 'Job not found' }, cors);
+      await atUpdate('Jobs', recordId, { Status: 'Open' });
+
+      try {
+        const bizUsername = job.fields.BusinessUsername;
+        if (bizUsername) {
+          const bizUser = await atGet('Users', `{Username}="${bizUsername}"`);
+          const bizEmail = bizUser.records[0]?.fields?.Email;
+          if (bizEmail) {
+            const tpl = tplJobPostingApproved({ title: job.fields.Title || '', locationName: job.fields.LocationName || '' });
+            sendEmail(bizEmail, tpl.subject, tpl.html).catch(() => {});
+          }
+        }
+      } catch (e) {}
+      return json(200, { success: true }, cors);
+    }
+
+    if (action === 'rejectJob') {
+      if (!isAdmin) return json(403, { error: 'Admin access required' }, cors);
+      const { recordId } = body;
+      if (!recordId) return json(400, { error: 'recordId required' }, cors);
+      const existing = await atGet('Jobs', `RECORD_ID()="${recordId}"`);
+      const job = existing.records[0];
+      if (!job) return json(404, { error: 'Job not found' }, cors);
+      await atUpdate('Jobs', recordId, { Status: 'Rejected' });
+
+      try {
+        const bizUsername = job.fields.BusinessUsername;
+        if (bizUsername) {
+          const bizUser = await atGet('Users', `{Username}="${bizUsername}"`);
+          const bizEmail = bizUser.records[0]?.fields?.Email;
+          if (bizEmail) {
+            const tpl = tplJobPostingRejected({ title: job.fields.Title || '' });
+            sendEmail(bizEmail, tpl.subject, tpl.html).catch(() => {});
+          }
+        }
+      } catch (e) {}
+      return json(200, { success: true }, cors);
+    }
+
+    if (action === 'getObserverJobs') {
+      if (!isObserver) return json(403, { error: 'Forbidden' }, cors);
+      const apps = await atGetAll('Applications', `AND({ObserverUsername}="${payload.username}",{Status}="Approved")`);
+      const jobIds = [...new Set(apps.map(a => a.fields.JobID).filter(Boolean))];
+      if (!jobIds.length) return json(200, { success: true, jobs: [] }, cors);
+      const formula = `OR(${jobIds.map(id => `{JobID}="${id}"`).join(',')})`;
+      const jobs = await atGetAll('Jobs', formula);
+      const byJobId = {};
+      jobs.forEach(j => { byJobId[j.fields.JobID] = j; });
+      const out = apps.map(a => {
+        const j = byJobId[a.fields.JobID];
+        if (!j) return null;
+        // Only surface jobs that are currently Open (approved & live).
+        if (j.fields.Status !== 'Open') return null;
+        return {
+          applicationId: a.id,
+          jobId: j.fields.JobID || '',
+          jobTitle: j.fields.Title || '',
+          locationName: j.fields.LocationName || '',
+          businessName: j.fields.BusinessName || j.fields.BusinessUsername || '',
+          requiredSessions: j.fields.RequiredSessions || '',
+          description: j.fields.Description || '',
+        };
+      }).filter(Boolean);
+      return json(200, { success: true, jobs: out }, cors);
     }
 
     // ── APPLICATIONS ──

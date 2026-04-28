@@ -87,6 +87,44 @@ export function tplRejected() {
   };
 }
 
+export function tplJobPosted({ businessName, title, locationName, requiredSessions, description }) {
+  return {
+    subject: `New job posted — ${title} by ${businessName}`,
+    html: `<div style="font-family:Arial,sans-serif;color:#18160F">
+      <h2 style="margin:0 0 12px">New job awaiting approval</h2>
+      <table>
+        ${row('Business', escapeHtml(businessName))}
+        ${row('Title', escapeHtml(title))}
+        ${row('Location', escapeHtml(locationName))}
+        ${row('Schedule', escapeHtml(requiredSessions) || '—')}
+      </table>
+      ${description ? `<p style="margin-top:14px;color:#5C5750;white-space:pre-wrap">${escapeHtml(description)}</p>` : ''}
+      <p style="margin-top:16px"><a href="${APP_URL}" style="color:#1B3A2D">Review in dashboard →</a></p>
+    </div>`,
+  };
+}
+
+export function tplJobPostingApproved({ title, locationName }) {
+  return {
+    subject: `Your job posting has been approved — ${title}`,
+    html: `<div style="font-family:Arial,sans-serif;color:#18160F">
+      <p>Your job posting <strong>${escapeHtml(title)}</strong> at <strong>${escapeHtml(locationName)}</strong> has been approved and is now visible to observers.</p>
+      <p><a href="${APP_URL}" style="color:#1B3A2D">Open dashboard →</a></p>
+    </div>`,
+  };
+}
+
+export function tplJobPostingRejected({ title }) {
+  const adminEmail = process.env.ADMIN_EMAIL || '';
+  return {
+    subject: `Update on your job posting — ${title}`,
+    html: `<div style="font-family:Arial,sans-serif;color:#18160F">
+      <p>Your job posting <strong>${escapeHtml(title)}</strong> has been reviewed and was not approved.</p>
+      <p>${adminEmail ? `Contact <a href="mailto:${escapeHtml(adminEmail)}">${escapeHtml(adminEmail)}</a> for more information.` : 'Contact an administrator for more information.'}</p>
+    </div>`,
+  };
+}
+
 export function tplJobApplication({ observerName, jobTitle, locationName }) {
   return {
     subject: `New application: ${observerName} — ${jobTitle}`,

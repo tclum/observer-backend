@@ -329,6 +329,13 @@ tbody tr:hover td{background:var(--surface2)}
   .fc-preview{border-left:none;border-top:1px solid var(--border)}
 }
 
+/* ── RECORD SETUP MODES ── */
+.rec-setup-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px;margin-bottom:14px}
+.rec-mode{cursor:pointer;border:1px solid var(--border);transition:all .15s}
+.rec-mode:hover{border-color:var(--purple-mid)}
+.rec-mode.selected{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-light)}
+.rec-mode.disabled{opacity:.55;cursor:not-allowed}
+
 /* ── BUSINESS LOOKUP ── */
 .lookup-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
 .lookup-row input{flex:1;min-width:140px;padding:9px 12px;border-radius:var(--r-sm);border:1px solid var(--border2);background:var(--surface);font-size:13px;outline:none}
@@ -692,21 +699,48 @@ tbody tr:hover td{background:var(--surface2)}
         <button class="btn-sm outline" id="rec-recovery-discard">Discard</button>
       </div>
 
-      <!-- SETUP CARD (no active session) -->
-      <div class="card" id="rec-setup">
-        <div class="card-header"><div class="card-title">Start a session</div></div>
-        <div class="card-body">
-          <div class="field"><label>Location</label>
-            <select class="filter-select" id="rec-loc" style="width:100%;min-width:0" onchange="recCheckStart()">
-              <option value="">Select a location…</option>
-            </select>
+      <!-- SETUP CARDS (no active session) -->
+      <div id="rec-setup">
+        <div class="rec-setup-grid">
+          <!-- Option A: Job-based -->
+          <div class="card rec-mode" id="rec-mode-job" data-mode="job">
+            <div class="card-header"><div class="card-title">Record for a job</div></div>
+            <div class="card-body">
+              <div id="rec-job-empty" style="display:none;font-size:13px;color:var(--ink3);padding:12px 0">
+                No active job assignments yet. Browse the <a href="#" onclick="navTo('jobboard');return false" style="color:var(--accent);font-weight:500">Job Board</a> to apply for positions.
+              </div>
+              <div id="rec-job-fields">
+                <div class="field"><label>Job</label>
+                  <select class="filter-select" id="rec-job" style="width:100%;min-width:0" onchange="recOnJobChange()">
+                    <option value="">Select a job…</option>
+                  </select>
+                </div>
+                <div class="field"><label>Location</label>
+                  <input class="filter-input" type="text" id="rec-job-loc" readonly style="width:100%;min-width:0;background:var(--surface2);color:var(--ink2)">
+                </div>
+                <div class="field"><label>Session name</label>
+                  <input class="filter-input" type="text" id="rec-job-sname" placeholder="e.g. Saturday morning" style="width:100%;min-width:0" oninput="recCheckStart()">
+                </div>
+              </div>
+            </div>
           </div>
-          <div class="field"><label>Session name (optional)</label>
-            <input class="filter-input" type="text" id="rec-sname" placeholder="e.g. Saturday morning" style="width:100%;min-width:0">
+
+          <!-- Option B: Custom -->
+          <div class="card rec-mode" id="rec-mode-custom" data-mode="custom">
+            <div class="card-header"><div class="card-title">Custom recording</div></div>
+            <div class="card-body">
+              <div style="font-size:12px;color:var(--ink3);margin-bottom:10px">Use this for observations outside of a job assignment.</div>
+              <div class="field"><label>Location name</label>
+                <input class="filter-input" type="text" id="rec-loc" placeholder="Enter location name" style="width:100%;min-width:0" oninput="recCheckStart()">
+              </div>
+              <div class="field"><label>Session name (optional)</label>
+                <input class="filter-input" type="text" id="rec-sname" placeholder="e.g. Saturday morning" style="width:100%;min-width:0" oninput="recCheckStart()">
+              </div>
+            </div>
           </div>
-          <div class="btn-row">
-            <button class="btn-lg primary" id="rec-start-btn" onclick="startSession()" disabled>Start session</button>
-          </div>
+        </div>
+        <div class="btn-row">
+          <button class="btn-lg primary" id="rec-start-btn" onclick="startSession()" disabled>Start session</button>
         </div>
       </div>
 
@@ -1059,6 +1093,7 @@ tbody tr:hover td{background:var(--surface2)}
       <button class="modal-close" onclick="closeBizJobModal()">×</button>
     </div>
     <div class="modal-body">
+      <div style="font-size:12px;color:#8B6A0F;background:#FFF6DC;border:1px solid #F2D78A;border-radius:8px;padding:10px 12px;margin-bottom:14px">New job postings require admin approval before observers can apply.</div>
       <div class="field"><label>Title</label><input type="text" id="bj-title" placeholder="e.g. Weekend Observer"></div>
       <div class="field"><label>Location</label>
         <select id="bj-location"><option value="">Select a location…</option></select>
@@ -1131,7 +1166,7 @@ let locAssignedObservers = [];
 let locAssignedBusinesses = [];
 let umBizAssignedLocs = [];
 let observerPseudonyms = {};
-let recSess = { loc: null, name: '', t: null };
+let recSess = { loc: null, name: '', t: null, jobId: null, jobTitle: null };
 let recEntries = [];
 let recMembers = [];
 let recShared = { dis: [], emo: [] };
@@ -1362,11 +1397,9 @@ function initApp() {
 }
 
 async function updateRecordNavVisibility() {
-  try {
-    const res = await api('/locations', { action: 'getAssignedLocations' });
-    const has = (res.locations || []).length > 0;
-    document.getElementById('nav-record').style.display = has ? 'flex' : 'none';
-  } catch(e) {}
+  // Observers can always record (custom location is supported), so the nav stays visible.
+  const el = document.getElementById('nav-record');
+  if (el) el.style.display = 'flex';
 }
 
 // ── NAVIGATION ──
@@ -1574,21 +1607,38 @@ async function renderAdminAttention(grid) {
     <div class="attn-card"><div class="attn-head"><div class="attn-title">Pending approvals</div><span class="attn-count" id="ac-users">…</span></div><div class="attn-list" id="al-users"><div class="attn-empty">Loading…</div></div></div>
     <div class="attn-card"><div class="attn-head"><div class="attn-title">Unactivated locations</div><span class="attn-count" id="ac-locs">…</span></div><div class="attn-list" id="al-locs"><div class="attn-empty">Loading…</div></div></div>
     <div class="attn-card"><div class="attn-head"><div class="attn-title">Open job applications</div><span class="attn-count" id="ac-apps">…</span></div><div class="attn-list" id="al-apps"><div class="attn-empty">Loading…</div></div></div>
+    <div class="attn-card"><div class="attn-head"><div class="attn-title">Pending job approvals</div><span class="attn-count" id="ac-jobs">…</span></div><div class="attn-list" id="al-jobs"><div class="attn-empty">Loading…</div></div></div>
   `;
   try {
-    const [usersR, locsR, appsR] = await Promise.all([
+    const [usersR, locsR, appsR, jobsR] = await Promise.all([
       api('/web-auth', { action: 'getWebUsers' }),
       api('/locations', { action: 'getLocations' }),
       api('/jobs', { action: 'getApplications' }),
+      api('/jobs', { action: 'getJobs' }),
     ]);
     const pendingUsers = (usersR.users || []).filter(u => u.status === 'Pending');
     const inactiveLocs = (locsR.locations || []).filter(l => l.active === false);
     const pendingApps = (appsR.applications || []).filter(a => a.status === 'Pending');
+    const pendingJobs = (jobsR.jobs || []).filter(j => j.status === 'Pending');
 
     const setCount = (id, n) => { const el = document.getElementById(id); el.textContent = n; if (n === 0) el.classList.add('zero'); };
     setCount('ac-users', pendingUsers.length);
     setCount('ac-locs', inactiveLocs.length);
     setCount('ac-apps', pendingApps.length);
+    setCount('ac-jobs', pendingJobs.length);
+
+    const jobListEl = document.getElementById('al-jobs');
+    jobListEl.innerHTML = pendingJobs.length ? pendingJobs.map(j => `
+      <div class="attn-item">
+        <div class="attn-item-name">${esc(j.title)}</div>
+        <div class="attn-item-meta">${esc(j.businessName || j.businessUsername)} · ${esc(j.locationName)} · ${esc(fmtDate(j.createdAt))}</div>
+        <div class="attn-item-actions">
+          <button class="btn-sm primary" data-attn-approve-job="${esc(j.id)}">Approve</button>
+          <button class="btn-sm danger" data-attn-reject-job="${esc(j.id)}">Reject</button>
+        </div>
+      </div>`).join('') : '<div class="attn-empty">No pending job approvals</div>';
+    jobListEl.querySelectorAll('[data-attn-approve-job]').forEach(b => b.addEventListener('click', () => attnApproveJob(b.dataset.attnApproveJob)));
+    jobListEl.querySelectorAll('[data-attn-reject-job]').forEach(b => b.addEventListener('click', () => attnRejectJob(b.dataset.attnRejectJob)));
 
     const userListEl = document.getElementById('al-users');
     userListEl.innerHTML = pendingUsers.length ? pendingUsers.map(u => `
@@ -1650,6 +1700,20 @@ async function attnUpdateApp(id, status) {
   try {
     const res = await api('/jobs', { action: 'updateApplication', recordId: id, status });
     if (res.success) { showToast('Updated'); renderAttentionPanel(); }
+    else showToast(res.error || 'Failed');
+  } catch(e) { showToast('Error'); }
+}
+async function attnApproveJob(recordId) {
+  try {
+    const res = await api('/jobs', { action: 'approveJob', recordId });
+    if (res.success) { showToast('Job approved'); renderAttentionPanel(); }
+    else showToast(res.error || 'Failed');
+  } catch(e) { showToast('Error'); }
+}
+async function attnRejectJob(recordId) {
+  try {
+    const res = await api('/jobs', { action: 'rejectJob', recordId });
+    if (res.success) { showToast('Job rejected'); renderAttentionPanel(); }
     else showToast(res.error || 'Failed');
   } catch(e) { showToast('Error'); }
 }
@@ -1742,9 +1806,10 @@ async function renderObserverAttention(grid) {
 function startRecordAt(locName) {
   navTo('record');
   setTimeout(() => {
+    if (typeof recSelectMode === 'function') recSelectMode('custom');
     const sel = document.getElementById('rec-loc');
     if (sel) { sel.value = locName; if (typeof recCheckStart === 'function') recCheckStart(); }
-  }, 60);
+  }, 80);
 }
 
 function renderDashboard() {
@@ -2091,6 +2156,52 @@ function parseUserNotes(notes) {
   try { return JSON.parse(notes); } catch { return null; }
 }
 
+function roleCellHtml(u) {
+  const isSelf = u.username === currentUser?.username;
+  const badge = `<span class="badge ${esc((u.role||'').toLowerCase())}">${esc(u.role||'—')}</span>`;
+  const pencil = isSelf ? '' : `<button class="btn-sm outline" style="padding:3px 7px;font-size:11px;margin-left:6px" data-role-edit="${esc(u.id)}" title="Change role">✎</button>`;
+  return `<span data-role-cell="${esc(u.id)}">${badge}${pencil}</span>`;
+}
+
+function startRoleEdit(uid) {
+  const cell = document.querySelector(`[data-role-cell="${uid}"]`);
+  if (!cell) return;
+  const u = allUsers.find(x => x.id === uid);
+  if (!u) return;
+  cell.innerHTML = `
+    <select data-role-select style="padding:4px 8px;border-radius:6px;border:1px solid var(--border2);font-size:12px">
+      <option value="Observer" ${u.role==='Observer'?'selected':''}>Observer</option>
+      <option value="Business" ${u.role==='Business'?'selected':''}>Business</option>
+      <option value="Admin" ${u.role==='Admin'?'selected':''}>Admin</option>
+    </select>
+    <button class="btn-sm primary" style="padding:3px 7px;font-size:11px;margin-left:4px" data-role-save="${esc(uid)}">✓</button>
+    <button class="btn-sm outline" style="padding:3px 7px;font-size:11px;margin-left:2px" data-role-cancel="${esc(uid)}">×</button>
+  `;
+  cell.querySelector('[data-role-save]').addEventListener('click', () => saveRoleEdit(uid));
+  cell.querySelector('[data-role-cancel]').addEventListener('click', () => renderUsers());
+}
+
+async function saveRoleEdit(uid) {
+  const cell = document.querySelector(`[data-role-cell="${uid}"]`);
+  const sel = cell?.querySelector('[data-role-select]');
+  const u = allUsers.find(x => x.id === uid);
+  if (!sel || !u) return;
+  const newRole = sel.value;
+  if (newRole === u.role) { renderUsers(); return; }
+  try {
+    const res = await api('/web-auth', { action: 'webUpdateUser', targetId: uid, fields: { Role: newRole }});
+    if (res.success) {
+      showToast(`${u.name || u.username}'s role changed to ${newRole}`);
+      const r = await api('/web-auth', { action: 'getWebUsers' });
+      allUsers = (r.users||[]).filter(x => x.username !== currentUser.username);
+      renderUsers();
+    } else {
+      showToast(res.error || 'Failed to update role');
+      renderUsers();
+    }
+  } catch(e) { showToast('Error'); renderUsers(); }
+}
+
 function userRowHtml(u, opts) {
   const cells = [
     `<td style="font-weight:500">${esc(u.name)||'—'}</td>`,
@@ -2098,10 +2209,10 @@ function userRowHtml(u, opts) {
     `<td style="color:var(--ink3)">${esc(u.email)||'—'}</td>`,
   ];
   if (opts.showLocations) {
-    const locs = allLocations.filter(l => (l.businesses || []).includes(u.username)).map(l => l.name);
+    const locs = allLocations.filter(l => (l.businesses || []).includes(u.username) || l.businessUsername === u.username).map(l => l.name);
     cells.push(`<td style="color:var(--ink3);font-size:12px">${locs.length ? locs.map(esc).join(', ') : '<span style="color:var(--ink3)">None</span>'}</td>`);
   } else {
-    cells.push(`<td><span class="badge ${esc((u.role||'').toLowerCase())}">${esc(u.role)}</span></td>`);
+    cells.push(`<td>${roleCellHtml(u)}</td>`);
   }
   cells.push(`<td><span class="badge ${esc((u.status||'').toLowerCase())}">${esc(u.status)}</span></td>`);
   const isBiz = opts.showLocations;
@@ -2216,6 +2327,7 @@ function bindUserActions(tbody) {
       else if (actionMap[action]) { updateWebUser(btn.dataset.uid, actionMap[action]); }
     });
   });
+  tbody.querySelectorAll('[data-role-edit]').forEach(btn => btn.addEventListener('click', () => startRoleEdit(btn.dataset.roleEdit)));
 }
 
 function renderUsers() {
@@ -2535,7 +2647,7 @@ function persistSession() {
   if (!key || !recSess.t) return;
   try {
     localStorage.setItem(key, JSON.stringify({
-      recSess: { loc: recSess.loc, name: recSess.name, t: recSess.t.toISOString() },
+      recSess: { loc: recSess.loc, name: recSess.name, t: recSess.t.toISOString(), jobId: recSess.jobId || null, jobTitle: recSess.jobTitle || null },
       recEntries: recEntries.map(e => ({ ...e, ts: e.ts.toISOString() })),
       recMissed,
       timestamp: Date.now(),
@@ -2563,6 +2675,9 @@ function loadPersistedSession() {
   } catch(e) { return null; }
 }
 
+let recObserverJobs = [];
+let recMode = 'job'; // 'job' | 'custom'
+
 async function initRecordPage() {
   if (!fieldConfig) {
     try { const res = await api('/config', { action: 'getConfig' }); fieldConfig = res.config || null; }
@@ -2579,20 +2694,30 @@ async function initRecordPage() {
       banner.querySelector('#rec-recovery-recover').onclick = () => recoverSession(saved);
       banner.querySelector('#rec-recovery-discard').onclick = () => { clearPersistedSession(); banner.style.display = 'none'; };
     }
-    let assignedCount = 0;
     try {
-      const res = await api('/locations', { action: 'getAssignedLocations' });
-      const locs = res.locations || [];
-      assignedCount = locs.length;
-      const sel = document.getElementById('rec-loc');
-      sel.innerHTML = '<option value="">Select a location…</option>' + locs.map(l => `<option value="${esc(l.name)}">${esc(l.name)}</option>`).join('');
-    } catch(e) { showToast('Could not load locations'); }
+      const res = await api('/jobs', { action: 'getObserverJobs' });
+      recObserverJobs = res.jobs || [];
+    } catch(e) { recObserverJobs = []; }
+
+    const jobSel = document.getElementById('rec-job');
+    if (recObserverJobs.length) {
+      jobSel.innerHTML = '<option value="">Select a job…</option>' +
+        recObserverJobs.map(j => `<option value="${esc(j.jobId)}">${esc(j.jobTitle)} — ${esc(j.locationName)} (${esc(j.businessName)})</option>`).join('');
+      document.getElementById('rec-job-empty').style.display = 'none';
+      document.getElementById('rec-job-fields').style.display = '';
+      document.getElementById('rec-mode-job').classList.remove('disabled');
+      recSelectMode('job');
+    } else {
+      document.getElementById('rec-job-empty').style.display = 'block';
+      document.getElementById('rec-job-fields').style.display = 'none';
+      document.getElementById('rec-mode-job').classList.add('disabled');
+      recSelectMode('custom');
+    }
     document.getElementById('rec-setup').style.display = 'block';
     document.getElementById('rec-active').style.display = 'none';
-    if (assignedCount === 0 && isObserver()) {
-      const setup = document.getElementById('rec-setup');
-      setup.innerHTML = '<div class="empty-state"><div class="empty-state-title">No assigned locations yet</div><div class="empty-state-sub">Apply to a job on the <a href="#" onclick="navTo(\'jobboard\');return false" style="color:var(--accent);font-weight:500">Job Board</a> to get assigned to a location.</div></div>';
-    }
+    recCheckStart();
+    document.getElementById('rec-mode-job').onclick = () => { if (recObserverJobs.length) recSelectMode('job'); };
+    document.getElementById('rec-mode-custom').onclick = () => recSelectMode('custom');
   } else {
     document.getElementById('rec-setup').style.display = 'none';
     document.getElementById('rec-active').style.display = 'block';
@@ -2601,8 +2726,24 @@ async function initRecordPage() {
   }
 }
 
+function recSelectMode(mode) {
+  recMode = mode;
+  document.getElementById('rec-mode-job').classList.toggle('selected', mode === 'job');
+  document.getElementById('rec-mode-custom').classList.toggle('selected', mode === 'custom');
+  recCheckStart();
+}
+
+function recOnJobChange() {
+  const id = document.getElementById('rec-job').value;
+  const job = recObserverJobs.find(j => j.jobId === id);
+  document.getElementById('rec-job-loc').value = job?.locationName || '';
+  const sname = document.getElementById('rec-job-sname');
+  if (job && !sname.value.trim()) sname.value = job.jobTitle;
+  recSelectMode('job');
+}
+
 function recoverSession(saved) {
-  recSess = { loc: saved.recSess.loc, name: saved.recSess.name, t: new Date(saved.recSess.t) };
+  recSess = { loc: saved.recSess.loc, name: saved.recSess.name, t: new Date(saved.recSess.t), jobId: saved.recSess.jobId || null, jobTitle: saved.recSess.jobTitle || null };
   recEntries = saved.recEntries.map(e => ({ ...e, ts: new Date(e.ts) }));
   recMissed = saved.recMissed || 0;
   recMembers = []; recMid = 0;
@@ -2622,14 +2763,35 @@ function recoverSession(saved) {
 }
 
 function recCheckStart() {
-  document.getElementById('rec-start-btn').disabled = !document.getElementById('rec-loc').value;
+  let ok = false;
+  if (recMode === 'job') {
+    const jobId = document.getElementById('rec-job').value;
+    const sname = document.getElementById('rec-job-sname').value.trim();
+    ok = !!jobId && !!sname;
+  } else {
+    const loc = document.getElementById('rec-loc').value.trim();
+    ok = !!loc;
+  }
+  document.getElementById('rec-start-btn').disabled = !ok;
 }
 
 function startSession() {
-  const loc = document.getElementById('rec-loc').value;
-  if (!loc) { showToast('Please select a location'); return; }
-  recSess.loc = loc;
-  recSess.name = document.getElementById('rec-sname').value.trim() || 'Session';
+  if (recMode === 'job') {
+    const jobId = document.getElementById('rec-job').value;
+    const job = recObserverJobs.find(j => j.jobId === jobId);
+    if (!job) { showToast('Please select a job'); return; }
+    recSess.loc = job.locationName;
+    recSess.name = document.getElementById('rec-job-sname').value.trim() || job.jobTitle;
+    recSess.jobId = job.jobId;
+    recSess.jobTitle = job.jobTitle;
+  } else {
+    const loc = document.getElementById('rec-loc').value.trim();
+    if (!loc) { showToast('Please enter a location'); return; }
+    recSess.loc = loc;
+    recSess.name = document.getElementById('rec-sname').value.trim() || 'Session';
+    recSess.jobId = null;
+    recSess.jobTitle = null;
+  }
   recSess.t = new Date();
   recEntries = [];
   recMissed = 0;
@@ -2657,11 +2819,14 @@ async function endSession() {
   let synced = true;
   if (recEntries.length) synced = await syncRecEntries();
   if (synced) {
-    recSess = { loc: null, name: '', t: null };
+    recSess = { loc: null, name: '', t: null, jobId: null, jobTitle: null };
     recEntries = []; recMembers = []; recMissed = 0; recMid = 0;
     recShared = { dis: [], emo: [] };
     document.getElementById('rec-loc').value = '';
     document.getElementById('rec-sname').value = '';
+    const jobSel = document.getElementById('rec-job'); if (jobSel) jobSel.value = '';
+    const jobLoc = document.getElementById('rec-job-loc'); if (jobLoc) jobLoc.value = '';
+    const jobSname = document.getElementById('rec-job-sname'); if (jobSname) jobSname.value = '';
     document.getElementById('rec-start-btn').disabled = true;
     document.getElementById('rec-setup').style.display = 'block';
     document.getElementById('rec-active').style.display = 'none';
@@ -2678,15 +2843,19 @@ function setSyncBar(state, msg) {
 async function syncRecEntries() {
   setSyncBar('syncing', 'Syncing to Airtable…');
   const rows = [];
+  const jobId = recSess.jobId || '';
   recEntries.forEach(e => {
-    if (e.missed) { rows.push({ fields: { 'Entry ID': String(e.id), 'Timestamp': e.ts.toISOString(), 'Type': 'missed', 'Observer': e.obs, 'Location': e.loc, 'Session': e.ses, 'Missed': 'YES' } }); return; }
-    if (!e.members.length) { rows.push({ fields: { 'Entry ID': String(e.id), 'Timestamp': e.ts.toISOString(), 'Type': e.type, 'Observer': e.obs, 'Location': e.loc, 'Session': e.ses, 'Disability': (e.dis||[]).join(', '), 'Emotion': (e.emo||[]).join(', '), 'Missed': 'NO' } }); return; }
-    e.members.forEach((m, i) => rows.push({ fields: { 'Entry ID': String(e.id), 'Timestamp': e.ts.toISOString(), 'Type': e.type, 'Observer': e.obs, 'Location': e.loc, 'Session': e.ses, 'Person #': String(i+1), 'Age': m.age||'', 'Gender': m.gender||'', 'Ethnicity': m.eth||'', 'Disability': i===0?(e.dis||[]).join(', '):'', 'Emotion': i===0?(e.emo||[]).join(', '):'', 'Missed': 'NO' } }));
+    if (e.missed) { rows.push({ fields: { 'Entry ID': String(e.id), 'Timestamp': e.ts.toISOString(), 'Type': 'missed', 'Observer': e.obs, 'Location': e.loc, 'Session': e.ses, 'Missed': 'YES', 'JobID': jobId } }); return; }
+    if (!e.members.length) { rows.push({ fields: { 'Entry ID': String(e.id), 'Timestamp': e.ts.toISOString(), 'Type': e.type, 'Observer': e.obs, 'Location': e.loc, 'Session': e.ses, 'Disability': (e.dis||[]).join(', '), 'Emotion': (e.emo||[]).join(', '), 'Missed': 'NO', 'JobID': jobId } }); return; }
+    e.members.forEach((m, i) => rows.push({ fields: { 'Entry ID': String(e.id), 'Timestamp': e.ts.toISOString(), 'Type': e.type, 'Observer': e.obs, 'Location': e.loc, 'Session': e.ses, 'Person #': String(i+1), 'Age': m.age||'', 'Gender': m.gender||'', 'Ethnicity': m.eth||'', 'Disability': i===0?(e.dis||[]).join(', '):'', 'Emotion': i===0?(e.emo||[]).join(', '):'', 'Missed': 'NO', 'JobID': jobId } }));
   });
   try {
     const res = await api('/sync', { records: rows });
     if (!res.success) throw new Error(res.error || 'Sync failed');
-    setSyncBar('ok', `Synced ${rows.length} rows to Airtable`);
+    const successMsg = recSess.jobTitle
+      ? `Session synced for ${recSess.jobTitle} at ${recSess.loc}`
+      : `Session synced for ${recSess.loc}`;
+    setSyncBar('ok', successMsg);
     clearPersistedSession();
     setTimeout(() => { document.getElementById('sync-bar').style.display = 'none'; }, 4000);
     return true;
@@ -2918,7 +3087,8 @@ function fmtDate(s) {
 function statusBadgeClass(status) {
   if (status === 'Open' || status === 'Approved' || status === 'Active') return 'active';
   if (status === 'Pending') return 'pending';
-  if (status === 'Rejected' || status === 'Closed') return 'rejected';
+  if (status === 'Rejected') return 'suspended';
+  if (status === 'Closed') return 'rejected';
   if (status === 'Paused') return 'observer';
   return 'admin';
 }
@@ -3229,6 +3399,11 @@ async function renderAdminJobs() {
 }
 
 // ── JOB CARD + SLIDE-IN PANEL ──
+function jobStatusLabel(j) {
+  if (j.status === 'Pending' && isBusiness()) return 'Awaiting approval';
+  return j.status;
+}
+
 function renderJobCardHtml(j) {
   const appCount = (allApps || []).filter(a => a.jobId === j.jobId).length;
   return `
@@ -3236,7 +3411,7 @@ function renderJobCardHtml(j) {
       <div class="job-card-title">${esc(j.title)}</div>
       <div class="job-card-biz">${esc(j.businessName || j.businessUsername)} · ${esc(j.locationName)}</div>
       <div class="job-card-meta">
-        <span class="badge ${statusBadgeClass(j.status)}">${esc(j.status)}</span>
+        <span class="badge ${statusBadgeClass(j.status)}">${esc(jobStatusLabel(j))}</span>
         ${j.requiredSessions ? `<span class="badge other">${esc(j.requiredSessions)}</span>` : ''}
       </div>
       <div class="job-card-foot">
@@ -3296,11 +3471,18 @@ function openJobPanel(recordId) {
     ${isOwnerOrAdmin ? `
     <div class="slide-section">
       <div class="slide-section-label">Manage</div>
+      ${isAdmin() && job.status === 'Pending' ? `
+        <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px">
+          <button class="btn-sm primary" data-js-approve="${esc(job.id)}">Approve job</button>
+          <button class="btn-sm danger" data-js-reject="${esc(job.id)}">Reject job</button>
+        </div>` : ''}
       <div style="display:flex;gap:8px;align-items:center">
         <select class="filter-select" id="js-status-select">
-          <option value="Open" ${job.status==='Open'?'selected':''}>Open</option>
+          ${isAdmin() ? `<option value="Open" ${job.status==='Open'?'selected':''}>Open</option>` : ''}
+          ${isAdmin() ? `<option value="Pending" ${job.status==='Pending'?'selected':''}>Pending</option>` : ''}
           <option value="Paused" ${job.status==='Paused'?'selected':''}>Paused</option>
           <option value="Closed" ${job.status==='Closed'?'selected':''}>Closed</option>
+          ${isAdmin() ? `<option value="Rejected" ${job.status==='Rejected'?'selected':''}>Rejected</option>` : ''}
         </select>
         <button class="btn-sm primary" data-js-save-status="${esc(job.id)}">Save</button>
         <button class="btn-sm danger" data-js-delete="${esc(job.id)}" style="margin-left:auto">Delete</button>
@@ -3324,6 +3506,16 @@ function openJobPanel(recordId) {
       showToast('Job closed');
       closeJobPanel();
       if (isAdmin()) renderAdminJobs(); else renderBizJobs();
+    });
+    body.querySelector('[data-js-approve]')?.addEventListener('click', async () => {
+      const res = await api('/jobs', { action: 'approveJob', recordId });
+      if (res.success) { showToast('Job approved'); if (isAdmin()) await renderAdminJobs(); openJobPanel(recordId); }
+      else showToast(res.error || 'Failed');
+    });
+    body.querySelector('[data-js-reject]')?.addEventListener('click', async () => {
+      const res = await api('/jobs', { action: 'rejectJob', recordId });
+      if (res.success) { showToast('Job rejected'); if (isAdmin()) await renderAdminJobs(); openJobPanel(recordId); }
+      else showToast(res.error || 'Failed');
     });
   }
 
