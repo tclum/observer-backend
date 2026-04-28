@@ -87,43 +87,63 @@ export function tplRejected() {
   };
 }
 
-export function tplJobSubmitted({ BusinessName, LocationName, Type, TargetCount, Deadline, Instructions, Reward }) {
+export function tplJobApplication({ observerName, jobTitle, locationName }) {
   return {
-    subject: `New job request from ${BusinessName} — ${Type}`,
+    subject: `New application: ${observerName} — ${jobTitle}`,
     html: `<div style="font-family:Arial,sans-serif;color:#18160F">
-      <h2 style="margin:0 0 12px">New job request</h2>
+      <h2 style="margin:0 0 12px">New observer application</h2>
       <table>
-        ${row('Business', escapeHtml(BusinessName))}
-        ${row('Location', escapeHtml(LocationName))}
-        ${row('Type', escapeHtml(Type))}
-        ${row('Target count', escapeHtml(TargetCount) || '—')}
-        ${row('Deadline', escapeHtml(Deadline) || '—')}
-        ${row('Reward', escapeHtml(Reward) || '—')}
-        ${row('Instructions', escapeHtml(Instructions) || '—')}
+        ${row('Observer', escapeHtml(observerName))}
+        ${row('Job', escapeHtml(jobTitle))}
+        ${row('Location', escapeHtml(locationName))}
       </table>
       <p style="margin-top:16px"><a href="${APP_URL}" style="color:#1B3A2D">Review in dashboard →</a></p>
     </div>`,
   };
 }
 
-export function tplJobApproved({ Type, LocationName }) {
+export function tplApplicationApproved({ jobTitle, locationName }) {
   return {
-    subject: 'Your job request has been approved',
+    subject: 'Your application has been approved',
     html: `<div style="font-family:Arial,sans-serif;color:#18160F">
-      <p>Your job request (<strong>${escapeHtml(Type)}</strong> at <strong>${escapeHtml(LocationName)}</strong>) has been approved and is now live for observers.</p>
-      <p><a href="${APP_URL}" style="color:#1B3A2D">View in dashboard →</a></p>
+      <p>Good news — your application for <strong>${escapeHtml(jobTitle)}</strong> at <strong>${escapeHtml(locationName)}</strong> has been approved.</p>
+      <p>You can now record sessions for this location.</p>
+      <p><a href="${APP_URL}" style="color:#1B3A2D">Open dashboard →</a></p>
     </div>`,
   };
 }
 
-export function tplJobRejected({ Type, LocationName }) {
-  const adminEmail = process.env.ADMIN_EMAIL || '';
-  const contact = adminEmail ? `Contact <a href="mailto:${escapeHtml(adminEmail)}">${escapeHtml(adminEmail)}</a> for more information.` : 'Contact an administrator for more information.';
+export function tplApplicationRejected({ jobTitle }) {
   return {
-    subject: 'Update on your job request',
+    subject: 'Update on your application',
     html: `<div style="font-family:Arial,sans-serif;color:#18160F">
-      <p>Your job request (<strong>${escapeHtml(Type)}</strong> at <strong>${escapeHtml(LocationName)}</strong>) was not approved at this time.</p>
-      <p>${contact}</p>
+      <p>Your application for <strong>${escapeHtml(jobTitle)}</strong> was not approved at this time.</p>
+      <p>Keep an eye on the job board for new openings.</p>
+      <p><a href="${APP_URL}" style="color:#1B3A2D">View other jobs →</a></p>
+    </div>`,
+  };
+}
+
+export function tplLocationActivated({ locationName }) {
+  return {
+    subject: `Location activated — ${locationName}`,
+    html: `<div style="font-family:Arial,sans-serif;color:#18160F">
+      <p>Your location <strong>${escapeHtml(locationName)}</strong> has been activated. You can now post jobs and accept observers there.</p>
+      <p><a href="${APP_URL}" style="color:#1B3A2D">Open dashboard →</a></p>
+    </div>`,
+  };
+}
+
+export function tplLocationPending({ businessName, locationName }) {
+  return {
+    subject: `New business location pending — ${locationName}`,
+    html: `<div style="font-family:Arial,sans-serif;color:#18160F">
+      <h2 style="margin:0 0 12px">New location awaiting activation</h2>
+      <table>
+        ${row('Business', escapeHtml(businessName))}
+        ${row('Location', escapeHtml(locationName))}
+      </table>
+      <p style="margin-top:16px"><a href="${APP_URL}" style="color:#1B3A2D">Review in dashboard →</a></p>
     </div>`,
   };
 }

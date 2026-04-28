@@ -364,25 +364,16 @@ tbody tr:hover td{background:var(--surface2)}
       <div class="sidebar-user-role" id="sb-role"></div>
     </div>
     <nav class="sidebar-nav">
+      <!-- Common -->
       <div class="nav-item active" onclick="navTo('dashboard')" id="nav-dashboard">
         <svg width="16" height="16" fill="none" viewBox="0 0 16 16"><rect x="1" y="1" width="6" height="6" rx="1.5" stroke="currentColor" stroke-width="1.3"/><rect x="9" y="1" width="6" height="6" rx="1.5" stroke="currentColor" stroke-width="1.3"/><rect x="1" y="9" width="6" height="6" rx="1.5" stroke="currentColor" stroke-width="1.3"/><rect x="9" y="9" width="6" height="6" rx="1.5" stroke="currentColor" stroke-width="1.3"/></svg>
         Dashboard
       </div>
-      <div class="nav-item" onclick="navTo('data')" id="nav-data">
-        <svg width="16" height="16" fill="none" viewBox="0 0 16 16"><path d="M2 4h12M2 8h12M2 12h7" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
-        Data
-      </div>
-      <div class="nav-item admin-only" onclick="navTo('locations')" id="nav-locations" style="display:none">
-        <svg width="16" height="16" fill="none" viewBox="0 0 16 16"><path d="M8 1.5C5.79 1.5 4 3.29 4 5.5c0 3 4 8 4 8s4-5 4-8c0-2.21-1.79-4-4-4z" stroke="currentColor" stroke-width="1.3"/><circle cx="8" cy="5.5" r="1.5" stroke="currentColor" stroke-width="1.3"/></svg>
-        Locations
-      </div>
-      <div class="nav-item admin-only" onclick="navTo('users')" id="nav-users" style="display:none">
-        <svg width="16" height="16" fill="none" viewBox="0 0 16 16"><circle cx="8" cy="5" r="3" stroke="currentColor" stroke-width="1.3"/><path d="M2 14c0-3.314 2.686-6 6-6s6 2.686 6 6" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
-        Users
-      </div>
-      <div class="nav-item admin-only" onclick="navTo('config')" id="nav-config" style="display:none">
-        <svg width="16" height="16" fill="none" viewBox="0 0 16 16"><circle cx="8" cy="8" r="2" stroke="currentColor" stroke-width="1.3"/><path d="M8 1v2M8 13v2M1 8h2M13 8h2M3 3l1.4 1.4M11.6 11.6L13 13M3 13l1.4-1.4M11.6 4.4L13 3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
-        Field Options
+
+      <!-- Observer -->
+      <div class="nav-item observer-only" onclick="navTo('jobboard')" id="nav-jobboard" style="display:none">
+        <svg width="16" height="16" fill="none" viewBox="0 0 16 16"><rect x="2" y="3" width="12" height="11" rx="1.5" stroke="currentColor" stroke-width="1.3"/><path d="M5 6h6M5 9h6M5 12h4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+        Job Board
       </div>
       <div class="nav-item observer-only" onclick="navTo('record')" id="nav-record" style="display:none">
         <svg width="16" height="16" fill="none" viewBox="0 0 16 16"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.3"/><circle cx="8" cy="8" r="2.5" fill="currentColor"/></svg>
@@ -392,17 +383,47 @@ tbody tr:hover td{background:var(--surface2)}
         <svg width="16" height="16" fill="none" viewBox="0 0 16 16"><circle cx="8" cy="5" r="3" stroke="currentColor" stroke-width="1.3"/><path d="M2 14c0-3.314 2.686-6 6-6s6 2.686 6 6" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
         My Sessions
       </div>
-      <div class="nav-item business-only" onclick="navTo('requestjob')" id="nav-requestjob" style="display:none">
+      <div class="nav-item observer-only" onclick="navTo('myapps')" id="nav-myapps" style="display:none">
         <svg width="16" height="16" fill="none" viewBox="0 0 16 16"><path d="M3 2h7l3 3v9H3V2z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/><path d="M10 2v3h3" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/><path d="M5.5 8.5h5M5.5 11h5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
-        Request Job
+        My Applications
       </div>
-      <div class="nav-item admin-only" onclick="navTo('jobreqs')" id="nav-jobreqs" style="display:none">
-        <svg width="16" height="16" fill="none" viewBox="0 0 16 16"><path d="M2 4h12v9H2z" stroke="currentColor" stroke-width="1.3"/><path d="M5 7h6M5 10h4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
-        Job Requests
+
+      <!-- Business -->
+      <div class="nav-item business-only" onclick="navTo('mylocations')" id="nav-mylocations" style="display:none">
+        <svg width="16" height="16" fill="none" viewBox="0 0 16 16"><path d="M8 1.5C5.79 1.5 4 3.29 4 5.5c0 3 4 8 4 8s4-5 4-8c0-2.21-1.79-4-4-4z" stroke="currentColor" stroke-width="1.3"/><circle cx="8" cy="5.5" r="1.5" stroke="currentColor" stroke-width="1.3"/></svg>
+        My Locations
       </div>
-      <div class="nav-item" onclick="navTo('jobs')" id="nav-jobs">
-        <svg width="16" height="16" fill="none" viewBox="0 0 16 16"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.3"/><path d="M5.5 8l2 2 3-4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        Open Jobs
+      <div class="nav-item business-only" onclick="navTo('bizjobs')" id="nav-bizjobs" style="display:none">
+        <svg width="16" height="16" fill="none" viewBox="0 0 16 16"><rect x="2" y="3" width="12" height="11" rx="1.5" stroke="currentColor" stroke-width="1.3"/><path d="M5 6h6M5 9h6M5 12h4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+        Jobs
+      </div>
+      <div class="nav-item business-only" onclick="navTo('bizobservers')" id="nav-bizobservers" style="display:none">
+        <svg width="16" height="16" fill="none" viewBox="0 0 16 16"><circle cx="8" cy="5" r="3" stroke="currentColor" stroke-width="1.3"/><path d="M2 14c0-3.314 2.686-6 6-6s6 2.686 6 6" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+        Observers
+      </div>
+
+      <!-- Admin + Business shared (Data) -->
+      <div class="nav-item" onclick="navTo('data')" id="nav-data">
+        <svg width="16" height="16" fill="none" viewBox="0 0 16 16"><path d="M2 4h12M2 8h12M2 12h7" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+        Data
+      </div>
+
+      <!-- Admin -->
+      <div class="nav-item admin-only" onclick="navTo('locations')" id="nav-locations" style="display:none">
+        <svg width="16" height="16" fill="none" viewBox="0 0 16 16"><path d="M8 1.5C5.79 1.5 4 3.29 4 5.5c0 3 4 8 4 8s4-5 4-8c0-2.21-1.79-4-4-4z" stroke="currentColor" stroke-width="1.3"/><circle cx="8" cy="5.5" r="1.5" stroke="currentColor" stroke-width="1.3"/></svg>
+        Locations
+      </div>
+      <div class="nav-item admin-only" onclick="navTo('users')" id="nav-users" style="display:none">
+        <svg width="16" height="16" fill="none" viewBox="0 0 16 16"><circle cx="8" cy="5" r="3" stroke="currentColor" stroke-width="1.3"/><path d="M2 14c0-3.314 2.686-6 6-6s6 2.686 6 6" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+        Users
+      </div>
+      <div class="nav-item admin-only" onclick="navTo('adminjobs')" id="nav-adminjobs" style="display:none">
+        <svg width="16" height="16" fill="none" viewBox="0 0 16 16"><rect x="2" y="3" width="12" height="11" rx="1.5" stroke="currentColor" stroke-width="1.3"/><path d="M5 6h6M5 9h6M5 12h4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+        Jobs
+      </div>
+      <div class="nav-item admin-only" onclick="navTo('config')" id="nav-config" style="display:none">
+        <svg width="16" height="16" fill="none" viewBox="0 0 16 16"><circle cx="8" cy="8" r="2" stroke="currentColor" stroke-width="1.3"/><path d="M8 1v2M8 13v2M1 8h2M13 8h2M3 3l1.4 1.4M11.6 11.6L13 13M3 13l1.4-1.4M11.6 4.4L13 3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+        Field Options
       </div>
     </nav>
     <div class="sidebar-loc-list" id="sb-business-locs" style="display:none">
@@ -680,73 +701,100 @@ tbody tr:hover td{background:var(--surface2)}
       </div>
     </div>
 
-    <!-- REQUEST JOB (Business) -->
-    <div class="page" id="page-requestjob">
+    <!-- JOB BOARD (Observer) -->
+    <div class="page" id="page-jobboard">
       <div class="page-header">
-        <div class="page-title">Request data collection</div>
-        <div class="page-sub">Submit a job request for observers. An admin will review and approve.</div>
+        <div class="page-title">Job Board</div>
+        <div class="page-sub">Open positions you can apply to</div>
       </div>
-      <div class="card" style="max-width:640px">
-        <div class="card-body">
-          <div class="field"><label>Location</label>
-            <select id="rj-location"><option value="">Select a location…</option></select>
-          </div>
-          <div class="field"><label>Job type</label>
-            <select id="rj-type">
-              <option value="Visit Audit">Visit Audit</option>
-              <option value="Mystery Shop">Mystery Shop</option>
-              <option value="Inventory Check">Inventory Check</option>
-              <option value="Other">Other</option>
-            </select>
-          </div>
-          <div class="field"><label>Target observation count</label>
-            <input type="number" id="rj-count" min="1" placeholder="e.g. 50">
-          </div>
-          <div class="field"><label>Deadline</label>
-            <input type="date" id="rj-deadline">
-          </div>
-          <div class="field"><label>Reward (optional)</label>
-            <input type="text" id="rj-reward" placeholder="e.g. $25 per session">
-          </div>
-          <div class="field"><label>Instructions</label>
-            <textarea id="rj-instructions" rows="4" placeholder="What should observers focus on?" style="width:100%;padding:12px 14px;border-radius:var(--r-sm);border:1px solid var(--border2);background:var(--surface);font-family:'DM Sans',sans-serif;font-size:14px;color:var(--ink);outline:none;resize:vertical"></textarea>
-          </div>
-          <div class="login-err" id="rj-err"></div>
-          <div class="login-success" id="rj-success">Request submitted. An admin will review and approve it.</div>
-          <button class="btn-full" id="rj-btn" onclick="doSubmitJobRequest()">Submit request</button>
-        </div>
-      </div>
+      <div id="jobboard-grid" class="loc-grid"></div>
     </div>
 
-    <!-- ADMIN JOB REQUESTS -->
-    <div class="page" id="page-jobreqs">
+    <!-- MY APPLICATIONS (Observer) -->
+    <div class="page" id="page-myapps">
       <div class="page-header">
-        <div class="page-title">Job Requests</div>
-        <div class="page-sub">Pending job requests from businesses</div>
+        <div class="page-title">My Applications</div>
+        <div class="page-sub">Track your application status</div>
       </div>
       <div class="card">
-        <div class="card-header"><div class="card-title" id="jr-count">Loading…</div></div>
+        <div class="card-header"><div class="card-title" id="myapps-count">Loading…</div></div>
         <div class="table-wrap">
           <table>
-            <thead><tr><th>Business</th><th>Location</th><th>Type</th><th>Target</th><th>Deadline</th><th>Reward</th><th>Submitted</th><th>Actions</th></tr></thead>
-            <tbody id="jr-tbody"></tbody>
+            <thead><tr><th>Job</th><th>Business</th><th>Location</th><th>Applied</th><th>Status</th></tr></thead>
+            <tbody id="myapps-tbody"></tbody>
           </table>
         </div>
       </div>
     </div>
 
-    <!-- OPEN JOBS -->
-    <div class="page" id="page-jobs">
+    <!-- MY LOCATIONS (Business) -->
+    <div class="page" id="page-mylocations">
       <div class="page-header">
-        <div class="page-title">Open Jobs</div>
-        <div class="page-sub" id="jobs-sub">Jobs available for data collection</div>
+        <div style="display:flex;align-items:center;justify-content:space-between">
+          <div><div class="page-title">My Locations</div><div class="page-sub">Sites you operate</div></div>
+          <button class="btn-sm primary" onclick="openBizLocModal()">+ Add location</button>
+        </div>
+      </div>
+      <div class="loc-grid" id="bizloc-grid"></div>
+    </div>
+
+    <!-- BUSINESS JOBS -->
+    <div class="page" id="page-bizjobs">
+      <div class="page-header">
+        <div style="display:flex;align-items:center;justify-content:space-between">
+          <div><div class="page-title">Jobs</div><div class="page-sub">Post and manage your job listings</div></div>
+          <button class="btn-sm primary" onclick="openBizJobModal()">+ Post a job</button>
+        </div>
       </div>
       <div class="card">
-        <div class="card-header"><div class="card-title" id="jobs-count">Loading…</div></div>
+        <div class="card-header"><div class="card-title" id="bizjobs-count">Loading…</div></div>
         <div class="table-wrap">
           <table>
-            <thead><tr><th>Business</th><th>Location</th><th>Type</th><th>Target</th><th>Deadline</th><th>Reward</th><th>Instructions</th><th>Status</th></tr></thead>
-            <tbody id="jobs-tbody"></tbody>
+            <thead><tr><th>Title</th><th>Location</th><th>Schedule</th><th>Applications</th><th>Status</th><th>Actions</th></tr></thead>
+            <tbody id="bizjobs-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- BUSINESS OBSERVERS -->
+    <div class="page" id="page-bizobservers">
+      <div class="page-header">
+        <div class="page-title">Observers</div>
+        <div class="page-sub">Active observers and pending applications</div>
+      </div>
+      <div class="card" style="margin-bottom:20px">
+        <div class="card-header"><div class="card-title">Pending applications</div></div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Observer</th><th>Job</th><th>Location</th><th>Applied</th><th>Actions</th></tr></thead>
+            <tbody id="bizapps-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header"><div class="card-title">Active observers</div></div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Observer</th><th>Location</th></tr></thead>
+            <tbody id="bizactive-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ADMIN JOBS -->
+    <div class="page" id="page-adminjobs">
+      <div class="page-header">
+        <div class="page-title">Jobs</div>
+        <div class="page-sub">All jobs across the platform</div>
+      </div>
+      <div class="card">
+        <div class="card-header"><div class="card-title" id="adminjobs-count">Loading…</div></div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Title</th><th>Business</th><th>Location</th><th>Applications</th><th>Status</th><th>Actions</th></tr></thead>
+            <tbody id="adminjobs-tbody"></tbody>
           </table>
         </div>
       </div>
@@ -851,6 +899,80 @@ tbody tr:hover td{background:var(--surface2)}
     <div class="modal-footer">
       <button class="btn-sm outline" onclick="closeApproveBizModal()">Cancel</button>
       <button class="btn-sm primary" onclick="confirmApproveBiz()">Approve & assign</button>
+    </div>
+  </div>
+</div>
+
+<!-- BIZ LOCATION MODAL -->
+<div class="modal-overlay" id="bizloc-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="bizloc-modal-title">Add location</div>
+      <button class="modal-close" onclick="closeBizLocModal()">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="field"><label>Location name</label><input type="text" id="bm-name" placeholder="e.g. Ala Moana"></div>
+      <div class="field"><label>Address</label><input type="text" id="bm-addr" placeholder="123 Main St"></div>
+      <div class="field"><label>Type</label>
+        <select id="bm-type">
+          <option value="Retail">Retail</option>
+          <option value="Restaurant">Restaurant</option>
+          <option value="Event">Event</option>
+          <option value="Other">Other</option>
+        </select>
+      </div>
+      <div style="font-size:12px;color:var(--ink3);margin-top:8px">New locations require admin activation before observers can be assigned.</div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-sm outline" onclick="closeBizLocModal()">Cancel</button>
+      <button class="btn-sm primary" onclick="saveBizLocation()">Save location</button>
+    </div>
+  </div>
+</div>
+
+<!-- BIZ JOB MODAL -->
+<div class="modal-overlay" id="bizjob-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="bizjob-modal-title">Post a job</div>
+      <button class="modal-close" onclick="closeBizJobModal()">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="field"><label>Title</label><input type="text" id="bj-title" placeholder="e.g. Weekend Observer"></div>
+      <div class="field"><label>Location</label>
+        <select id="bj-location"><option value="">Select a location…</option></select>
+      </div>
+      <div class="field"><label>Description</label>
+        <textarea id="bj-description" rows="4" placeholder="What's this job about?" style="width:100%;padding:12px 14px;border-radius:var(--r-sm);border:1px solid var(--border2);background:var(--surface);font-family:'DM Sans',sans-serif;font-size:14px;color:var(--ink);outline:none;resize:vertical"></textarea>
+      </div>
+      <div class="field"><label>Required sessions / schedule</label><input type="text" id="bj-sessions" placeholder="e.g. Weekends, 10am-2pm"></div>
+      <div class="field"><label>Notes</label>
+        <textarea id="bj-notes" rows="3" placeholder="Any additional context…" style="width:100%;padding:12px 14px;border-radius:var(--r-sm);border:1px solid var(--border2);background:var(--surface);font-family:'DM Sans',sans-serif;font-size:14px;color:var(--ink);outline:none;resize:vertical"></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-sm outline" onclick="closeBizJobModal()">Cancel</button>
+      <button class="btn-sm primary" onclick="saveBizJob()">Save job</button>
+    </div>
+  </div>
+</div>
+
+<!-- APPROVE APPLICATION MODAL -->
+<div class="modal-overlay" id="approve-app-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">Approve application</div>
+      <button class="modal-close" onclick="closeApproveAppModal()">×</button>
+    </div>
+    <div class="modal-body">
+      <div style="font-size:13px;color:var(--ink2);margin-bottom:14px">Assign <strong id="aa-observer"></strong> to a location.</div>
+      <div class="field"><label>Location</label>
+        <select id="aa-location"></select>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-sm outline" onclick="closeApproveAppModal()">Cancel</button>
+      <button class="btn-sm primary" onclick="confirmApproveApp()">Approve</button>
     </div>
   </div>
 </div>
@@ -1101,6 +1223,15 @@ function initApp() {
   applyDatePreset('data');
   loadAllData();
   navTo('dashboard');
+  if (isObserver()) updateRecordNavVisibility();
+}
+
+async function updateRecordNavVisibility() {
+  try {
+    const res = await api('/locations', { action: 'getAssignedLocations' });
+    const has = (res.locations || []).length > 0;
+    document.getElementById('nav-record').style.display = has ? 'flex' : 'none';
+  } catch(e) {}
 }
 
 // ── NAVIGATION ──
@@ -1111,7 +1242,7 @@ function toggleMobileSidebar(open) {
   document.getElementById('sidebar-backdrop').classList.toggle('open', open);
 }
 
-const PAGE_TITLES = { dashboard: 'Dashboard', data: 'Data', locations: 'Locations', users: 'Users', config: 'Field Options', record: 'Record', mydata: 'My Sessions', requestjob: 'Request Job', jobreqs: 'Job Requests', jobs: 'Open Jobs' };
+const PAGE_TITLES = { dashboard: 'Dashboard', data: 'Data', locations: 'Locations', users: 'Users', config: 'Field Options', record: 'Record', mydata: 'My Sessions', jobboard: 'Job Board', myapps: 'My Applications', mylocations: 'My Locations', bizjobs: 'Jobs', bizobservers: 'Observers', adminjobs: 'Jobs' };
 
 function navTo(page) {
   if (page !== 'record' && hasUnsyncedSession()) {
@@ -1131,9 +1262,12 @@ function navTo(page) {
   if (page === 'mydata') renderMyData();
   if (page === 'config') renderFieldConfig();
   if (page === 'record') initRecordPage();
-  if (page === 'requestjob') initRequestJobPage();
-  if (page === 'jobreqs') renderJobRequests();
-  if (page === 'jobs') renderOpenJobs();
+  if (page === 'jobboard') renderJobBoard();
+  if (page === 'myapps') renderMyApps();
+  if (page === 'mylocations') renderMyLocations();
+  if (page === 'bizjobs') renderBizJobs();
+  if (page === 'bizobservers') renderBizObservers();
+  if (page === 'adminjobs') renderAdminJobs();
 }
 
 window.addEventListener('beforeunload', e => {
@@ -1451,15 +1585,37 @@ function renderLocations() {
       <div class="loc-card-addr">${esc(l.address||'No address')}</div>
       <div class="loc-card-meta">
         <span class="badge ${esc((l.type||'other').toLowerCase())}">${esc(l.type||'Other')}</span>
-        ${l.active===false?'<span class="badge rejected">Inactive</span>':'<span class="badge active">Active</span>'}
+        ${l.active===false?'<span class="badge pending">Inactive</span>':'<span class="badge active">Active</span>'}
+        ${l.businessName?`<span class="badge business">${esc(l.businessName)}</span>`:''}
       </div>
       <div class="loc-card-observers">Observers: ${l.observers?.length ? l.observers.map(esc).join(', ') : '<span style="color:var(--ink3)">none</span>'}</div>
-      <div class="loc-card-observers">Businesses: ${l.businesses?.length ? l.businesses.map(esc).join(', ') : '<span style="color:var(--ink3)">none</span>'}</div>
       <div class="loc-card-actions">
         <button class="btn-sm outline" data-loc-id="${esc(l.id)}">Edit</button>
+        <button class="btn-sm ${l.active===false?'primary':'outline'}" data-toggle-loc="${esc(l.id)}" data-loc-active="${l.active===false?'true':'false'}">${l.active===false?'Activate':'Deactivate'}</button>
       </div>
     </div>`).join('');
   grid.querySelectorAll('[data-loc-id]').forEach(btn => btn.addEventListener('click', () => editLocation(btn.dataset.locId)));
+  grid.querySelectorAll('[data-toggle-loc]').forEach(btn => btn.addEventListener('click', () => toggleLocActive(btn.dataset.toggleLoc, btn.dataset.locActive === 'true')));
+}
+
+async function toggleLocActive(locId, makeActive) {
+  const l = allLocations.find(x => x.id === locId);
+  if (!l) return;
+  try {
+    const res = await api('/locations', { action: 'updateLocation', locationId: locId, location: {
+      name: l.name, address: l.address || '', type: l.type || '',
+      observers: l.observers || [], businesses: l.businesses || [],
+      active: makeActive,
+      businessUsername: l.businessUsername || '',
+      businessName: l.businessName || '',
+    }});
+    if (res.success) {
+      showToast(makeActive ? 'Location activated' : 'Location deactivated');
+      const r = await api('/locations', { action: 'getLocations' });
+      allLocations = r.locations || [];
+      renderLocations();
+    } else showToast(res.error || 'Failed');
+  } catch(e) { showToast('Error'); }
 }
 
 function openLocModal(loc) {
@@ -1601,9 +1757,7 @@ function userRowHtml(u, opts) {
   }
   cells.push(`<td><span class="badge ${esc((u.status||'').toLowerCase())}">${esc(u.status)}</span></td>`);
   const isBiz = opts.showLocations;
-  const approveBtn = (isBiz && u.status === 'Pending')
-    ? `<button class="btn-sm primary" style="padding:5px 10px;font-size:11px" data-action="approve-biz" data-uid="${esc(u.id)}" data-uname="${esc(u.username)}">Approve</button>`
-    : `<button class="btn-sm primary" style="padding:5px 10px;font-size:11px" data-action="approve" data-uid="${esc(u.id)}">Approve</button>`;
+  const approveBtn = `<button class="btn-sm primary" style="padding:5px 10px;font-size:11px" data-action="approve" data-uid="${esc(u.id)}">Approve</button>`;
   cells.push(`<td>
     <div style="display:flex;gap:6px;flex-wrap:wrap">
       ${isBiz?`<button class="btn-sm outline" style="padding:5px 10px;font-size:11px" data-action="toggle-biz" data-uid="${esc(u.id)}">Details</button>`:''}
@@ -1960,14 +2114,20 @@ async function initRecordPage() {
       banner.querySelector('#rec-recovery-recover').onclick = () => recoverSession(saved);
       banner.querySelector('#rec-recovery-discard').onclick = () => { clearPersistedSession(); banner.style.display = 'none'; };
     }
+    let assignedCount = 0;
     try {
       const res = await api('/locations', { action: 'getAssignedLocations' });
       const locs = res.locations || [];
+      assignedCount = locs.length;
       const sel = document.getElementById('rec-loc');
       sel.innerHTML = '<option value="">Select a location…</option>' + locs.map(l => `<option value="${esc(l.name)}">${esc(l.name)}</option>`).join('');
     } catch(e) { showToast('Could not load locations'); }
     document.getElementById('rec-setup').style.display = 'block';
     document.getElementById('rec-active').style.display = 'none';
+    if (assignedCount === 0 && isObserver()) {
+      const setup = document.getElementById('rec-setup');
+      setup.innerHTML = '<div class="empty-state"><div class="empty-state-title">No assigned locations yet</div><div class="empty-state-sub">Apply to a job on the <a href="#" onclick="navTo(\'jobboard\');return false" style="color:var(--accent);font-weight:500">Job Board</a> to get assigned to a location.</div></div>';
+    }
   } else {
     document.getElementById('rec-setup').style.display = 'none';
     document.getElementById('rec-active').style.display = 'block';
@@ -2278,138 +2438,362 @@ function renderS() {
   `;
 }
 
-// ── JOBS ──
+// ── JOBS / APPLICATIONS ──
 let allJobs = [];
+let allApps = [];
+let editingJobId = null;
+let editingBizLocId = null;
+let approvingApp = null;
 
-function initRequestJobPage() {
-  const sel = document.getElementById('rj-location');
-  sel.innerHTML = '<option value="">Select a location…</option>';
-  const myLocs = (allLocations || []).filter(l => l.Active !== false);
-  myLocs.forEach(l => {
-    const opt = document.createElement('option');
-    opt.value = l.Name || l.name || '';
-    opt.textContent = l.Name || l.name || '';
-    sel.appendChild(opt);
-  });
-  document.getElementById('rj-success').style.display = 'none';
-  document.getElementById('rj-err').style.display = 'none';
-  document.getElementById('rj-btn').style.display = 'block';
-}
-
-async function doSubmitJobRequest() {
-  const locationName = document.getElementById('rj-location').value.trim();
-  const type = document.getElementById('rj-type').value;
-  const targetCount = document.getElementById('rj-count').value;
-  const deadline = document.getElementById('rj-deadline').value;
-  const reward = document.getElementById('rj-reward').value.trim();
-  const instructions = document.getElementById('rj-instructions').value.trim();
-  const err = document.getElementById('rj-err');
-  const ok = document.getElementById('rj-success');
-  const btn = document.getElementById('rj-btn');
-  err.style.display = 'none'; ok.style.display = 'none';
-  if (!locationName) { err.textContent = 'Please select a location'; err.style.display = 'block'; return; }
-  if (!type) { err.textContent = 'Please choose a job type'; err.style.display = 'block'; return; }
-  btn.disabled = true; btn.textContent = 'Submitting…';
-  try {
-    const res = await api('/jobs', { action: 'submitJobRequest', locationName, type, targetCount, deadline, reward, instructions });
-    if (res.success) {
-      ok.style.display = 'block';
-      btn.style.display = 'none';
-      ['rj-count','rj-deadline','rj-reward','rj-instructions'].forEach(id => document.getElementById(id).value = '');
-    } else {
-      err.textContent = res.error || 'Submission failed'; err.style.display = 'block';
-      btn.disabled = false; btn.textContent = 'Submit request';
-    }
-  } catch(e) {
-    err.textContent = 'Could not reach server.'; err.style.display = 'block';
-    btn.disabled = false; btn.textContent = 'Submit request';
-  }
-}
-
-function fmtJobDate(s) {
+function fmtDate(s) {
   if (!s) return '—';
   try { return new Date(s).toLocaleDateString(); } catch { return s; }
 }
 
-async function renderJobRequests() {
-  const tbody = document.getElementById('jr-tbody');
-  const count = document.getElementById('jr-count');
-  tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;color:var(--ink3);padding:24px">Loading…</td></tr>';
+function statusBadgeClass(status) {
+  if (status === 'Open' || status === 'Approved' || status === 'Active') return 'active';
+  if (status === 'Pending') return 'pending';
+  if (status === 'Rejected' || status === 'Closed') return 'rejected';
+  if (status === 'Paused') return 'observer';
+  return 'admin';
+}
+
+// ── JOB BOARD (Observer) ──
+async function renderJobBoard() {
+  const grid = document.getElementById('jobboard-grid');
+  grid.innerHTML = '<div class="loading"><div class="spinner"></div>Loading…</div>';
   try {
-    const res = await api('/jobs', { action: 'getJobs', status: 'Pending' });
-    const jobs = res.jobs || [];
-    count.textContent = jobs.length + (jobs.length === 1 ? ' pending request' : ' pending requests');
+    const [jobsRes, appsRes] = await Promise.all([
+      api('/jobs', { action: 'getJobs' }),
+      api('/jobs', { action: 'getApplications' }),
+    ]);
+    const jobs = jobsRes.jobs || [];
+    const apps = appsRes.applications || [];
+    allApps = apps;
     if (!jobs.length) {
-      tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;color:var(--ink3);padding:24px">No pending requests</td></tr>';
+      grid.innerHTML = '<div class="empty-state"><div class="empty-state-title">No open positions at the moment</div><div class="empty-state-sub">Check back later</div></div>';
       return;
     }
-    tbody.innerHTML = jobs.map(j => `
-      <tr>
-        <td>${esc(j.businessName || j.businessUsername)}</td>
-        <td>${esc(j.locationName)}</td>
-        <td>${esc(j.type)}</td>
-        <td>${esc(j.targetCount) || '—'}</td>
-        <td>${esc(fmtJobDate(j.deadline))}</td>
-        <td>${esc(j.reward) || '—'}</td>
-        <td>${esc(fmtJobDate(j.createdAt))}</td>
-        <td>
-          <button class="btn-sm primary" onclick="updateJobStatus('${j.id}','Open')">Approve</button>
-          <button class="btn-sm danger" onclick="updateJobStatus('${j.id}','Rejected')">Reject</button>
-        </td>
-      </tr>
-    `).join('');
+    const appByJobId = {};
+    apps.forEach(a => { appByJobId[a.jobId] = a; });
+    grid.innerHTML = jobs.map(j => {
+      const myApp = appByJobId[j.jobId];
+      const action = myApp
+        ? `<span class="badge ${statusBadgeClass(myApp.status)}">${esc(myApp.status)}</span>`
+        : `<button class="btn-sm primary" data-apply="${esc(j.id)}">Apply</button>`;
+      return `
+        <div class="loc-card">
+          <div class="loc-card-name">${esc(j.title)}</div>
+          <div class="loc-card-addr">${esc(j.businessName || j.businessUsername)} · ${esc(j.locationName)}</div>
+          <div class="loc-card-meta">
+            ${j.requiredSessions ? `<span class="badge other">${esc(j.requiredSessions)}</span>` : ''}
+            <span class="badge active">Open</span>
+          </div>
+          <div class="loc-card-observers" style="white-space:normal">${esc(j.description) || '<span style="color:var(--ink3)">No description</span>'}</div>
+          <div class="loc-card-actions">${action}</div>
+        </div>`;
+    }).join('');
+    grid.querySelectorAll('[data-apply]').forEach(btn => btn.addEventListener('click', () => applyToJob(btn.dataset.apply)));
   } catch(e) {
-    tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;color:var(--warn);padding:24px">Failed to load</td></tr>';
+    grid.innerHTML = '<div class="empty-state"><div class="empty-state-title">Failed to load</div></div>';
   }
 }
 
-async function updateJobStatus(jobId, status) {
+async function applyToJob(recordId) {
   try {
-    const res = await api('/jobs', { action: 'updateJob', jobId, status });
-    if (res.success) {
-      showToast(status === 'Open' ? 'Job approved' : 'Job rejected');
-      renderJobRequests();
-    } else {
-      showToast(res.error || 'Update failed');
-    }
+    const res = await api('/jobs', { action: 'applyToJob', recordId });
+    if (res.success) { showToast('Application submitted'); renderJobBoard(); }
+    else showToast(res.error || 'Failed to apply');
   } catch(e) { showToast('Could not reach server'); }
 }
 
-async function renderOpenJobs() {
-  const tbody = document.getElementById('jobs-tbody');
-  const count = document.getElementById('jobs-count');
-  const sub = document.getElementById('jobs-sub');
-  if (isBusiness()) sub.textContent = 'Your job requests and their status';
-  else if (isObserver()) sub.textContent = 'Open jobs available for data collection';
-  else sub.textContent = 'All jobs across the platform';
-  tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;color:var(--ink3);padding:24px">Loading…</td></tr>';
+// ── MY APPLICATIONS (Observer) ──
+async function renderMyApps() {
+  const tbody = document.getElementById('myapps-tbody');
+  const count = document.getElementById('myapps-count');
+  tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--ink3);padding:24px">Loading…</td></tr>';
   try {
-    const params = { action: 'getJobs' };
-    if (isAdmin()) params.status = '';
-    const res = await api('/jobs', params);
-    const jobs = res.jobs || [];
+    const res = await api('/jobs', { action: 'getApplications' });
+    const apps = res.applications || [];
+    count.textContent = apps.length + (apps.length === 1 ? ' application' : ' applications');
+    if (!apps.length) {
+      tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--ink3);padding:24px">You haven\'t applied to any jobs yet</td></tr>';
+      return;
+    }
+    tbody.innerHTML = apps.map(a => `
+      <tr>
+        <td>${esc(a.jobTitle)}</td>
+        <td>${esc(a.businessUsername)}</td>
+        <td>${esc(a.locationName)}</td>
+        <td>${esc(fmtDate(a.appliedAt))}</td>
+        <td><span class="badge ${statusBadgeClass(a.status)}">${esc(a.status)}</span></td>
+      </tr>`).join('');
+  } catch(e) {
+    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--warn);padding:24px">Failed to load</td></tr>';
+  }
+}
+
+// ── BUSINESS: MY LOCATIONS ──
+async function renderMyLocations() {
+  const grid = document.getElementById('bizloc-grid');
+  grid.innerHTML = '<div class="loading"><div class="spinner"></div>Loading…</div>';
+  try {
+    const res = await api('/locations', { action: 'getLocations' });
+    const locs = res.locations || [];
+    allLocations = locs;
+    if (!locs.length) {
+      grid.innerHTML = '<div class="empty-state"><div class="empty-state-title">No locations yet</div><div class="empty-state-sub">Add your first location to start posting jobs</div></div>';
+      return;
+    }
+    grid.innerHTML = locs.map(l => `
+      <div class="loc-card ${l.active===false?'loc-inactive':''}">
+        <div class="loc-card-name">${esc(l.name)}</div>
+        <div class="loc-card-addr">${esc(l.address||'No address')}</div>
+        <div class="loc-card-meta">
+          <span class="badge ${esc((l.type||'other').toLowerCase())}">${esc(l.type||'Other')}</span>
+          ${l.active===false?'<span class="badge pending">Pending activation</span>':'<span class="badge active">Active</span>'}
+        </div>
+        <div class="loc-card-observers">${(l.observers||[]).length} ${(l.observers||[]).length===1?'observer':'observers'} assigned</div>
+        ${l.active===false?'<div style="font-size:12px;color:var(--ink3);margin-bottom:10px">Pending admin activation — observers cannot be assigned yet.</div>':''}
+        <div class="loc-card-actions">
+          <button class="btn-sm outline" data-edit-bizloc="${esc(l.id)}">Edit</button>
+        </div>
+      </div>`).join('');
+    grid.querySelectorAll('[data-edit-bizloc]').forEach(b => b.addEventListener('click', () => openBizLocModal(b.dataset.editBizloc)));
+  } catch(e) {
+    grid.innerHTML = '<div class="empty-state"><div class="empty-state-title">Failed to load</div></div>';
+  }
+}
+
+function openBizLocModal(locId) {
+  editingBizLocId = locId || null;
+  const loc = locId ? allLocations.find(l => l.id === locId) : null;
+  document.getElementById('bizloc-modal-title').textContent = locId ? 'Edit location' : 'Add location';
+  document.getElementById('bm-name').value = loc?.name || '';
+  document.getElementById('bm-addr').value = loc?.address || '';
+  document.getElementById('bm-type').value = loc?.type || 'Retail';
+  document.getElementById('bizloc-modal').classList.add('open');
+}
+function closeBizLocModal() { document.getElementById('bizloc-modal').classList.remove('open'); }
+
+async function saveBizLocation() {
+  const name = document.getElementById('bm-name').value.trim();
+  if (!name) { showToast('Location name required'); return; }
+  const location = {
+    name,
+    address: document.getElementById('bm-addr').value.trim(),
+    type: document.getElementById('bm-type').value,
+  };
+  try {
+    const res = editingBizLocId
+      ? await api('/locations', { action: 'updateLocation', locationId: editingBizLocId, location })
+      : await api('/locations', { action: 'createLocation', location });
+    if (res.success) {
+      showToast(editingBizLocId ? 'Location updated' : 'Location added — pending admin activation');
+      closeBizLocModal();
+      renderMyLocations();
+    } else showToast(res.error || 'Failed to save');
+  } catch(e) { showToast('Error saving location'); }
+}
+
+// ── BUSINESS: JOBS ──
+async function renderBizJobs() {
+  const tbody = document.getElementById('bizjobs-tbody');
+  const count = document.getElementById('bizjobs-count');
+  tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--ink3);padding:24px">Loading…</td></tr>';
+  try {
+    const [jobsRes, appsRes, locsRes] = await Promise.all([
+      api('/jobs', { action: 'getJobs' }),
+      api('/jobs', { action: 'getApplications' }),
+      api('/locations', { action: 'getLocations' }),
+    ]);
+    const jobs = jobsRes.jobs || [];
     allJobs = jobs;
+    allApps = appsRes.applications || [];
+    allLocations = locsRes.locations || [];
     count.textContent = jobs.length + (jobs.length === 1 ? ' job' : ' jobs');
     if (!jobs.length) {
-      tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;color:var(--ink3);padding:24px">No jobs to show</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--ink3);padding:24px">You haven\'t posted any jobs yet</td></tr>';
       return;
     }
     tbody.innerHTML = jobs.map(j => {
-      const statusClass = j.status === 'Open' ? 'active' : j.status === 'Pending' ? 'pending' : j.status === 'Rejected' ? 'rejected' : 'admin';
+      const appCount = allApps.filter(a => a.jobId === j.jobId).length;
+      const closeBtn = j.status === 'Open'
+        ? `<button class="btn-sm outline" data-close-job="${esc(j.id)}">Close</button>`
+        : `<button class="btn-sm outline" data-reopen-job="${esc(j.id)}">Reopen</button>`;
       return `
-      <tr>
-        <td>${esc(j.businessName || j.businessUsername)}</td>
-        <td>${esc(j.locationName)}</td>
-        <td>${esc(j.type)}</td>
-        <td>${esc(j.targetCount) || '—'}</td>
-        <td>${esc(fmtJobDate(j.deadline))}</td>
-        <td>${esc(j.reward) || '—'}</td>
-        <td style="max-width:240px;white-space:normal">${esc(j.instructions) || '—'}</td>
-        <td><span class="badge ${statusClass}">${esc(j.status)}</span></td>
-      </tr>`;
+        <tr>
+          <td><strong>${esc(j.title)}</strong></td>
+          <td>${esc(j.locationName)}</td>
+          <td style="color:var(--ink3)">${esc(j.requiredSessions) || '—'}</td>
+          <td><a href="#" data-view-apps="${esc(j.jobId)}" style="color:var(--accent);font-weight:500">${appCount}</a></td>
+          <td><span class="badge ${statusBadgeClass(j.status)}">${esc(j.status)}</span></td>
+          <td>
+            <button class="btn-sm outline" data-edit-job="${esc(j.id)}">Edit</button>
+            ${closeBtn}
+          </td>
+        </tr>`;
     }).join('');
+    tbody.querySelectorAll('[data-edit-job]').forEach(b => b.addEventListener('click', () => openBizJobModal(b.dataset.editJob)));
+    tbody.querySelectorAll('[data-close-job]').forEach(b => b.addEventListener('click', () => updateBizJobStatus(b.dataset.closeJob, 'Closed')));
+    tbody.querySelectorAll('[data-reopen-job]').forEach(b => b.addEventListener('click', () => updateBizJobStatus(b.dataset.reopenJob, 'Open')));
+    tbody.querySelectorAll('[data-view-apps]').forEach(a => a.addEventListener('click', e => { e.preventDefault(); navTo('bizobservers'); }));
   } catch(e) {
-    tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;color:var(--warn);padding:24px">Failed to load</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--warn);padding:24px">Failed to load</td></tr>';
+  }
+}
+
+async function openBizJobModal(jobId) {
+  editingJobId = jobId || null;
+  const job = jobId ? allJobs.find(j => j.id === jobId) : null;
+  document.getElementById('bizjob-modal-title').textContent = jobId ? 'Edit job' : 'Post a job';
+  document.getElementById('bj-title').value = job?.title || '';
+  document.getElementById('bj-description').value = job?.description || '';
+  document.getElementById('bj-sessions').value = job?.requiredSessions || '';
+  document.getElementById('bj-notes').value = job?.notes || '';
+  // populate location select with active business locations
+  try {
+    const locsRes = await api('/locations', { action: 'getLocations' });
+    allLocations = locsRes.locations || [];
+  } catch(e) {}
+  const sel = document.getElementById('bj-location');
+  const activeLocs = allLocations.filter(l => l.active !== false);
+  sel.innerHTML = '<option value="">Select a location…</option>' +
+    activeLocs.map(l => `<option value="${esc(l.id)}" ${job?.locationId===l.id?'selected':''}>${esc(l.name)}</option>`).join('');
+  document.getElementById('bizjob-modal').classList.add('open');
+}
+function closeBizJobModal() { document.getElementById('bizjob-modal').classList.remove('open'); }
+
+async function saveBizJob() {
+  const title = document.getElementById('bj-title').value.trim();
+  const locationId = document.getElementById('bj-location').value;
+  const description = document.getElementById('bj-description').value.trim();
+  const requiredSessions = document.getElementById('bj-sessions').value.trim();
+  const notes = document.getElementById('bj-notes').value.trim();
+  if (!title) { showToast('Title required'); return; }
+  if (!locationId && !editingJobId) { showToast('Select a location'); return; }
+  try {
+    const res = editingJobId
+      ? await api('/jobs', { action: 'updateJob', recordId: editingJobId, fields: { Title: title, Description: description, RequiredSessions: requiredSessions, Notes: notes }})
+      : await api('/jobs', { action: 'createJob', title, description, locationId, requiredSessions, notes });
+    if (res.success) {
+      showToast(editingJobId ? 'Job updated' : 'Job posted');
+      closeBizJobModal();
+      renderBizJobs();
+    } else showToast(res.error || 'Failed to save');
+  } catch(e) { showToast('Error saving job'); }
+}
+
+async function updateBizJobStatus(recordId, status) {
+  try {
+    const res = await api('/jobs', { action: 'updateJob', recordId, fields: { Status: status }});
+    if (res.success) { showToast('Updated'); renderBizJobs(); }
+    else showToast(res.error || 'Failed');
+  } catch(e) { showToast('Error'); }
+}
+
+// ── BUSINESS: OBSERVERS ──
+async function renderBizObservers() {
+  const appsTbody = document.getElementById('bizapps-tbody');
+  const activeTbody = document.getElementById('bizactive-tbody');
+  appsTbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--ink3);padding:18px">Loading…</td></tr>';
+  activeTbody.innerHTML = '<tr><td colspan="2" style="text-align:center;color:var(--ink3);padding:18px">Loading…</td></tr>';
+  try {
+    const [appsRes, locsRes] = await Promise.all([
+      api('/jobs', { action: 'getApplications' }),
+      api('/locations', { action: 'getLocations' }),
+    ]);
+    allApps = appsRes.applications || [];
+    allLocations = locsRes.locations || [];
+
+    const pending = allApps.filter(a => a.status === 'Pending');
+    appsTbody.innerHTML = pending.length ? pending.map(a => `
+      <tr>
+        <td><strong>${esc(a.observerName || a.observerUsername)}</strong></td>
+        <td>${esc(a.jobTitle)}</td>
+        <td>${esc(a.locationName)}</td>
+        <td>${esc(fmtDate(a.appliedAt))}</td>
+        <td>
+          <button class="btn-sm primary" data-approve-app="${esc(a.id)}" data-app-obs="${esc(a.observerName||a.observerUsername)}" data-app-loc="${esc(a.locationName)}">Approve</button>
+          <button class="btn-sm danger" data-reject-app="${esc(a.id)}">Reject</button>
+        </td>
+      </tr>`).join('') : '<tr><td colspan="5" style="text-align:center;color:var(--ink3);padding:18px">No pending applications</td></tr>';
+    appsTbody.querySelectorAll('[data-approve-app]').forEach(b => b.addEventListener('click', () => openApproveAppModal(b.dataset.approveApp, b.dataset.appObs)));
+    appsTbody.querySelectorAll('[data-reject-app]').forEach(b => b.addEventListener('click', () => updateAppStatus(b.dataset.rejectApp, 'Rejected')));
+
+    const rows = [];
+    allLocations.forEach(l => {
+      (l.observers || []).forEach(o => rows.push({ observer: o, loc: l.name }));
+    });
+    activeTbody.innerHTML = rows.length ? rows.map(r => `<tr><td><strong>${esc(r.observer)}</strong></td><td>${esc(r.loc)}</td></tr>`).join('') : '<tr><td colspan="2" style="text-align:center;color:var(--ink3);padding:18px">No active observers yet</td></tr>';
+  } catch(e) {
+    appsTbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--warn);padding:18px">Failed to load</td></tr>';
+  }
+}
+
+function openApproveAppModal(appId, observerName) {
+  approvingApp = appId;
+  document.getElementById('aa-observer').textContent = observerName;
+  const sel = document.getElementById('aa-location');
+  const active = (allLocations || []).filter(l => l.active !== false);
+  sel.innerHTML = active.map(l => `<option value="${esc(l.id)}">${esc(l.name)}</option>`).join('');
+  document.getElementById('approve-app-modal').classList.add('open');
+}
+function closeApproveAppModal() {
+  approvingApp = null;
+  document.getElementById('approve-app-modal').classList.remove('open');
+}
+async function confirmApproveApp() {
+  if (!approvingApp) return;
+  const locationId = document.getElementById('aa-location').value;
+  try {
+    const res = await api('/jobs', { action: 'updateApplication', recordId: approvingApp, status: 'Approved', locationId });
+    if (res.success) { showToast('Application approved'); closeApproveAppModal(); renderBizObservers(); }
+    else showToast(res.error || 'Failed');
+  } catch(e) { showToast('Error'); }
+}
+async function updateAppStatus(recordId, status) {
+  try {
+    const res = await api('/jobs', { action: 'updateApplication', recordId, status });
+    if (res.success) { showToast('Updated'); renderBizObservers(); }
+    else showToast(res.error || 'Failed');
+  } catch(e) { showToast('Error'); }
+}
+
+// ── ADMIN JOBS ──
+async function renderAdminJobs() {
+  const tbody = document.getElementById('adminjobs-tbody');
+  const count = document.getElementById('adminjobs-count');
+  tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--ink3);padding:24px">Loading…</td></tr>';
+  try {
+    const [jobsRes, appsRes] = await Promise.all([
+      api('/jobs', { action: 'getJobs' }),
+      api('/jobs', { action: 'getApplications' }),
+    ]);
+    const jobs = jobsRes.jobs || [];
+    allJobs = jobs;
+    allApps = appsRes.applications || [];
+    count.textContent = jobs.length + (jobs.length === 1 ? ' job' : ' jobs');
+    if (!jobs.length) { tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--ink3);padding:24px">No jobs yet</td></tr>'; return; }
+    tbody.innerHTML = jobs.map(j => {
+      const appCount = allApps.filter(a => a.jobId === j.jobId).length;
+      const toggleBtn = j.status === 'Open'
+        ? `<button class="btn-sm outline" data-admin-close="${esc(j.id)}">Close</button>`
+        : `<button class="btn-sm outline" data-admin-reopen="${esc(j.id)}">Reopen</button>`;
+      return `
+        <tr>
+          <td><strong>${esc(j.title)}</strong></td>
+          <td>${esc(j.businessName || j.businessUsername)}</td>
+          <td>${esc(j.locationName)}</td>
+          <td>${appCount}</td>
+          <td><span class="badge ${statusBadgeClass(j.status)}">${esc(j.status)}</span></td>
+          <td>${toggleBtn}</td>
+        </tr>`;
+    }).join('');
+    tbody.querySelectorAll('[data-admin-close]').forEach(b => b.addEventListener('click', () => updateBizJobStatus(b.dataset.adminClose, 'Closed').then(() => renderAdminJobs())));
+    tbody.querySelectorAll('[data-admin-reopen]').forEach(b => b.addEventListener('click', () => updateBizJobStatus(b.dataset.adminReopen, 'Open').then(() => renderAdminJobs())));
+  } catch(e) {
+    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--warn);padding:24px">Failed to load</td></tr>';
   }
 }
 </script>

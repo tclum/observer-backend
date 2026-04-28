@@ -1,4 +1,4 @@
-import { atGet, atCreate, atUpdate, signJWT, verifyToken, hashPassword, verifyPassword, checkRateLimit, getClientIP, corsHeaders, json, parseBody } from './_utils.js';
+import { atGet, atGetAll, atCreate, atUpdate, signJWT, verifyToken, hashPassword, verifyPassword, checkRateLimit, getClientIP, corsHeaders, json, parseBody } from './_utils.js';
 import { sendEmail, tplBusinessRegistration, tplObserverRegistration, tplApproved, tplRejected, tplPasswordReset } from './_email.js';
 
 export const handler = async (event) => {
@@ -122,6 +122,22 @@ export const handler = async (event) => {
         Role: 'Business', Status: 'Pending', Notes: notes,
       });
 
+      const reqLocs = Array.isArray(requestedLocations) ? requestedLocations.filter(Boolean) : [];
+      for (const locName of reqLocs) {
+        try {
+          await atCreate('Locations', {
+            Name: locName,
+            Address: '',
+            Type: '',
+            Observers: '',
+            Businesses: username,
+            BusinessUsername: username,
+            BusinessName: businessName,
+            Active: false,
+          });
+        } catch (e) { /* skip duplicates / errors */ }
+      }
+
       const adminEmail = process.env.ADMIN_EMAIL;
       if (adminEmail) {
         const tpl = tplBusinessRegistration({ businessName, contactPerson, email: emailLc, businessType, requestedLocations, phone, description });
@@ -226,6 +242,12 @@ export const handler = async (event) => {
           if (u?.Email) {
             const tpl = fields.Status === 'Active' ? tplApproved({ username: u.Username }) : tplRejected();
             sendEmail(u.Email, tpl.subject, tpl.html).catch(() => {});
+          }
+          if (fields.Status === 'Active' && u?.Role === 'Business' && u?.Username) {
+            const locs = await atGetAll('Locations', `AND({BusinessUsername}="${u.Username}",NOT({Active}=TRUE()))`);
+            for (const loc of locs) {
+              try { await atUpdate('Locations', loc.id, { Active: true }); } catch (e) {}
+            }
           }
         } catch (e) { /* email is fire-and-forget */ }
       }
