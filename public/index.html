@@ -1041,6 +1041,18 @@ tbody tr:hover td{background:var(--surface2)}
           <option value="false">Inactive</option>
         </select>
       </div>
+      <div style="margin-top:18px;padding-top:14px;border-top:1px solid var(--border)">
+        <div style="font-family:'Syne',sans-serif;font-size:13px;font-weight:600;color:var(--ink);margin-bottom:10px">Camera Configuration</div>
+        <div class="field"><label>Camera URL</label>
+          <input type="text" id="lm-camera-url" placeholder="http://192.168.1.50:5000 or https://xxxx.ngrok.io">
+        </div>
+        <div class="field"><label>Camera enabled</label>
+          <select id="lm-camera-enabled">
+            <option value="false">No</option>
+            <option value="true">Yes</option>
+          </select>
+        </div>
+      </div>
     </div>
     <div class="modal-footer">
       <button class="btn-sm outline" onclick="closeLocModal()">Cancel</button>
@@ -2460,6 +2472,8 @@ function openLocModal(loc) {
   document.getElementById('lm-addr').value = '';
   document.getElementById('lm-type').value = 'Retail';
   document.getElementById('lm-active').value = 'true';
+  document.getElementById('lm-camera-url').value = '';
+  document.getElementById('lm-camera-enabled').value = 'false';
   document.getElementById('loc-modal-title').textContent = 'Add location';
   populateObserverSelect();
   populateBusinessSelect();
@@ -2478,6 +2492,8 @@ function editLocation(id) {
   document.getElementById('lm-addr').value = l.address || '';
   document.getElementById('lm-type').value = l.type || 'Retail';
   document.getElementById('lm-active').value = l.active === false ? 'false' : 'true';
+  document.getElementById('lm-camera-url').value = l.cameraUrl || '';
+  document.getElementById('lm-camera-enabled').value = l.cameraEnabled ? 'true' : 'false';
   document.getElementById('loc-modal-title').textContent = 'Edit location';
   populateObserverSelect();
   populateBusinessSelect();
@@ -2553,6 +2569,8 @@ async function saveLocation() {
     observers: locAssignedObservers,
     businesses: locAssignedBusinesses,
     active: document.getElementById('lm-active').value === 'true',
+    cameraUrl: document.getElementById('lm-camera-url').value.trim(),
+    cameraEnabled: document.getElementById('lm-camera-enabled').value,
   };
   try {
     let res;

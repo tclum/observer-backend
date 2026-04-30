@@ -129,6 +129,8 @@ export const handler = async (event) => {
       };
       if (location.businessUsername !== undefined) fields.BusinessUsername = location.businessUsername;
       if (location.businessName !== undefined) fields.BusinessName = location.businessName;
+      if (location.cameraUrl !== undefined) fields.CameraUrl = location.cameraUrl;
+      if (location.cameraEnabled !== undefined) fields.CameraEnabled = location.cameraEnabled === true || location.cameraEnabled === 'true' ? 'true' : 'false';
 
       const before = await atGet('Locations', `RECORD_ID()="${locationId}"`);
       const wasActive = before.records[0]?.fields?.Active !== false;
