@@ -1,6 +1,8 @@
 import { atGet, atGetAll, atCreate, atUpdate, atDelete, verifyToken, corsHeaders, json, parseBody } from './_utils.js';
 import { sendEmail, tplLocationActivated, tplLocationPending } from './_email.js';
 
+const isTrueStr = v => typeof v === 'string' && v.toLowerCase() === 'true';
+
 const mapLocation = r => ({
   id: r.id,
   name: r.fields.Name || '',
@@ -11,6 +13,12 @@ const mapLocation = r => ({
   active: r.fields.Active !== false,
   businessUsername: r.fields.BusinessUsername || '',
   businessName: r.fields.BusinessName || '',
+  cameraUrl: r.fields.CameraUrl || '',
+  cameraEnabled: isTrueStr(r.fields.CameraEnabled),
+  autoScanEnabled: isTrueStr(r.fields.AutoScanEnabled),
+  autoScanInterval: parseInt(r.fields.AutoScanInterval, 10) || 60,
+  lastScanAt: r.fields.LastScanAt || '',
+  lastScanCount: r.fields.LastScanCount || '',
 });
 
 export const handler = async (event) => {

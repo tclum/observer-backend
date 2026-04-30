@@ -307,6 +307,52 @@ tbody tr:hover td{background:var(--surface2)}
 .job-card-meta{display:flex;gap:6px;flex-wrap:wrap;margin-top:4px}
 .job-card-foot{display:flex;align-items:center;justify-content:space-between;font-size:11px;color:var(--ink3);margin-top:6px;padding-top:10px;border-top:1px solid var(--border)}
 
+/* ── CAMERA PAGE ── */
+.cam-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(360px,1fr));gap:16px}
+.cam-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:20px;display:flex;flex-direction:column;gap:14px}
+.cam-head{display:flex;align-items:flex-start;gap:10px}
+.cam-head-info{flex:1;min-width:0}
+.cam-head-name{font-size:15px;font-weight:600;color:var(--ink);display:flex;align-items:center;gap:8px}
+.cam-head-biz{font-size:12px;color:var(--ink3);margin-top:2px}
+.cam-status-dot{width:9px;height:9px;border-radius:50%;background:#C9A41A;flex-shrink:0;display:inline-block}
+.cam-status-dot.connected{background:#1B3A2D}
+.cam-status-dot.error{background:var(--warn)}
+.cam-status-dot.idle{background:#C9A41A}
+.cam-stats{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.cam-stat{background:var(--surface2);border-radius:var(--r-sm);padding:10px 12px}
+.cam-stat-lbl{font-size:10px;color:var(--ink3);letter-spacing:.05em;text-transform:uppercase;margin-bottom:4px}
+.cam-stat-val{font-family:'Syne',sans-serif;font-size:18px;font-weight:600;color:var(--ink)}
+.cam-stat-sub{font-size:11px;color:var(--ink3);margin-top:2px}
+.cam-stat-val.count{font-size:24px;color:var(--accent)}
+.cam-actions{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.cam-actions .spacer{flex:1}
+.cam-toggle{display:inline-flex;align-items:center;gap:8px;font-size:12px;color:var(--ink2);user-select:none;cursor:pointer}
+.cam-switch{position:relative;width:32px;height:18px;background:var(--surface3);border-radius:18px;transition:background .15s}
+.cam-switch::after{content:'';position:absolute;top:2px;left:2px;width:14px;height:14px;border-radius:50%;background:#fff;transition:transform .15s;box-shadow:0 1px 2px rgba(0,0,0,.2)}
+.cam-switch.on{background:var(--accent)}
+.cam-switch.on::after{transform:translateX(14px)}
+.cam-img-wrap{position:relative;border:1px solid var(--border);border-radius:var(--r-sm);overflow:hidden;background:var(--surface2);min-height:140px;display:flex;align-items:center;justify-content:center}
+.cam-img-wrap img{display:block;width:100%;height:auto;max-height:280px;object-fit:contain}
+.cam-img-empty{font-size:12px;color:var(--ink3);padding:30px}
+.cam-img-overlay-btn{position:absolute;top:8px;right:8px;background:rgba(24,22,15,.7);color:#fff;border:none;padding:6px 12px;border-radius:var(--r-pill);font-size:12px;font-weight:500;cursor:pointer}
+.cam-img-overlay-btn:hover{background:var(--ink)}
+.cam-collapsible-head{display:flex;align-items:center;gap:6px;cursor:pointer;font-size:12px;font-weight:500;color:var(--ink2);padding:6px 0}
+.cam-collapsible-head .arrow{transition:transform .15s;display:inline-block}
+.cam-collapsible.open .arrow{transform:rotate(180deg)}
+.cam-collapsible-body{display:none;margin-top:8px}
+.cam-collapsible.open .cam-collapsible-body{display:block}
+.cam-test-result{font-size:12px;padding:8px 12px;border-radius:var(--r-sm);margin-top:8px}
+.cam-test-result.ok{background:var(--accent-light);color:var(--accent)}
+.cam-test-result.err{background:var(--warn-light);color:var(--warn)}
+.cam-url{font-family:'DM Mono',monospace;font-size:11px;color:var(--ink3);word-break:break-all}
+.cam-pill{display:inline-block;font-size:10px;font-weight:500;padding:2px 8px;border-radius:var(--r-pill);background:var(--surface2);color:var(--ink2);text-transform:uppercase;letter-spacing:.05em}
+.cam-pill.on{background:var(--accent-light);color:var(--accent)}
+.cam-pill.off{background:var(--surface2);color:var(--ink3)}
+.cam-spinner{display:inline-block;width:12px;height:12px;border:2px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;margin-right:6px;vertical-align:middle}
+.cam-source-icon{display:inline-flex;align-items:center;gap:4px;font-size:11px;color:var(--accent);font-weight:500}
+.toast.success{background:var(--accent)}
+.toast.error{background:var(--warn)}
+
 /* ── DRAGGABLE PILLS (Field Options) ── */
 .pill-bag{display:flex;flex-wrap:wrap;gap:6px;padding:10px;border:1px dashed var(--border2);border-radius:var(--r-sm);background:var(--surface);min-height:54px}
 .pill-bag.empty{align-items:center;justify-content:center;color:var(--ink3);font-size:12px}
@@ -523,6 +569,12 @@ tbody tr:hover td{background:var(--surface2)}
         Data
       </div>
 
+      <!-- Admin + Business shared (Camera) -->
+      <div class="nav-item" onclick="navTo('camera')" id="nav-camera" style="display:none">
+        <svg width="16" height="16" fill="none" viewBox="0 0 16 16"><rect x="1.5" y="4" width="13" height="9" rx="1.5" stroke="currentColor" stroke-width="1.3"/><circle cx="8" cy="8.5" r="2.5" stroke="currentColor" stroke-width="1.3"/><path d="M5.5 4l1-1.5h3l1 1.5" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg>
+        Camera
+      </div>
+
       <!-- Admin -->
       <div class="nav-item admin-only" onclick="navTo('locations')" id="nav-locations" style="display:none">
         <svg width="16" height="16" fill="none" viewBox="0 0 16 16"><path d="M8 1.5C5.79 1.5 4 3.29 4 5.5c0 3 4 8 4 8s4-5 4-8c0-2.21-1.79-4-4-4z" stroke="currentColor" stroke-width="1.3"/><circle cx="8" cy="5.5" r="1.5" stroke="currentColor" stroke-width="1.3"/></svg>
@@ -584,6 +636,7 @@ tbody tr:hover td{background:var(--surface2)}
             <input class="filter-input" type="date" id="dash-filter-from" onchange="loadDashboard()" style="display:none">
             <input class="filter-input" type="date" id="dash-filter-to" onchange="loadDashboard()" style="display:none">
             <select class="filter-select" id="dash-filter-obs" onchange="loadDashboard()" style="display:none"><option value="">All observers</option></select>
+            <select class="filter-select" id="dash-filter-source" onchange="loadDashboard()"><option value="">All sources</option><option value="human">Human only</option><option value="camera">Camera only</option></select>
             <button class="btn-sm outline" onclick="clearDashFilters()">Clear</button>
           </div>
           <div class="stat-row" id="dash-stats"></div>
@@ -617,7 +670,8 @@ tbody tr:hover td{background:var(--surface2)}
         </select>
         <input class="filter-input" type="date" id="data-filter-from" style="display:none">
         <input class="filter-input" type="date" id="data-filter-to" style="display:none">
-        <select class="filter-select" id="data-filter-type"><option value="">All types</option><option value="full">Full</option><option value="quick">Quick</option><option value="missed">Missed</option></select>
+        <select class="filter-select" id="data-filter-type"><option value="">All types</option><option value="full">Full</option><option value="quick">Quick</option><option value="missed">Missed</option><option value="camera">Camera</option></select>
+        <select class="filter-select" id="data-filter-source"><option value="">All sources</option><option value="human">Human</option><option value="camera">Camera</option></select>
         <button class="btn-sm primary" onclick="applyDataFilters()">Filter</button>
         <button class="btn-sm outline" onclick="clearDataFilters()">Clear</button>
       </div>
@@ -627,7 +681,7 @@ tbody tr:hover td{background:var(--surface2)}
         </div>
         <div class="table-wrap">
           <table>
-            <thead><tr><th>#</th><th>Time</th><th>Observer</th><th>Location</th><th>Session</th><th>Type</th><th>Age</th><th>Gender</th><th>Ethnicity</th><th>Emotion</th><th>Missed</th></tr></thead>
+            <thead><tr><th>#</th><th>Time</th><th>Source</th><th>Observer</th><th>Location</th><th>Session</th><th>Type</th><th>Age</th><th>Gender</th><th>Ethnicity</th><th>Emotion</th><th>Missed</th></tr></thead>
             <tbody id="data-tbody"></tbody>
           </table>
         </div>
@@ -643,6 +697,15 @@ tbody tr:hover td{background:var(--surface2)}
         </div>
       </div>
       <div class="loc-grid" id="loc-grid"></div>
+    </div>
+
+    <!-- CAMERA -->
+    <div class="page" id="page-camera">
+      <div class="page-header">
+        <div class="page-title">Camera Control</div>
+        <div class="page-sub">Monitor and trigger Raspberry Pi camera detection</div>
+      </div>
+      <div id="cam-grid" class="cam-grid"></div>
     </div>
 
     <!-- USERS -->
@@ -982,6 +1045,52 @@ tbody tr:hover td{background:var(--surface2)}
     <div class="modal-footer">
       <button class="btn-sm outline" onclick="closeLocModal()">Cancel</button>
       <button class="btn-sm primary" onclick="saveLocation()">Save location</button>
+    </div>
+  </div>
+</div>
+
+<!-- CAMERA SETTINGS MODAL -->
+<div class="modal-overlay" id="cam-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="cam-modal-title">Camera settings</div>
+      <button class="modal-close" onclick="closeCamModal()">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="field">
+        <label>Camera URL</label>
+        <input type="text" id="cm-url" placeholder="http://192.168.1.50:5000">
+        <div style="font-size:11px;color:var(--ink3);margin-top:4px">Local IP address of the Raspberry Pi running the scanner</div>
+      </div>
+      <div class="field">
+        <label style="display:flex;align-items:center;justify-content:space-between">
+          <span>Camera enabled</span>
+          <span class="cam-toggle" onclick="cmToggle('enabled')">
+            <span id="cm-enabled-switch" class="cam-switch"></span>
+          </span>
+        </label>
+      </div>
+      <div class="field">
+        <label style="display:flex;align-items:center;justify-content:space-between">
+          <span>Auto-scan enabled</span>
+          <span class="cam-toggle" onclick="cmToggle('auto')">
+            <span id="cm-auto-switch" class="cam-switch"></span>
+          </span>
+        </label>
+      </div>
+      <div class="field" id="cm-interval-field">
+        <label>Scan every (seconds)</label>
+        <input type="number" id="cm-interval" min="30" value="60">
+        <div style="font-size:11px;color:var(--ink3);margin-top:4px">How often to automatically scan. 60 = every minute. Minimum 30.</div>
+      </div>
+      <div style="margin-top:8px">
+        <button class="btn-sm outline" type="button" onclick="cmTestConnection()">Test connection</button>
+        <div id="cm-test-result"></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-sm outline" onclick="closeCamModal()">Cancel</button>
+      <button class="btn-sm primary" onclick="cmSave()">Save</button>
     </div>
   </div>
 </div>
@@ -1371,6 +1480,7 @@ function initApp() {
   document.querySelectorAll('.observer-only').forEach(el => el.style.display = isObserver() ? 'flex' : 'none');
   document.querySelectorAll('.business-only').forEach(el => el.style.display = isBusiness() ? 'flex' : 'none');
   document.getElementById('nav-data').style.display = isObserver() ? 'none' : 'flex';
+  document.getElementById('nav-camera').style.display = (isAdmin() || isBusiness()) ? 'flex' : 'none';
   document.getElementById('sb-business-locs').style.display = isBusiness() ? 'block' : 'none';
 
   document.getElementById('dash-filter-obs').style.display = isAdmin() ? 'block' : 'none';
@@ -1410,7 +1520,7 @@ function toggleMobileSidebar(open) {
   document.getElementById('sidebar-backdrop').classList.toggle('open', open);
 }
 
-const PAGE_TITLES = { dashboard: 'Dashboard', data: 'Data', locations: 'Locations', users: 'Users', config: 'Field Options', record: 'Record', mydata: 'My Sessions', jobboard: 'Job Board', myapps: 'My Applications', mylocations: 'My Locations', bizjobs: 'Jobs', bizobservers: 'Observers', adminjobs: 'Jobs' };
+const PAGE_TITLES = { dashboard: 'Dashboard', data: 'Data', camera: 'Camera Control', locations: 'Locations', users: 'Users', config: 'Field Options', record: 'Record', mydata: 'My Sessions', jobboard: 'Job Board', myapps: 'My Applications', mylocations: 'My Locations', bizjobs: 'Jobs', bizobservers: 'Observers', adminjobs: 'Jobs' };
 
 function navTo(page) {
   if (page !== 'record' && hasUnsyncedSession()) {
@@ -1425,6 +1535,7 @@ function navTo(page) {
   toggleMobileSidebar(false);
   if (page === 'dashboard') renderDashboard();
   if (page === 'data') renderDataTable();
+  if (page === 'camera') renderCameraPage();
   if (page === 'locations') renderLocations();
   if (page === 'users') renderUsers();
   if (page === 'mydata') renderMyData();
@@ -1469,6 +1580,8 @@ async function loadAllData() {
       'Disability': o.disability,
       'Emotion': o.emotion,
       'Missed': o.missed,
+      'Source': o.source || (o.type === 'camera' ? 'camera' : 'human'),
+      'CameraUrl': o.cameraUrl || '',
     }));
     allUsers = (usersRes.users || []).filter(u => u.username !== currentUser.username);
     allLocations = locsRes.locations || [];
@@ -1509,10 +1622,12 @@ function getFilteredObs() {
   const obs = document.getElementById('dash-filter-obs').value;
   const from = document.getElementById('dash-filter-from').value;
   const to = document.getElementById('dash-filter-to').value;
+  const source = document.getElementById('dash-filter-source')?.value || '';
   return allObservations.filter(o => {
     if (isObserver() && o.Observer !== currentUser.username) return false;
     if (loc && o.Location !== loc) return false;
     if (obs && o.Observer !== obs) return false;
+    if (source && (o.Source || 'human') !== source) return false;
     if (from && o.Timestamp && o.Timestamp < from) return false;
     if (to && o.Timestamp && o.Timestamp.slice(0,10) > to) return false;
     return true;
@@ -1520,12 +1635,12 @@ function getFilteredObs() {
 }
 
 function clearDashFilters() {
-  ['dash-filter-loc','dash-filter-obs','dash-filter-from','dash-filter-to'].forEach(id => { document.getElementById(id).value = ''; });
+  ['dash-filter-loc','dash-filter-obs','dash-filter-from','dash-filter-to','dash-filter-source'].forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
   document.getElementById('dash-filter-preset').value = 'all';
   applyDatePreset('dash');
 }
 function clearDataFilters() {
-  ['data-filter-loc','data-filter-obs','data-filter-from','data-filter-to','data-filter-type'].forEach(id => { document.getElementById(id).value = ''; });
+  ['data-filter-loc','data-filter-obs','data-filter-from','data-filter-to','data-filter-type','data-filter-source'].forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
   document.getElementById('data-filter-preset').value = 'all';
   applyDatePreset('data');
 }
@@ -1821,12 +1936,15 @@ function _renderDashboardAnalytics() {
   const obs = getFilteredObs();
   const real = obs.filter(o => o.Missed !== 'YES');
   const missed = obs.filter(o => o.Missed === 'YES').length;
-  const people = real.length;
+  const camCount = real.filter(o => o.Source === 'camera').reduce((s, o) => s + (parseInt(o['Person #'], 10) || 0), 0);
+  const humanReal = real.filter(o => o.Source !== 'camera');
+  const people = humanReal.length + camCount;
   const sessions = [...new Set(real.map(o => o.Session).filter(Boolean))].length;
   const locs = [...new Set(real.map(o => o.Location).filter(Boolean))].length;
+  const camIndicator = camCount > 0 ? ` <span title="Includes camera counts" style="font-size:13px;opacity:.85">📷</span>` : '';
 
   document.getElementById('dash-stats').innerHTML = `
-    <div class="stat-card accent"><div class="stat-num">${people}</div><div class="stat-lbl">People logged</div></div>
+    <div class="stat-card accent"><div class="stat-num">${people}${camIndicator}</div><div class="stat-lbl">People logged</div></div>
     <div class="stat-card"><div class="stat-num">${real.length > 0 ? [...new Set(real.map(o=>o['Entry ID']))].length : 0}</div><div class="stat-lbl">Observations</div></div>
     <div class="stat-card"><div class="stat-num">${sessions}</div><div class="stat-lbl">Sessions</div></div>
     <div class="stat-card"><div class="stat-num" style="color:var(--warn)">${missed}</div><div class="stat-lbl">Missed groups</div></div>
@@ -1932,11 +2050,13 @@ function renderDataTable() {
   const from = document.getElementById('data-filter-from').value;
   const to = document.getElementById('data-filter-to').value;
   const type = document.getElementById('data-filter-type').value;
+  const source = document.getElementById('data-filter-source')?.value || '';
   let data = allObservations.filter(o => {
     if (isObserver() && o.Observer !== currentUser.username) return false;
     if (loc && o.Location !== loc) return false;
     if (obs && o.Observer !== obs) return false;
     if (type && o.Type !== type) return false;
+    if (source && (o.Source || 'human') !== source) return false;
     if (from && o.Timestamp && o.Timestamp < from) return false;
     if (to && o.Timestamp && o.Timestamp.slice(0,10) > to) return false;
     return true;
@@ -1944,20 +2064,28 @@ function renderDataTable() {
   document.getElementById('data-count').textContent = `${data.length} ${data.length===1?'entry':'entries'}`;
   document.getElementById('data-tbody').innerHTML = data.length ? data.map(o => {
     const t = o.Timestamp ? new Date(o.Timestamp).toLocaleString([],{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'}) : '—';
+    const isCam = (o.Source === 'camera') || o.Type === 'camera';
+    const sourceCell = isCam
+      ? '<span class="cam-source-icon" title="Camera"><svg width="13" height="13" fill="none" viewBox="0 0 16 16"><rect x="1.5" y="4" width="13" height="9" rx="1.5" stroke="currentColor" stroke-width="1.3"/><circle cx="8" cy="8.5" r="2.5" stroke="currentColor" stroke-width="1.3"/></svg>Camera</span>'
+      : '<span style="color:var(--ink3);font-size:11px">Human</span>';
+    const typeCell = isCam
+      ? '<span class="badge" style="background:var(--purple-light);color:var(--purple)">📷 Camera</span>'
+      : `<span class="badge ${esc(o.Type||'other')}">${esc(o.Type)||'—'}</span>`;
     return `<tr>
       <td style="font-family:'DM Mono',monospace;font-size:12px;color:var(--ink3)">${esc(o['Entry ID'])||'—'}</td>
       <td style="white-space:nowrap">${esc(t)}</td>
+      <td>${sourceCell}</td>
       <td>${esc(displayObserver(o.Observer))||'—'}</td>
       <td>${esc(o.Location)||'—'}</td>
       <td style="color:var(--ink3)">${esc(o.Session)||'—'}</td>
-      <td><span class="badge ${esc(o.Type||'other')}">${esc(o.Type)||'—'}</span></td>
+      <td>${typeCell}</td>
       <td>${esc(o.Age)||'—'}</td>
       <td>${esc(o.Gender)||'—'}</td>
       <td>${esc(o.Ethnicity)||'—'}</td>
       <td>${esc(o.Emotion)||'—'}</td>
       <td>${o.Missed==='YES'?'<span class="badge suspended">Yes</span>':'—'}</td>
     </tr>`;
-  }).join('') : '<tr><td colspan="11" style="text-align:center;padding:40px;color:var(--ink3)">No entries match your filters</td></tr>';
+  }).join('') : '<tr><td colspan="12" style="text-align:center;padding:40px;color:var(--ink3)">No entries match your filters</td></tr>';
 }
 
 // ── MY DATA ──
@@ -1983,6 +2111,299 @@ function renderMyData() {
       <td>${esc(o.Age)||'—'}</td><td>${esc(o.Gender)||'—'}</td><td>${esc(o.Ethnicity)||'—'}</td><td>${esc(o.Emotion)||'—'}</td>
     </tr>`;
   }).join('') || '<tr><td colspan="9" style="text-align:center;padding:40px;color:var(--ink3)">No entries yet</td></tr>';
+}
+
+// ── CAMERA ──
+let cameraLocations = [];
+let camPolling = {}; // locId -> intervalId for debug image polling
+let editingCamLocId = null;
+let cmDraft = { enabled: false, auto: false };
+
+function relTime(iso) {
+  if (!iso) return '—';
+  const t = new Date(iso).getTime();
+  if (!t || isNaN(t)) return '—';
+  const diff = Date.now() - t;
+  if (diff < 60000) return 'just now';
+  if (diff < 3600000) { const m = Math.floor(diff/60000); return m + ' minute' + (m===1?'':'s') + ' ago'; }
+  if (diff < 86400000) { const h = Math.floor(diff/3600000); return h + ' hour' + (h===1?'':'s') + ' ago'; }
+  const d = Math.floor(diff/86400000);
+  return d + ' day' + (d===1?'':'s') + ' ago';
+}
+
+function truncateUrl(u) {
+  if (!u) return '—';
+  return u.length > 36 ? u.slice(0, 34) + '…' : u;
+}
+
+async function renderCameraPage() {
+  const grid = document.getElementById('cam-grid');
+  grid.innerHTML = '<div class="loading"><div class="spinner"></div>Loading cameras…</div>';
+  Object.values(camPolling).forEach(id => clearInterval(id));
+  camPolling = {};
+  try {
+    const res = await api('/camera', { action: 'getCameraList' });
+    if (!res.success) { grid.innerHTML = `<div class="empty-state"><div class="empty-state-title">Could not load cameras</div><div class="empty-state-sub">${esc(res.error || 'Try again')}</div></div>`; return; }
+    cameraLocations = res.locations || [];
+    if (!cameraLocations.length) {
+      const target = isAdmin() ? 'locations' : 'mylocations';
+      const label = isAdmin() ? 'Go to Locations' : 'Go to My Locations';
+      grid.innerHTML = `
+        <div class="empty-state" style="grid-column:1/-1">
+          <div class="empty-state-title">No cameras configured yet</div>
+          <div class="empty-state-sub">Edit a location to add a camera URL.</div>
+          <button class="btn-sm primary" style="margin-top:14px" onclick="navTo('${target}')">${label}</button>
+        </div>`;
+      return;
+    }
+    grid.innerHTML = cameraLocations.map(renderCameraCard).join('');
+  } catch (e) {
+    grid.innerHTML = `<div class="empty-state"><div class="empty-state-title">Error</div><div class="empty-state-sub">${esc(e.message || 'Could not load cameras')}</div></div>`;
+  }
+}
+
+function renderCameraCard(l) {
+  const dotClass = l.cameraEnabled ? 'idle' : 'idle';
+  const bizLine = isAdmin() && l.businessName ? `<div class="cam-head-biz">${esc(l.businessName)}</div>` : '';
+  return `
+    <div class="cam-card" data-cam-id="${esc(l.id)}">
+      <div class="cam-head">
+        <div class="cam-head-info">
+          <div class="cam-head-name">
+            <span class="cam-status-dot ${dotClass}" data-cam-dot></span>
+            ${esc(l.name)}
+          </div>
+          ${bizLine}
+          <div class="cam-url" style="margin-top:6px">${esc(truncateUrl(l.cameraUrl))}</div>
+        </div>
+        <button class="btn-sm outline" onclick="checkCameraStatus('${esc(l.id)}')">Check status</button>
+      </div>
+      <div class="cam-stats" data-cam-stats style="display:none">
+        <div class="cam-stat">
+          <div class="cam-stat-lbl">Last count</div>
+          <div class="cam-stat-val count" data-cam-count>—</div>
+          <div class="cam-stat-sub">people</div>
+        </div>
+        <div class="cam-stat">
+          <div class="cam-stat-lbl">Last scan</div>
+          <div class="cam-stat-val" data-cam-time style="font-size:14px">—</div>
+          <div class="cam-stat-sub" data-cam-auto>—</div>
+        </div>
+      </div>
+      <div class="cam-collapsible" data-cam-collapsible>
+        <div class="cam-collapsible-head" onclick="toggleCamImage('${esc(l.id)}')">
+          <span class="arrow">▾</span>
+          <span>View latest scan image</span>
+        </div>
+        <div class="cam-collapsible-body">
+          <div class="cam-img-wrap" data-cam-img-wrap>
+            <div class="cam-img-empty">No image yet — scan to see results</div>
+          </div>
+        </div>
+      </div>
+      <div class="cam-actions">
+        <button class="btn-sm primary" data-cam-scan onclick="scanNow('${esc(l.id)}', this)">Scan now</button>
+        <label class="cam-toggle">
+          <span data-cam-auto-switch class="cam-switch ${l.autoScanEnabled?'on':''}" onclick="toggleAutoScan('${esc(l.id)}', this)"></span>
+          Auto-scan
+        </label>
+        <div class="spacer"></div>
+        <button class="btn-sm outline" onclick="openCamSettings('${esc(l.id)}')">Settings</button>
+      </div>
+    </div>`;
+}
+
+function findCard(locId) {
+  return document.querySelector(`[data-cam-id="${CSS.escape(locId)}"]`);
+}
+
+function setCamDot(card, state) {
+  const dot = card.querySelector('[data-cam-dot]');
+  if (!dot) return;
+  dot.classList.remove('connected','error','idle');
+  dot.classList.add(state);
+}
+
+async function checkCameraStatus(locId) {
+  const card = findCard(locId);
+  if (!card) return;
+  setCamDot(card, 'idle');
+  try {
+    const res = await api('/camera', { action: 'getCameraStatus', locationId: locId });
+    if (res.error) { showToast(res.error, 'error'); setCamDot(card, 'error'); return; }
+    updateCameraCardStatus(card, res);
+  } catch (e) { showToast('Could not reach server', 'error'); setCamDot(card, 'error'); }
+}
+
+function updateCameraCardStatus(card, res) {
+  const stats = card.querySelector('[data-cam-stats]');
+  stats.style.display = '';
+  card.querySelector('[data-cam-count]').textContent = res.lastScanCount || (res.latestResult?.people_count ?? 0);
+  card.querySelector('[data-cam-time]').textContent = relTime(res.lastScanAt || res.latestResult?.timestamp);
+  const autoEl = card.querySelector('[data-cam-auto]');
+  autoEl.innerHTML = res.autoScanEnabled
+    ? `<span class="cam-pill on">Auto-scan on · ${res.autoScanInterval}s</span>`
+    : `<span class="cam-pill off">Auto-scan off</span>`;
+  setCamDot(card, res.connected && res.cameraEnabled ? 'connected' : (res.connected ? 'idle' : 'error'));
+  // Update local cache
+  const idx = cameraLocations.findIndex(l => l.id === res.locationId);
+  if (idx >= 0) {
+    cameraLocations[idx] = { ...cameraLocations[idx],
+      cameraEnabled: !!res.cameraEnabled,
+      autoScanEnabled: !!res.autoScanEnabled,
+      autoScanInterval: res.autoScanInterval || 60,
+      lastScanAt: res.lastScanAt || cameraLocations[idx].lastScanAt,
+      lastScanCount: String(res.lastScanCount || cameraLocations[idx].lastScanCount || ''),
+      cameraUrl: res.cameraUrl || cameraLocations[idx].cameraUrl,
+    };
+  }
+}
+
+async function scanNow(locId, btn) {
+  const card = findCard(locId);
+  const orig = btn.textContent;
+  btn.disabled = true;
+  btn.innerHTML = '<span class="cam-spinner"></span>Scanning…';
+  try {
+    const res = await api('/camera', { action: 'triggerScan', locationId: locId });
+    if (res.error || !res.success) { showToast('Scan failed — ' + (res.error || 'unknown'), 'error'); setCamDot(card, 'error'); }
+    else {
+      const stats = card.querySelector('[data-cam-stats]');
+      stats.style.display = '';
+      card.querySelector('[data-cam-count]').textContent = res.peopleCount;
+      card.querySelector('[data-cam-time]').textContent = 'just now';
+      setCamDot(card, 'connected');
+      const idx = cameraLocations.findIndex(l => l.id === locId);
+      if (idx >= 0) { cameraLocations[idx].lastScanAt = res.timestamp; cameraLocations[idx].lastScanCount = String(res.peopleCount); }
+      showToast(`Scan complete — ${res.peopleCount} ${res.peopleCount===1?'person':'people'} detected`, 'success');
+      const collapsible = card.querySelector('[data-cam-collapsible]');
+      if (collapsible.classList.contains('open')) loadCamImage(locId);
+    }
+  } catch(e) { showToast('Scan failed — ' + (e.message || 'network'), 'error'); setCamDot(card, 'error'); }
+  setTimeout(() => { btn.disabled = false; btn.textContent = orig; }, 2000);
+}
+
+async function toggleAutoScan(locId, switchEl) {
+  const newVal = !switchEl.classList.contains('on');
+  switchEl.classList.toggle('on', newVal);
+  const idx = cameraLocations.findIndex(l => l.id === locId);
+  const interval = (idx >= 0 && cameraLocations[idx].autoScanInterval) || 60;
+  try {
+    const res = await api('/camera', { action: 'updateCameraSettings', locationId: locId, settings: { autoScanEnabled: newVal } });
+    if (res.error) { switchEl.classList.toggle('on', !newVal); showToast(res.error, 'error'); return; }
+    if (idx >= 0) cameraLocations[idx].autoScanEnabled = newVal;
+    showToast(newVal ? 'Auto-scan enabled' : 'Auto-scan disabled', 'success');
+    if (newVal) setTimeout(() => showToast(`Scans will run every ${interval}s when the Pi is reachable`), 1200);
+    const card = findCard(locId);
+    const autoEl = card?.querySelector('[data-cam-auto]');
+    if (autoEl) autoEl.innerHTML = newVal ? `<span class="cam-pill on">Auto-scan on · ${interval}s</span>` : `<span class="cam-pill off">Auto-scan off</span>`;
+  } catch(e) { switchEl.classList.toggle('on', !newVal); showToast('Could not update', 'error'); }
+}
+
+async function toggleCamImage(locId) {
+  const card = findCard(locId);
+  const collapsible = card.querySelector('[data-cam-collapsible]');
+  collapsible.classList.toggle('open');
+  if (collapsible.classList.contains('open')) {
+    loadCamImage(locId);
+    const loc = cameraLocations.find(l => l.id === locId);
+    if (loc?.autoScanEnabled) {
+      camPolling[locId] = setInterval(() => loadCamImage(locId), 30000);
+    }
+  } else {
+    if (camPolling[locId]) { clearInterval(camPolling[locId]); delete camPolling[locId]; }
+  }
+}
+
+async function loadCamImage(locId) {
+  const card = findCard(locId);
+  if (!card) return;
+  const wrap = card.querySelector('[data-cam-img-wrap]');
+  try {
+    const r = await fetch(SERVER + '/camera', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + authToken },
+      body: JSON.stringify({ action: 'getLatestDebugImage', locationId: locId }),
+    });
+    if (!r.ok) {
+      const err = await r.json().catch(() => ({}));
+      wrap.innerHTML = `<div class="cam-img-empty">${esc(err.error || 'Image not available')}</div>`;
+      return;
+    }
+    const blob = await r.blob();
+    const url = URL.createObjectURL(blob);
+    const prev = wrap.querySelector('img');
+    if (prev) URL.revokeObjectURL(prev.src);
+    wrap.innerHTML = `<img alt="Latest scan"><button class="cam-img-overlay-btn" onclick="scanNow('${esc(locId)}', this)">Scan now</button>`;
+    wrap.querySelector('img').src = url;
+  } catch (e) {
+    wrap.innerHTML = `<div class="cam-img-empty">Could not load image</div>`;
+  }
+}
+
+function openCamSettings(locId) {
+  const l = cameraLocations.find(x => x.id === locId);
+  if (!l) return;
+  editingCamLocId = locId;
+  document.getElementById('cam-modal-title').textContent = 'Camera settings — ' + l.name;
+  document.getElementById('cm-url').value = l.cameraUrl || '';
+  document.getElementById('cm-interval').value = l.autoScanInterval || 60;
+  cmDraft = { enabled: !!l.cameraEnabled, auto: !!l.autoScanEnabled };
+  cmRenderToggles();
+  document.getElementById('cm-test-result').innerHTML = '';
+  document.getElementById('cam-modal').classList.add('open');
+}
+
+function closeCamModal() {
+  document.getElementById('cam-modal').classList.remove('open');
+  editingCamLocId = null;
+}
+
+function cmToggle(which) {
+  if (which === 'enabled') cmDraft.enabled = !cmDraft.enabled;
+  else cmDraft.auto = !cmDraft.auto;
+  cmRenderToggles();
+}
+
+function cmRenderToggles() {
+  document.getElementById('cm-enabled-switch').classList.toggle('on', cmDraft.enabled);
+  document.getElementById('cm-auto-switch').classList.toggle('on', cmDraft.auto);
+  document.getElementById('cm-interval-field').style.display = cmDraft.auto ? 'block' : 'none';
+}
+
+async function cmTestConnection() {
+  if (!editingCamLocId) return;
+  const url = document.getElementById('cm-url').value.trim();
+  const out = document.getElementById('cm-test-result');
+  out.innerHTML = '<div class="cam-test-result" style="background:var(--surface2);color:var(--ink3)">Testing…</div>';
+  try {
+    if (url) {
+      const save = await api('/camera', { action: 'updateCameraSettings', locationId: editingCamLocId, settings: { cameraUrl: url } });
+      if (save.error) { out.innerHTML = `<div class="cam-test-result err">${esc(save.error)}</div>`; return; }
+    }
+    const res = await api('/camera', { action: 'getCameraStatus', locationId: editingCamLocId });
+    if (res.connected) {
+      out.innerHTML = `<div class="cam-test-result ok">Connected — Pi running${res.lastScanAt?', last scan '+esc(relTime(res.lastScanAt)):''}</div>`;
+    } else {
+      out.innerHTML = `<div class="cam-test-result err">Connection failed — check URL and ensure Pi is running</div>`;
+    }
+  } catch(e) { out.innerHTML = `<div class="cam-test-result err">${esc(e.message || 'Failed')}</div>`; }
+}
+
+async function cmSave() {
+  if (!editingCamLocId) return;
+  const url = document.getElementById('cm-url').value.trim();
+  const interval = Math.max(30, parseInt(document.getElementById('cm-interval').value, 10) || 60);
+  if (url && !/^https?:\/\//i.test(url)) { showToast('URL must start with http:// or https://', 'error'); return; }
+  try {
+    const res = await api('/camera', { action: 'updateCameraSettings', locationId: editingCamLocId, settings: {
+      cameraUrl: url, cameraEnabled: cmDraft.enabled, autoScanEnabled: cmDraft.auto, autoScanInterval: interval,
+    }});
+    if (res.error) { showToast(res.error, 'error'); return; }
+    showToast('Settings saved', 'success');
+    closeCamModal();
+    renderCameraPage();
+  } catch(e) { showToast('Could not save', 'error'); }
 }
 
 // ── LOCATIONS ──
@@ -2606,18 +3027,20 @@ function exportFilteredCSV() {
   const from = document.getElementById('data-filter-from').value;
   const to = document.getElementById('data-filter-to').value;
   const type = document.getElementById('data-filter-type').value;
+  const source = document.getElementById('data-filter-source')?.value || '';
   let data = allObservations.filter(o => {
     if (isObserver() && o.Observer !== currentUser.username) return false;
     if (loc && o.Location !== loc) return false;
     if (obs && o.Observer !== obs) return false;
     if (type && o.Type !== type) return false;
+    if (source && (o.Source || 'human') !== source) return false;
     if (from && o.Timestamp && o.Timestamp < from) return false;
     if (to && o.Timestamp && o.Timestamp.slice(0,10) > to) return false;
     return true;
   });
   if (!data.length) { showToast('No data to export'); return; }
   if (isBusiness()) data = data.map(o => ({ ...o, Observer: pseudonymFor(o.Observer) }));
-  const cols = ['Entry ID','Timestamp','Type','Observer','Location','Session','Person #','Age','Gender','Ethnicity','Disability','Emotion','Missed'];
+  const cols = ['Entry ID','Timestamp','Type','Source','Observer','Location','Session','Person #','Age','Gender','Ethnicity','Disability','Emotion','Missed'];
   const rows = [cols, ...data.map(o => cols.map(c => o[c]||''))];
   const csv = rows.map(r => r.map(v => `"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');
   const a = document.createElement('a');
@@ -2628,9 +3051,13 @@ function exportFilteredCSV() {
 }
 
 // ── HELPERS ──
-function showToast(msg) {
+function showToast(msg, kind) {
   const t = document.getElementById('toast');
-  t.textContent = msg; t.classList.add('show');
+  t.textContent = msg;
+  t.classList.remove('success','error');
+  if (kind === 'success') t.classList.add('success');
+  else if (kind === 'error') t.classList.add('error');
+  t.classList.add('show');
   setTimeout(() => t.classList.remove('show'), 2200);
 }
 

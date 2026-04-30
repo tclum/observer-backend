@@ -46,6 +46,8 @@ export const handler = async (event) => {
         disability: r.fields['Disability'] || '',
         emotion: r.fields['Emotion'] || '',
         missed: r.fields['Missed'] || 'NO',
+        source: r.fields['Source'] || 'human',
+        cameraUrl: r.fields['CameraUrl'] || '',
       }));
       return json(200, { success: true, observations, total: observations.length }, cors);
     }
